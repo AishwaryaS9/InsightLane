@@ -23,9 +23,9 @@ export const addBlog = async (req, res) => {
         const optimizedImageUrl = imagekit.url({
             path: response.filePath,
             transformation: [
-                { quality: 'auto' }, 
-                { format: 'webp' }, 
-                { width: '1280' }, 
+                { quality: 'auto' },
+                { format: 'webp' },
+                { width: '1280' },
             ],
         });
 
@@ -37,7 +37,7 @@ export const addBlog = async (req, res) => {
             category,
             image,
             isPublished,
-            author: req.user.id, 
+            author: req.user.id,
         });
 
         res.json({ success: true, message: "Blog added successfully" });
@@ -45,9 +45,6 @@ export const addBlog = async (req, res) => {
         res.json({ success: false, message: error.message });
     }
 };
-
-
-
 
 export const getAllBlogs = async (req, res) => {
     try {
@@ -110,8 +107,8 @@ export const addComment = async (req, res) => {
         const { blog, content } = req.body;
 
         const user = {
-            id: req.user.id, 
-            name: req.user.name, 
+            id: req.user.id,
+            name: req.user.name,
         };
 
         await Comment.create({ blog, user, content });
@@ -137,6 +134,38 @@ export const generateContent = async (req, res) => {
         const { prompt } = req.body;
         const content = await main(prompt + ' Generate a blog content for this topic in simple text format');
         res.json({ success: true, content });
+    } catch (error) {
+        res.json({ success: false, message: error.message });
+    }
+};
+
+
+export const getAuthorDashboard = async (req, res) => {
+    try {
+        const { id } = req.user;
+        const authorBlogs = await Blog.find({ author: id }).sort({ createdAt: -1 });
+        console.log('author blogs uid', JSON.stringify(id))
+
+        const totalBlogs = authorBlogs.length;
+
+        const drafts = authorBlogs.filter(blog => !blog.isPublished).length;
+
+        const blogIds = authorBlogs.map(blog => blog._id);
+        const comments = await Comment.find({ blog: { $in: blogIds } });
+
+        const totalComments = comments.length;
+
+        const approvedComments = comments.filter(comment => comment.isApproved).length;
+
+        const dashboardData = {
+            totalBlogs,
+            drafts,
+            totalComments,
+            approvedComments,
+            recentBlogs: authorBlogs.slice(0, 5), 
+        };
+
+        res.json({ success: true, dashboardData });
     } catch (error) {
         res.json({ success: false, message: error.message });
     }

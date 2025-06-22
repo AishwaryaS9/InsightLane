@@ -15,12 +15,14 @@ router.post('/blogs/allcomments', blogController.getBlogComments);
 
 // Author: Add, update their own blogs
 router.post('/addblog', upload.single('image'), auth, authorize(['author', 'admin']), blogController.addBlog);
-router.delete('/blogs', auth, authorize(['author', 'admin']), blogController.deleteBlogById);
 router.post('/generate', auth, authorize(['author', 'admin']), blogController.generateContent)
+router.get('/author/dashboard', auth, authorize(['author']), blogController.getAuthorDashboard);
+
 
 
 // Admin: Manage all content
 router.patch('/blogs/toggle-publish', auth, authorize(['admin']), blogController.togglePublish);
+router.delete('/blogs', auth, authorize(['author', 'admin']), blogController.deleteBlogById);
 router.post('/blogs/approve-comment', auth, authorize(['admin']), adminController.approveCommentById);
 router.delete('/blogs/delete-comment', auth, authorize(['admin']), adminController.deleteCommentById);
 
