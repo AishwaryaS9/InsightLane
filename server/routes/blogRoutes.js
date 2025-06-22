@@ -1,17 +1,27 @@
-import express from 'express'
-import { addBlog, addComment, deleteBlogById, generateContent, getAllBlogs, getBlogById, getBlogComments, togglePublish } from '../controllers/blogController.js';
-import upload from '../middleware/multer.js';
+import express from 'express';
+import { authorize } from '../middleware/roleMiddleware.js';
+import * as blogController from '../controllers/blogController.js';
+import * as adminController from '../controllers/adminController.js'
 import auth from '../middleware/auth.js';
+import upload from '../middleware/multer.js';
 
-const blogRouter = express.Router();
+const router = express.Router();
 
-blogRouter.post('/add', upload.single('image'), auth, addBlog)
-blogRouter.get('/all', getAllBlogs)
-blogRouter.get('/:blogId', getBlogById)
-blogRouter.post('/delete', auth, deleteBlogById)
-blogRouter.post('/toggle-publish', auth, togglePublish)
-blogRouter.post('/add-comment', addComment)
-blogRouter.post('/comments', getBlogComments)
-blogRouter.post('/generate', auth, generateContent)
+// Reader: View blogs and comments
+router.get('/blogs', blogController.getAllBlogs);
+router.get('/blogs/:blogId', blogController.getBlogById);
+router.post('/blogs/comments', auth, authorize(['reader', 'author', 'admin']), blogController.addComment);
+router.post('/blogs/allcomments', blogController.getBlogComments);
 
-export default blogRouter;
+// Author: Add, update their own blogs
+router.post('/addblog', upload.single('image'), auth, authorize(['author', 'admin']), blogController.addBlog);
+router.delete('/blogs', auth, authorize(['author', 'admin']), blogController.deleteBlogById);
+router.post('/generate', auth, authorize(['author', 'admin']), blogController.generateContent)
+
+
+// Admin: Manage all content
+router.patch('/blogs/toggle-publish', auth, authorize(['admin']), blogController.togglePublish);
+router.post('/blogs/approve-comment', auth, authorize(['admin']), adminController.approveCommentById);
+router.delete('/blogs/delete-comment', auth, authorize(['admin']), adminController.deleteCommentById);
+
+export default router;

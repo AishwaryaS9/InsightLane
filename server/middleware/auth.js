@@ -1,30 +1,32 @@
-// import jwt from 'jsonwebtoken'
+import jwt from 'jsonwebtoken';
 
-// const auth = (req, res, next) => {
-//     const token = req.headers.authorization;
-//     try {
-//         jwt.verify(token, process.env.JWT_SECRET)
-//         next();
-//     } catch (error) {
-//         res.json({ success: false, message: "Invalid token" })
-//     }
-// }
+const auth = (req, res, next) => {
+    console.log("Auth middleware triggered");
 
-// export default auth;
+    const token = req.header("Authorization")?.replace("Bearer ", "");
+    if (!token) {
+        return res.status(401).json({ success: false, message: "Access Denied: No Token Provided" });
+    }
 
-import jwt from "jsonwebtoken";
-import User from "../models/User.js";
-
-const auth = async (req, res, next) => {
     try {
-        const token = req.header("Authorization")?.split(" ")[1];
-        if (!token) return res.status(401).json({ message: "No token provided" });
-
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        req.user = await User.findById(decoded.id).select("-password");
-        next();
+        req.user = {
+            id: decoded.id,
+            name: decoded.name,
+            role: decoded.role,
+        };
+
+        next(); 
     } catch (error) {
-        res.status(401).json({ message: "Invalid token" });
+        console.error("JWT Verification Error:", error.message);
+
+        if (error.name === "TokenExpiredError") {
+            return res.status(401).json({ success: false, message: "Token has expired" });
+        } else if (error.name === "JsonWebTokenError") {
+            return res.status(400).json({ success: false, message: "Invalid Token" });
+        } else {
+            return res.status(500).json({ success: false, message: "Internal Server Error during token verification" });
+        }
     }
 };
 
