@@ -1,6 +1,7 @@
 import logo from './logo.svg'
 import gradientBackground from './gradientBackground.png'
 import star_icon from './star.svg'
+import blogAuth from './blogauth.jpg'
 import blog_pic_1 from './blog_pic_1.png';
 import blog_pic_2 from './blog_pic_2.png';
 import blog_pic_3 from './blog_pic_3.png';
@@ -15,7 +16,8 @@ import blog_pic_10 from './blog_pic_10.png';
 export const assets = {
     logo: logo,
     gradientBackground: gradientBackground,
-    star_icon: star_icon
+    star_icon: star_icon,
+    blogAuth: blogAuth
 }
 
 export const blogCategories = ['All', 'Technology', 'Startup', 'Lifestyle', 'Finance']

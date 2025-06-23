@@ -1,5 +1,9 @@
 import { useEffect, useState } from "react";
 import { assets } from "../assets/assets";
+import { useNavigate } from "react-router-dom";
+import { clearLogin } from "../redux/store/slice/loginSlice";
+import { useAppDispatch, useAppSelector } from "../redux/store/hooks";
+
 
 const Navbar = () => {
     const navLinks = [
@@ -9,8 +13,15 @@ const Navbar = () => {
         { name: 'About', path: '/' },
     ];
 
+    const navigate = useNavigate();
+
+    const userToken = useAppSelector((state) => state.login.token)
+    console.log("usertoken", userToken)
+
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+    const dispatch = useAppDispatch();
 
     useEffect(() => {
         const handleScroll = () => {
@@ -23,6 +34,15 @@ const Navbar = () => {
             window.removeEventListener("scroll", handleScroll);
         };
     }, []);
+
+    const handleLogin = () => {
+        if (!userToken) {
+            navigate('/login')
+        } else {
+            dispatch(clearLogin())
+            navigate('/')
+        }
+    }
 
     return (
         <nav
@@ -64,8 +84,8 @@ const Navbar = () => {
 
             {/* Desktop Right */}
             <div className="hidden md:flex items-center gap-4">
-                <button className="bg-primary text-white px-8 py-2.5 rounded-full ml-4 transition-all duration-500">
-                    Login
+                <button onClick={handleLogin} className="bg-primary text-white px-8 py-2.5 rounded-full ml-4 transition-all duration-500">
+                    {userToken ? 'Logout' : 'Login'}
                 </button>
             </div>
 
@@ -113,8 +133,8 @@ const Navbar = () => {
                     New Launch
                 </button>
 
-                <button className="bg-primary text-white px-8 py-2.5 rounded-full transition-all duration-500">
-                    Login
+                <button onClick={handleLogin} className="bg-primary text-white px-8 py-2.5 rounded-full transition-all duration-500">
+                    {userToken ? 'Logout' : 'Login'}
                 </button>
             </div>
         </nav>
