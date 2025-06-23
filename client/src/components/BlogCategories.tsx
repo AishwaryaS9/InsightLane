@@ -1,10 +1,29 @@
-import { useState } from 'react'
-import { blog_data, blogCategories } from '../assets/assets'
+import { useEffect, useState } from 'react'
+import { blogCategories } from '../assets/assets'
 import { motion } from 'motion/react'
 import BlogCard from './BlogCard';
+import { getAllBlogs } from '../api/blogApi';
+import toast from 'react-hot-toast';
+import type { Blogs } from '../utils/interface';
 
 const BlogCategories = () => {
     const [menu, setMenu] = useState('All');
+    const [blogs, setBlogs] = useState([]);
+
+    const getBlogData = async () => {
+        try {
+            const data = await getAllBlogs();
+            if (data) {
+                setBlogs(data.blogs)
+            }
+        } catch (error) {
+            toast.error((error as Error).message);
+        }
+    }
+
+    useEffect(() => {
+        getBlogData();
+    }, [])
 
     return (
         <div>
@@ -28,8 +47,8 @@ const BlogCategories = () => {
             </div>
             <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4
             gap-8 mb-24 mx-8 sm:mx-16 xl:mx-40'>
-                {blog_data.filter((blog) => menu === "All" ? true : blog.category === menu).map((blog) =>
-                    <BlogCard key={blog._id} blog={blog} />
+                {blogs.filter((blog: Blogs) => menu === "All" ? true : blog?.category === menu).map((blog) =>
+                    <BlogCard key={blog?._id} blog={blog} />
                 )}
             </div>
         </div>

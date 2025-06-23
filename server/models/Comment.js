@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 const commentSchema = new mongoose.Schema({
-    blog: { type: mongoose.Schema.Types.ObjectId, ref: 'blog', required: true },
+    blog: { type: mongoose.Schema.Types.ObjectId, ref: 'Blog', required: true },
     user: {
         id: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
         name: { type: String, required: true }

@@ -1,9 +1,11 @@
 import express from 'express'
-import { getDashboard } from '../controllers/adminController.js';
+import { getAllComments, getDashboard, getUsersDetails } from '../controllers/adminController.js';
 import auth from '../middleware/auth.js';
 
 const adminRouter = express.Router();
 
 adminRouter.get('/dashboard', auth, getDashboard);
+adminRouter.get('/users', auth, getUsersDetails);
+adminRouter.get('/all-comments',auth, getAllComments)
 
 export default adminRouter;

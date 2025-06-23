@@ -65,7 +65,7 @@ export async function loginUser(email: string, password: string) {
             console.error("Error Response Status:", error.response.status);
             console.error("Error Response Headers:", error.response.headers);
 
-            throw new Error(error.response.data?.message || "Failed to register user.");
+            throw new Error(error.response.data?.message || "Failed to login user.");
         } else if (error.request) {
             console.error("No response received:", error.request);
             throw new Error("No response from the server. Please try again later.");
@@ -73,5 +73,23 @@ export async function loginUser(email: string, password: string) {
             console.error("Error Message:", error.message);
             throw new Error(error.message || "An unexpected error occurred.");
         }
+    }
+}
+
+export async function getAllUsers(token: string | null) {
+    const url = `${api.baseUrl}/admin/users`;
+    console.log("url", url)
+    try {
+        console.log("trigge")
+        const response = await axios.get(url, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        })
+        if (response.status === 200) {
+            return response.data
+        }
+    } catch (error) {
+        console.error(error)
     }
 }

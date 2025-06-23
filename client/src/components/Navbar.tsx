@@ -15,8 +15,8 @@ const Navbar = () => {
 
     const navigate = useNavigate();
 
-    const userToken = useAppSelector((state) => state.login.token)
-    console.log("usertoken", userToken)
+    const userToken = useAppSelector((state) => state.login.token);
+    const userRole = useAppSelector((state) => state.login.role);
 
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -74,12 +74,15 @@ const Navbar = () => {
                         />
                     </a>
                 ))}
-                <button
-                    className={`border px-4 py-1 text-sm font-light rounded-full cursor-pointer ${isScrolled ? "text-black" : "text-primary"
-                        } transition-all`}
-                >
-                    New Launch
-                </button>
+                {userToken && userRole === "admin" && (
+                    <button onClick={() => navigate('/admin')}
+                        className={`border px-4 py-1 text-sm font-light rounded-full cursor-pointer ${isScrolled ? "text-black" : "text-primary"
+                            } transition-all`}
+                    >
+                        Dashboard
+                    </button>
+                )}
+
             </div>
 
             {/* Desktop Right */}

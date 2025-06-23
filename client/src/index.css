@@ -1,9 +1,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Alegreya:ital,wght@0,400..900;1,400..900&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Mulish:ital,wght@0,200..1000;1,200..1000&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Work+Sans:ital,wght@0,100..900;1,100..900&display=swap');
 @import "tailwindcss";
 
 * {
-  font-family: "Mulish", sans-serif;
+  font-family: "Work Sans", sans-serif;
 }
 
 .font-alegreya {
@@ -12,6 +13,10 @@
 
 .font-mulish {
   font-family: "Mulish" !important;
+}
+
+.font-workSans {
+  font-family: "Work Sans" !important;
 }
 
 
