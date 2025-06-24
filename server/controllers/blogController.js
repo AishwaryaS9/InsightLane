@@ -6,7 +6,7 @@ import main from '../configs/gemini.js';
 
 export const addBlog = async (req, res) => {
     try {
-        const { title, subTitle, description, category, isPublished } = JSON.parse(req.body.blog);
+        const { title, subTitle, description, category } = JSON.parse(req.body.blog);
         const imageFile = req.file;
         if (!title || !description || !category || !imageFile) {
             return res.json({ success: false, message: "Missing required fields" });
@@ -36,7 +36,7 @@ export const addBlog = async (req, res) => {
             description,
             category,
             image,
-            isPublished,
+            isPublished: false,
             author: req.user.id,
         });
 
@@ -162,11 +162,52 @@ export const getAuthorDashboard = async (req, res) => {
             drafts,
             totalComments,
             approvedComments,
-            recentBlogs: authorBlogs.slice(0, 5), 
+            recentBlogs: authorBlogs.slice(0, 5),
         };
 
         res.json({ success: true, dashboardData });
     } catch (error) {
         res.json({ success: false, message: error.message });
+    }
+};
+
+
+
+export const getRelatedBlogs = async (req, res) => {
+    try {
+        const { blogId } = req.params; 
+        const currentBlog = await Blog.findById(blogId);
+
+        if (!currentBlog) {
+            return res.status(404).json({ success: false, message: "Blog not found" });
+        }
+
+        const relatedBlogs = await Blog.find({
+            _id: { $ne: blogId }, 
+            category: currentBlog.category, 
+            isPublished: true, 
+        })
+            .limit(3)
+            .sort({ createdAt: -1 }); 
+
+        res.json({ success: true, relatedBlogs });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+};
+
+
+export const getBlogsByAuthor = async (req, res) => {
+    try {
+        const { authorId } = req.params;
+        const blogs = await Blog.find({ author: authorId }).sort({ createdAt: -1 });
+
+        if (!blogs.length) {
+            return res.status(404).json({ success: false, message: "No blogs found for this author" });
+        }
+
+        res.json({ success: true, blogs });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
     }
 };

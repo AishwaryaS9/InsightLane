@@ -12,12 +12,13 @@ router.get('/blogs', blogController.getAllBlogs);
 router.get('/blogs/:blogId', blogController.getBlogById);
 router.post('/blogs/comments', auth, authorize(['reader', 'author', 'admin']), blogController.addComment);
 router.post('/blogs/allcomments', blogController.getBlogComments);
+router.get('/blogs/related/:blogId', blogController.getRelatedBlogs);
 
 // Author: Add, update their own blogs
 router.post('/addblog', upload.single('image'), auth, authorize(['author', 'admin']), blogController.addBlog);
 router.post('/generate', auth, authorize(['author', 'admin']), blogController.generateContent)
 router.get('/author/dashboard', auth, authorize(['author']), blogController.getAuthorDashboard);
-
+router.get('/author/:authorId', auth, authorize(['author']), blogController.getBlogsByAuthor);
 
 
 // Admin: Manage all content

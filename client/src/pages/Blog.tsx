@@ -3,11 +3,13 @@ import { useParams } from 'react-router-dom'
 import { assets } from '../assets/assets';
 import Navbar from '../components/Navbar';
 import Moment from 'moment';
-import { getBlogById } from '../api/blogApi';
+import { addBlogComment, getBlogById, getBlogComment } from '../api/blogApi';
 import toast from 'react-hot-toast';
 import { BiLogoFacebookCircle } from "react-icons/bi";
 import { RiTwitterXLine } from "react-icons/ri";
 import type { Comment } from '../utils/interface';
+import { LiaComments } from 'react-icons/lia';
+import { useAppSelector } from '../redux/store/hooks';
 
 
 const Blog = () => {
@@ -15,14 +17,18 @@ const Blog = () => {
 
     const [data, setData] = useState(null);
     const [comments, setComments] = useState<Comment[]>([]);
-    // const [name, setName] = useState('');
-    // const [content, setContent] = useState('')
+    const [content, setContent] = useState('');
+
+    const userToken = useAppSelector((state) => state.login.token);
+
 
     const fetchBlogData = async () => {
         try {
             const data = await getBlogById(id)
             if (data) {
                 setData(data.blog)
+            } else {
+                toast.error(data.message)
             }
 
         } catch (error) {
@@ -30,9 +36,36 @@ const Blog = () => {
         }
     }
 
+    const fetchComments = async () => {
+        try {
+            const data = await getBlogComment(userToken, id)
+            if (data) {
+                setComments(data.comments)
+            } else {
+                toast.error(data.message)
+            }
+        } catch (error) {
+            toast.error((error as Error).message);
+        }
+    }
+
+    const addComment = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        try {
+            const data = await addBlogComment(userToken, id, content)
+            if (data) {
+                toast.success(data.message)
+                setContent('')
+            }
+        } catch (error) {
+            toast.error((error as Error).message);
+        }
+    }
+
     useEffect(() => {
         fetchBlogData();
-    })
+        fetchComments();
+    }, [])
 
     return data ? (
         <div className='relative'>
@@ -56,29 +89,27 @@ const Blog = () => {
                 </div>
 
                 {/* Comments section */}
-                {/* <div className='mt-14 mb-10 max-w-3xl mx-auto'>
+                <div className='mt-14 mb-10 max-w-3xl mx-auto'>
                     <p className='font-semibold mb-4'>Comments ({comments.length})</p>
                     <div className='flex flex-col gap-4'>
-                        {comments.map((item, index) => (
+
+                        {comments.length > 0 && comments.map((item, index) => (
                             <div key={index} className='relative bg-primary/2 border border-primary/5 *:max-w-xl p-4 rounded text-gray-600'>
                                 <div className='flex items-center gap-2 mb-2'>
-                                    <img className='w-6' src={assets.comment_icon} alt="" />
-                                    <p className='font-medium'>{item.name}</p>
+                                    <LiaComments className='w-6 h-6' />
+                                    <p className='font-medium'>{item.user.name}</p>
                                 </div>
                                 <p className='text-sm max-w-md ml-8'>{item.content}</p>
                                 <div className='absolute right-4 bottom-3 flex items-center gap-2 text-xs'>{Moment(item.createdAt).fromNow()}</div>
                             </div>
                         ))}
                     </div>
-                </div> */}
+                </div>
 
                 {/* Add Comment Section */}
-                {/* <div className='max-w-3xl mx-auto'>
+                <div className='max-w-3xl mx-auto'>
                     <p className='font-semibold mb-4'>Add your comment</p>
                     <form onSubmit={addComment} className='flex flex-col items-start gap-4 max-w-lg'>
-                        <input onChange={(e) => setName(e.target.value)} value={name}
-                            type="text" placeholder='Name' required
-                            className='w-full p-2 border border-gray-300 rounded outline-none' />
                         <textarea onChange={(e) => setContent(e.target.value)} value={content}
                             placeholder='Comment' required
                             className='w-full p-2 border border-gray-300 rounded outline-none h-48'>
@@ -86,7 +117,7 @@ const Blog = () => {
                         <button type='submit'
                             className='bg-primary text-white rounded p-2 px-8 hover:scale-102 transition-all cursor-pointer'>Submit</button>
                     </form>
-                </div> */}
+                </div>
 
                 {/* Share Buttons */}
                 <div className='my-24 max-w-3xl mx-auto'>

@@ -78,9 +78,7 @@ export async function loginUser(email: string, password: string) {
 
 export async function getAllUsers(token: string | null) {
     const url = `${api.baseUrl}/admin/users`;
-    console.log("url", url)
     try {
-        console.log("trigge")
         const response = await axios.get(url, {
             headers: {
                 'Authorization': `Bearer ${token}`

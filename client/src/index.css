@@ -104,3 +104,7 @@
 .rich-text a {
   color: #007AFF
 }
+
+.user-card {
+  @apply bg-white p-4 rounded-xl shadow-md shadow-gray-100 border border-gray-200/50 dark:bg-gray-800 dark:border-gray-700 dark:shadow-none;
+}

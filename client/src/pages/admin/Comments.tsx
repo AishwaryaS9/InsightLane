@@ -57,18 +57,36 @@ const Comments = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {comments
+                        {comments.length === 0 ? (
+                            <tr>
+                                <td colSpan={3} className="text-center py-15 text-gray-500">
+                                    No comments available.
+                                </td>
+                            </tr>
+                        ) : comments
                             .filter((comment) => {
                                 if (filter === 'Approved') return comment.isApproved === true;
                                 return comment.isApproved === false;
-                            })
-                            .map((comment) => (
-                                <CommentTableItem
-                                    key={comment._id}
-                                    comment={comment}
-                                    fetchComments={fetchComments}
-                                />
-                            ))}
+                            }).length === 0 ? (
+                            <tr>
+                                <td colSpan={3} className="text-center py-4 text-gray-500">
+                                    No {filter.toLowerCase()} comments found.
+                                </td>
+                            </tr>
+                        ) : (
+                            comments
+                                .filter((comment) => {
+                                    if (filter === 'Approved') return comment.isApproved === true;
+                                    return comment.isApproved === false;
+                                })
+                                .map((comment) => (
+                                    <CommentTableItem
+                                        key={comment._id}
+                                        comment={comment}
+                                        fetchComments={fetchComments}
+                                    />
+                                ))
+                        )}
                     </tbody>
                 </table>
             </div>

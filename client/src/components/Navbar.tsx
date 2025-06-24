@@ -83,6 +83,15 @@ const Navbar = () => {
                     </button>
                 )}
 
+                 {userToken && userRole === "author" && (
+                    <button onClick={() => navigate('/author')}
+                        className={`border px-4 py-1 text-sm font-light rounded-full cursor-pointer ${isScrolled ? "text-black" : "text-primary"
+                            } transition-all`}
+                    >
+                        Dashboard
+                    </button>
+                )}
+
             </div>
 
             {/* Desktop Right */}
