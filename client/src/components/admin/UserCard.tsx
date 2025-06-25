@@ -43,4 +43,3 @@ const UserCard = ({ userInfo }: any) => {
 
 export default UserCard
 
-

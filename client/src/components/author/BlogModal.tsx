@@ -30,22 +30,22 @@ const BlogModal = ({ blog, onViewClose }) => {
 
                 {/* Content Section */}
                 <div className="flex-grow overflow-y-auto p-6">
-                    <div className="border-b pb-4">
+                    <div className="border-b border-b-gray-200 pb-4">
                         <h3 className="text-lg font-semibold text-gray-800">
                             {blog.title}
                         </h3>
                     </div>
 
                     <div className="mt-6 space-y-6">
-                        <p className="text-gray-700 text-base" dangerouslySetInnerHTML={{ __html: blog.description }}></p>
+                        <p className="text-gray-600 text-[14px] leading-6" dangerouslySetInnerHTML={{ __html: blog.description }}></p>
                     </div>
                 </div>
 
                 {/* Footer Section */}
-                <div className="border-t p-4 flex justify-end">
+                <div className="border-t border-t-gray-200 p-4 flex justify-end">
                     <button
                         onClick={onViewClose}
-                        className="px-6 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg font-medium"
+                        className="px-6 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg font-medium cursor-pointer"
                     >
                         Close
                     </button>

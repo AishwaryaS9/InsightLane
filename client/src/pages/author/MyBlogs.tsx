@@ -1,15 +1,12 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react';
 import { getBlogByAuthorId } from '../../api/blogApi';
 import { useAppSelector } from '../../redux/store/hooks';
 import toast from 'react-hot-toast';
-import { PiEyeThin } from "react-icons/pi";
-import { PiCalendarDots } from "react-icons/pi";
+import { PiEyeThin, PiCalendarDots } from "react-icons/pi";
 import BlogModal from '../../components/author/BlogModal';
 import type { Blogs } from '../../utils/interface';
 
-
 const MyBlogs = () => {
-
     const [blogs, setBlogs] = useState<Blogs[]>([]);
     const [modalOpen, setModalOpen] = useState(false);
     const [selectedBlog, setSelectedBlog] = useState<Blogs | null>(null);
@@ -17,23 +14,22 @@ const MyBlogs = () => {
     const userToken = useAppSelector((state) => state.login.token);
     const userId = useAppSelector((state) => state.login.userId);
 
-
     const fetchBlogByAuthor = async () => {
         try {
-            const data = await getBlogByAuthorId(userToken, userId)
+            const data = await getBlogByAuthorId(userToken, userId);
             if (data) {
-                setBlogs(data.blogs)
+                setBlogs(data.blogs);
             } else {
-                toast.error(data.message)
+                toast.error(data.message);
             }
         } catch (error) {
             toast.error((error as Error).message);
         }
-    }
+    };
 
     useEffect(() => {
-        fetchBlogByAuthor()
-    }, [])
+        fetchBlogByAuthor();
+    }, []);
 
     const handleModal = (blog: Blogs) => {
         setSelectedBlog(blog);
@@ -44,74 +40,70 @@ const MyBlogs = () => {
         setSelectedBlog(null);
         setModalOpen(false);
     };
+
     return (
         <>
-            <div className="w-full min-h-screen bg-blue-50/50 p-6 flex flex-col px-5 sm:pt-12 sm:pl-16">
-                <h1>All Blogs</h1>
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-2">
+            <div className="w-full min-h-screen bg-blue-50/50 py-12 px-6 sm:px-16">
+                <h1 className="text-3xl font-semibold text-gray-800 mb-8">My Blogs</h1>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                     {blogs.map((blog) => (
                         <div
-                            className="relative bg-white border border-gray-200 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 h-80 flex flex-col overflow-hidden"
+                            className="relative bg-white rounded-lg shadow-md hover:shadow-lg transition-all duration-300 overflow-hidden flex flex-col h-full"
                             key={blog._id}
                         >
-                            <a href="#">
+                            {/* Thumbnail */}
+                            <div className="h-36 w-full">
                                 <img
-                                    className="rounded-t-lg w-full h-32 object-cover object-center"
+                                    className="h-full w-full object-cover"
                                     src={blog.image}
-                                    alt=""
+                                    alt={blog.title}
                                 />
-                            </a>
-                            <div className="p-5 flex-grow flex flex-col">
-                                <a href="#">
-                                    <h5 className="mb-2 text-lg font-semibold text-gray-900 hover:text-primary">
-                                        {blog.title}
-                                    </h5>
-                                </a>
+                            </div>
+
+                            {/* Content */}
+                            <div className="p-4 flex flex-col space-y-2 flex-grow">
+                                <h2 className="text-md font-semibold text-gray-900">{blog.title}</h2>
                                 <p
-                                    className="mb-3 text-gray-700 line-clamp-2 text-sm"
+                                    className="text-gray-600 font-light text-sm line-clamp-2"
                                     dangerouslySetInnerHTML={{ __html: blog.description }}
                                 ></p>
-                                <div className='items-center justify-center'>
-                                    <span className={`inline-block px-3 py-1 text-[11px] font-medium rounded-md capitalize ${blog.isPublished
-                                        ? "bg-green-100 text-green-700"
-                                        : "bg-red-100 text-red-700"
-                                        }`}>
-                                        {blog.isPublished ? "Published" : "Unpublished"}
-                                    </span>
+                                <div className="flex items-center justify-between text-sm text-gray-500 mt-auto">
+                                    <div
+                                        className={`px-3 py-1 rounded-full font-medium text-xs ${blog.isPublished ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
+                                            }`}
+                                    >
+                                        {blog.isPublished ? 'Published' : 'Unpublished'}
+                                    </div>
+                                    <div className="flex items-center">
+                                        <PiCalendarDots className="w-4 h-4 mr-1" />
+                                        <span className="text-xs" title="Created On">
+                                            {new Date(blog.createdAt).toLocaleDateString()}
+                                        </span>
+                                    </div>
                                 </div>
                             </div>
 
-                            <div className="px-3 flex justify-between items-center">
-
-                                <a
-                                    href="#"
-                                    className="inline-flex items-center px-3 py-2 text-sm font-medium text-primary"
+                            {/* Actions */}
+                            <div className="p-3 bg-gray-100 border-t border-gray-200 flex justify-between items-center" >
+                                <button
+                                    className="text-sm text-blue-600 font-normal hover:underline cursor-pointer"
                                     onClick={() => handleModal(blog)}
                                 >
-
-                                    <PiEyeThin className="rtl:rotate-180 w-4 h-4 mr-1" />
+                                    <PiEyeThin className="inline-block w-4 h-4 mr-1" />
                                     Preview
-                                </a>
-                                <div className="flex items-center text-gray-700">
-                                    <PiCalendarDots className="w-3 h-3 mr-1" />
-                                    <span
-                                        className="text-xs"
-                                        title="Created On"
-                                    >
-                                        {new Date(blog.createdAt).toLocaleDateString()}
-                                    </span>
-                                </div>
+                                </button>
                             </div>
                         </div>
                     ))}
-                </div>
-            </div>
+                </div >
+            </div >
+
             {modalOpen && selectedBlog && (
                 <BlogModal blog={selectedBlog} onViewClose={closeModal} />
             )}
-            {/* <BlogModal blog={blogs}/> */}
         </>
-    )
-}
+    );
+};
 
-export default MyBlogs
+export default MyBlogs;

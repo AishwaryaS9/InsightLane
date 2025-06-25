@@ -46,14 +46,45 @@ export const addBlog = async (req, res) => {
     }
 };
 
+//With Search and Pagination
 export const getAllBlogs = async (req, res) => {
     try {
-        const blogs = await Blog.find({ isPublished: true }).populate('author', 'name email role');
-        res.json({ success: true, blogs });
+        const { search, page = 1, limit = 10 } = req.query;
+
+        let filter = { isPublished: true };
+
+        if (search) {
+            filter.$or = [
+                { title: { $regex: search, $options: "i" } },
+                { subTitle: { $regex: search, $options: "i" } },
+                { category: { $regex: search, $options: "i" } },
+                { description: { $regex: search, $options: "i" } },
+            ];
+        }
+
+        const pageInt = parseInt(page, 10);
+        const limitInt = parseInt(limit, 10);
+
+        const totalBlogs = await Blog.countDocuments(filter);
+
+        const blogs = await Blog.find(filter)
+            .populate('author', 'name email role')
+            .skip((pageInt - 1) * limitInt)
+            .limit(limitInt);
+
+        res.json({
+            success: true,
+            totalBlogs,
+            currentPage: pageInt,
+            totalPages: Math.ceil(totalBlogs / limitInt),
+            blogs,
+        });
     } catch (error) {
         res.json({ success: false, message: error.message });
     }
 };
+
+
 
 export const getBlogById = async (req, res) => {
     try {
@@ -175,7 +206,7 @@ export const getAuthorDashboard = async (req, res) => {
 
 export const getRelatedBlogs = async (req, res) => {
     try {
-        const { blogId } = req.params; 
+        const { blogId } = req.params;
         const currentBlog = await Blog.findById(blogId);
 
         if (!currentBlog) {
@@ -183,12 +214,12 @@ export const getRelatedBlogs = async (req, res) => {
         }
 
         const relatedBlogs = await Blog.find({
-            _id: { $ne: blogId }, 
-            category: currentBlog.category, 
-            isPublished: true, 
+            _id: { $ne: blogId },
+            category: currentBlog.category,
+            isPublished: true,
         })
             .limit(3)
-            .sort({ createdAt: -1 }); 
+            .sort({ createdAt: -1 });
 
         res.json({ success: true, relatedBlogs });
     } catch (error) {

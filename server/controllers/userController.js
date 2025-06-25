@@ -59,19 +59,49 @@ export const socialLogin = async (req, res) => {
     res.json({ message: "Social login not implemented yet" });
 };
 
+
 export const getUserProfile = async (req, res) => {
     try {
-        const user = await User.findById(req.user.id);
-        res.json(user);
+        const { search, page = 1, limit = 10 } = req.query;
+
+        let filter = {};
+
+        if (search) {
+            filter.$or = [
+                { name: { $regex: search, $options: "i" } },
+                { email: { $regex: search, $options: "i" } },
+                { role: { $regex: search, $options: "i" } },
+            ];
+        }
+
+        const pageInt = parseInt(page, 10);
+        const limitInt = parseInt(limit, 10);
+
+        const totalUsers = await User.countDocuments(filter);
+
+        const users = await User.find(filter)
+            .skip((pageInt - 1) * limitInt)
+            .limit(limitInt)
+            .select("-password");
+
+        res.json({
+            success: true,
+            totalUsers,
+            currentPage: pageInt,
+            totalPages: Math.ceil(totalUsers / limitInt),
+            users,
+        });
     } catch (error) {
+        console.error("Error fetching user profiles:", error.message);
         res.status(500).json({ message: error.message });
     }
 };
 
+
 export const getUserProfileById = async (req, res) => {
     try {
-        const { id } = req.params; // Get user ID from request params
-        const user = await User.findById(id).select('-password'); // Exclude password field
+        const { id } = req.params;
+        const user = await User.findById(id).select('-password');
 
         if (!user) {
             return res.status(404).json({ message: "User not found" });

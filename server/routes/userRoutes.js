@@ -13,7 +13,7 @@ userRouter.post("/social-login", socialLogin);
 // Protected Routes
 userRouter.get("/profile", auth, getUserProfile);
 userRouter.put('/profile', auth, upload.single('profilePicture'), updateUserProfile);
-userRouter.get('/userprofile/:id', auth, getUserProfileById);
+userRouter.get('/userprofile/:id',  getUserProfileById);
 
 
 export default userRouter;

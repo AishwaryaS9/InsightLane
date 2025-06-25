@@ -10,8 +10,6 @@ import { LiaComments } from 'react-icons/lia';
 import { useAppSelector } from '../redux/store/hooks';
 import { getUserProfileById } from '../api/userApi';
 
-
-
 const Blog = () => {
     const { id } = useParams();
 
@@ -68,7 +66,7 @@ const Blog = () => {
 
     const fetchUserProfile = async (authorId: string) => {
         try {
-            const data = await getUserProfileById(userToken, authorId);
+            const data = await getUserProfileById(authorId);
             if (data) {
                 setUserProfile(data);
             } else {
@@ -139,7 +137,7 @@ const Blog = () => {
             <Navbar />
 
             <div className='text-center mt-20 text-gray-600'>
-                <p className='text-primary py-4 font-medium'>Published on {Moment(data.createdAt).format('MMMM Do YYYY')}</p>
+                <p className='text-teal py-6 font-normal'>Published on {Moment(data.createdAt).format('MMMM Do YYYY')}</p>
                 <h1 className='text-2xl sm:text-5xl font-semibold max-w-2xl mx-auto
                 text-gray-800'>{data.title}</h1>
                 <h2 className='my-5 max-w-lg truncate mx-auto'>{data.subTitle}</h2>
