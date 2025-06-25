@@ -111,9 +111,9 @@ export const addComment = async (req, res) => {
             name: req.user.name,
         };
 
-        await Comment.create({ blog, user, content });
+        await Comment.create({ blog, user, content, isApproved: true });
 
-        res.json({ success: true, message: "Comment added for review" });
+        res.json({ success: true, message: "Comment added successfully" });
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });
     }

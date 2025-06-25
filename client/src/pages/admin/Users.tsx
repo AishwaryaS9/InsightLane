@@ -27,7 +27,7 @@ const Users = () => {
     }, [userToken]);
 
     return (
-        <div className="w-full min-h-screen bg-blue-100/50 p-6 flex flex-col px-5 sm:pt-12 sm:pl-16 ">
+        <div className="w-full min-h-screen bg-blue-50/50 p-6 flex flex-col px-5 sm:pt-12 sm:pl-16 ">
 
             <div className='flex flex-wrap gap-4'>
                 <div className='flex items-center gap-4 bg-white p-4 min-w-58 rounded shadow cursor-pointer hover:scale-105 transition-all'>

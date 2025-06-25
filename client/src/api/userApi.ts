@@ -91,3 +91,21 @@ export async function getAllUsers(token: string | null) {
         console.error(error)
     }
 }
+
+
+export async function getUserProfileById(token: string | null, id: string) {
+    const url = `${api.baseUrl}/user/userprofile/${id}`
+    try {
+        const response = await axios.get(url, {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            }
+        })
+        if (response.status === 200) {
+            return response.data
+        }
+    } catch (error) {
+        console.error(error)
+    }
+}

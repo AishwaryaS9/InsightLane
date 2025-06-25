@@ -8,9 +8,9 @@ import { useAppDispatch, useAppSelector } from "../redux/store/hooks";
 const Navbar = () => {
     const navLinks = [
         { name: 'Home', path: '/' },
-        { name: 'Products', path: '/' },
-        { name: 'Contact', path: '/' },
         { name: 'About', path: '/' },
+        { name: 'Categories', path: '/' },
+        { name: 'Contact', path: '/' },
     ];
 
     const navigate = useNavigate();
@@ -83,7 +83,7 @@ const Navbar = () => {
                     </button>
                 )}
 
-                 {userToken && userRole === "author" && (
+                {userToken && userRole === "author" && (
                     <button onClick={() => navigate('/author')}
                         className={`border px-4 py-1 text-sm font-light rounded-full cursor-pointer ${isScrolled ? "text-black" : "text-primary"
                             } transition-all`}

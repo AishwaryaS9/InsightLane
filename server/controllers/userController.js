@@ -67,6 +67,25 @@ export const getUserProfile = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
+
+export const getUserProfileById = async (req, res) => {
+    try {
+        const { id } = req.params; // Get user ID from request params
+        const user = await User.findById(id).select('-password'); // Exclude password field
+
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        res.json(user);
+    } catch (error) {
+        console.error('Error fetching user profile by ID:', error.message);
+        res.status(500).json({ message: error.message });
+    }
+};
+
+
+
 export const updateUserProfile = async (req, res) => {
     try {
         const { bio, socialLinks } = req.body;

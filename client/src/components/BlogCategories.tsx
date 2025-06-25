@@ -13,6 +13,7 @@ const BlogCategories = () => {
     const getBlogData = async () => {
         try {
             const data = await getAllBlogs();
+            console.log("author", data.blogs)
             if (data) {
                 setBlogs(data.blogs)
             }
@@ -48,7 +49,7 @@ const BlogCategories = () => {
             <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4
             gap-8 mb-24 mx-8 sm:mx-16 xl:mx-40'>
                 {blogs.filter((blog: Blogs) => menu === "All" ? true : blog?.category === menu).map((blog) =>
-                    <BlogCard key={blog?._id} blog={blog} />
+                    <BlogCard key={blog?._id} blog={blog}/>
                 )}
             </div>
         </div>

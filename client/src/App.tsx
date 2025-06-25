@@ -15,11 +15,16 @@ import Comments from './pages/admin/Comments'
 import Users from './pages/admin/Users'
 import AuthorDashboard from './pages/author/AuthorDashboard'
 import MyBlogs from './pages/author/MyBlogs'
+import Footer from './components/Footer'
 
 const App = () => {
   const location = useLocation();
   const hideNavbarRoutes = ['/login', '/register', '/admin', '/author'];
   const shouldHideNavbar = hideNavbarRoutes.some((route) =>
+    location.pathname.startsWith(route)
+  );
+  const hideFooterRoutes = ['/login', '/register', '/admin', '/author'];
+  const shouldHideFooter = hideFooterRoutes.some((route) =>
     location.pathname.startsWith(route)
   );
   const userToken = useAppSelector((state) => state.login.token);
@@ -52,6 +57,7 @@ const App = () => {
             <Route path='myBlogs' element={<MyBlogs />} />
           </Route>
         </Routes>
+        {!shouldHideFooter && <Footer />}
       </div>
     </>
   )

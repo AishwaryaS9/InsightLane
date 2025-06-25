@@ -46,7 +46,7 @@ const MyBlogs = () => {
     };
     return (
         <>
-            <div className="w-full min-h-screen bg-blue-100/50 p-6 flex flex-col px-5 sm:pt-12 sm:pl-16">
+            <div className="w-full min-h-screen bg-blue-50/50 p-6 flex flex-col px-5 sm:pt-12 sm:pl-16">
                 <h1>All Blogs</h1>
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-2">
                     {blogs.map((blog) => (

@@ -210,3 +210,15 @@ export async function getBlogByAuthorId(token: string | null, authorId: string |
         console.error(error)
     }
 }
+
+export async function getRelatedBlogs(blogId: string) {
+    const url = `${api.baseUrl}/blog/blogs/related/${blogId}`
+    try {
+        const response = await axios.get(url);
+        if (response.status === 200) {
+            return response.data
+        }
+    } catch (error) {
+        console.error(error)
+    }
+}
