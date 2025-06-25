@@ -37,6 +37,7 @@ const Register = () => {
                     src={assets.logo_light}
                     alt="logo"
                     className='h-9'
+                    onClick={() => navigate('/')}
                 />
             </div>
 

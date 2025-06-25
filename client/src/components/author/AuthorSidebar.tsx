@@ -1,5 +1,4 @@
 import { NavLink } from 'react-router-dom'
-import { LiaComments } from "react-icons/lia";
 import { PiNotebook } from "react-icons/pi";
 import { MdOutlinePostAdd } from "react-icons/md";
 import { RiHome3Line } from "react-icons/ri";

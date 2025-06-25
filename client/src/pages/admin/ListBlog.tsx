@@ -23,8 +23,8 @@ const ListBlog = () => {
     }, []);
 
     return (
-        <div className="flex-1 p-6 md:p-10 bg-gradient-to-b from-blue-50 to-blue-100 min-h-screen">
-            <h1 className="text-2xl font-bold text-gray-700 mb-6">All Blogs</h1>
+        <div className="flex-1 p-6 md:p-10 bg-blue-50/50 min-h-screen">
+            <h1 className="text-2xl font-semibold text-gray-700 mb-6">All Blogs</h1>
 
             <div className="relative overflow-x-auto shadow-md rounded-2xl bg-white">
                 <table className="w-full text-sm text-left text-gray-500">

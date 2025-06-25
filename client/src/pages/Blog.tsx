@@ -213,22 +213,25 @@ const Blog = () => {
             </div>
 
             {/* Related Blogs */}
-            <div className="mx-5 max-w-5xl md:mx-auto my-10 ">
-                <p className="font-semibold mb-4 text-xl">Related Blogs</p>
-                <div className={`grid gap-4 ${relatedBlogs.length === 1 ? 'grid-cols-1' : relatedBlogs.length === 2 ? 'grid-cols-2' : 'grid-cols-3'}`}>
-                    {relatedBlogs.map((blog, index) => (
-                        <div onClick={() => handleRelatedBlog(blog._id)}
-                            key={index} className="rounded-lg shadow-md overflow-hidden border border-gray-200  hover:scale-102 duration-300 cursor-pointer">
-                            <img src={blog.image} alt="" className="h-40 w-full object-cover" />
-                            <div className="p-4">
-                                <h3 className="text-lg font-medium text-gray-800">{blog.title}</h3>
-                                <p className="text-sm text-gray-600 mt-2">{blog.subTitle}</p>
-                                <div className="text-xs text-gray-400 mt-4">Published on {Moment(blog.createdAt).format('MMMM Do YYYY')}</div>
+            {relatedBlogs.length > 0 && (
+                <div className="mx-5 max-w-5xl md:mx-auto my-10 ">
+                    <p className="font-semibold mb-4 text-xl">Related Blogs</p>
+                    <div className={`grid gap-4 ${relatedBlogs.length === 1 ? 'grid-cols-1' : relatedBlogs.length === 2 ? 'grid-cols-2' : 'grid-cols-3'}`}>
+                        {relatedBlogs.map((blog, index) => (
+                            <div onClick={() => handleRelatedBlog(blog._id)}
+                                key={index} className="rounded-lg shadow-md overflow-hidden border border-gray-200  hover:scale-102 duration-300 cursor-pointer">
+                                <img src={blog.image} alt="" className="h-40 w-full object-cover" />
+                                <div className="p-4">
+                                    <h3 className="text-lg font-medium text-gray-800">{blog.title}</h3>
+                                    <p className="text-sm text-gray-600 mt-2">{blog.subTitle}</p>
+                                    <div className="text-xs text-gray-400 mt-4">Published on {Moment(blog.createdAt).format('MMMM Do YYYY')}</div>
+                                </div>
                             </div>
-                        </div>
-                    ))}
+                        ))}
+                    </div>
                 </div>
-            </div>
+            )}
+
 
         </div >
 

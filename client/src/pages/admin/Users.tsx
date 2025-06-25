@@ -27,7 +27,7 @@ const Users = () => {
     }, [userToken]);
 
     return (
-        <div className="w-full min-h-screen bg-gradient-to-b from-blue-50 to-blue-100 p-6 flex flex-col">
+        <div className="w-full min-h-screen bg-blue-50/50 p-6 flex flex-col">
             {/* Summary Cards */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
                 {[
@@ -51,7 +51,7 @@ const Users = () => {
 
             {/* User List Section */}
             <div className="p-6 w-full max-w-7xl mx-auto">
-                <h1 className="text-xl font-bold text-gray-700 mb-4">All Users</h1>
+                <h1 className="text-xl font-semibold text-gray-700 mb-4">All Users</h1>
                 {userInfo.length === 0 ? (
                     <p className="text-center text-gray-600 text-lg">
                         No users found. Please check back later.

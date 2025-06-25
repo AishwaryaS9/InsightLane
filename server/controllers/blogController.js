@@ -234,7 +234,7 @@ export const getBlogsByAuthor = async (req, res) => {
         const blogs = await Blog.find({ author: authorId }).sort({ createdAt: -1 });
 
         if (!blogs.length) {
-            return res.status(404).json({ success: false, message: "No blogs found for this author" });
+            return res.status(404).json({ success: false, message: "No blogs found" });
         }
 
         res.json({ success: true, blogs });

@@ -31,7 +31,7 @@ const Comments = () => {
     return (
         <div className="flex-1 p-6 md:p-10 bg-blue-50/50 min-h-screen">
             <div className="flex justify-between items-center mb-6  max-w-full">
-                <h1 className="text-2xl font-bold text-gray-700">Comments</h1>
+                <h1 className="text-2xl font-semibold text-gray-700">Comments</h1>
                 <div className="flex gap-4">
                     <button
                         onClick={() => setFilter('Approved')}

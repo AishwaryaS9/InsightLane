@@ -1,18 +1,33 @@
 import axios from "axios";
 import api from "./endPoint";
 
-export async function getAllBlogs() {
-    const url = `${api.baseUrl}/blog/blogs`
+// export async function getAllBlogs() {
+//     const url = `${api.baseUrl}/blog/blogs`
+
+//     try {
+//         const response = await axios.get(url)
+//         if (response.status === 200) {
+//             return response.data;
+//         }
+//     } catch (error) {
+//         console.error(error)
+//     }
+// }
+
+export async function getAllBlogs(page: number = 1, limit: number = 5, search: string = '') {
+    const url = `${api.baseUrl}/blog/blogs?page=${page}&limit=${limit}&search=${search}`;
 
     try {
-        const response = await axios.get(url)
+        const response = await axios.get(url);
         if (response.status === 200) {
             return response.data;
         }
     } catch (error) {
-        console.error(error)
+        console.error(error);
+        throw error; // Ensure the error propagates
     }
 }
+
 
 export async function getBlogById(id: string) {
     const url = `${api.baseUrl}/blog/blogs/${id}`
@@ -195,21 +210,65 @@ export async function deleteBlogApi(token: string | null, id: string) {
 
 }
 
+// export async function getBlogByAuthorId(token: string | null, authorId: string | null) {
+//     const url = `${api.baseUrl}/blog/author/${authorId}`
+//     try {
+//         const response = await axios.get(url, {
+//             headers: {
+//                 'Authorization': `Bearer ${token}`
+//             }
+//         })
+//         if (response.status === 200) {
+//             return response.data;
+//         } else if(response.status === 404){
+//             console.log("data messgae", response.data.message)
+//             return response.data.message
+//         }
+//     } catch (error) {
+//         console.error(error)
+//     }
+// }
+
 export async function getBlogByAuthorId(token: string | null, authorId: string | null) {
-    const url = `${api.baseUrl}/blog/author/${authorId}`
+    const url = `${api.baseUrl}/blog/author/${authorId}`;
     try {
         const response = await axios.get(url, {
             headers: {
-                'Authorization': `Bearer ${token}`
-            }
-        })
+                'Authorization': `Bearer ${token}`,
+            },
+        });
+
         if (response.status === 200) {
-            return response.data;
+            return response.data; 
+        } else {
+            return {
+                success: false,
+                message: response.data.message || 'Something went wrong',
+            };
         }
     } catch (error) {
-        console.error(error)
+        if (axios.isAxiosError(error)) {
+            if (error.response && error.response.status === 404) {
+                return {
+                    success: false,
+                    message: 'No blogs found',
+                };
+            } else {
+                return {
+                    success: false,
+                    message: error.response?.data.message || 'An unexpected error occurred',
+                };
+            }
+        } else {
+            console.error(error);
+            return {
+                success: false,
+                message: 'An unexpected error occurred',
+            };
+        }
     }
 }
+
 
 export async function getRelatedBlogs(blogId: string) {
     const url = `${api.baseUrl}/blog/blogs/related/${blogId}`
