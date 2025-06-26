@@ -3,8 +3,10 @@ import { getBlogByAuthorId } from '../../api/blogApi';
 import { useAppSelector } from '../../redux/store/hooks';
 import toast from 'react-hot-toast';
 import { PiEyeThin, PiCalendarDots, PiNotebookThin } from "react-icons/pi";
+import { CiEdit } from "react-icons/ci";
 import BlogModal from '../../components/author/BlogModal';
 import type { Blogs } from '../../utils/interface';
+import EditBlogModal from '../../components/author/EditBlogModal';
 
 const MyBlogs = () => {
     const [blogs, setBlogs] = useState<Blogs[]>([]);
@@ -12,6 +14,8 @@ const MyBlogs = () => {
     const [selectedBlog, setSelectedBlog] = useState<Blogs | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [isEditBlogModalOpen, setIsEditBlogModalOpen] = useState(false);
+    const [editSelectedBlog, setEditSelectedBlog] = useState<Blogs | null>(null);
 
     const userToken = useAppSelector((state) => state.login.token);
     const userId = useAppSelector((state) => state.login.userId);
@@ -47,6 +51,16 @@ const MyBlogs = () => {
         setSelectedBlog(null);
         setModalOpen(false);
     };
+
+    const handleEditBlogModal = (blog: Blogs) => {
+        setEditSelectedBlog(blog)
+        setIsEditBlogModalOpen(true);
+    }
+
+    const closeEditBlogModal = () => {
+        setEditSelectedBlog(null);
+        setIsEditBlogModalOpen(false);
+    }
 
     return (
         <>
@@ -103,13 +117,18 @@ const MyBlogs = () => {
                                 </div>
 
                                 {/* Actions */}
-                                <div className="p-3 bg-gray-100 border-t border-gray-200 flex justify-between items-center" >
+                                <div className="p-3 bg-gray-100 border-t border-gray-200 flex justify-between items-center flex-row" >
                                     <button
-                                        className="text-sm text-blue-600 font-normal hover:underline cursor-pointer"
+                                        className="text-xs text-blue-600 font-normal hover:underline cursor-pointer"
                                         onClick={() => handleModal(blog)}
                                     >
                                         <PiEyeThin className="inline-block w-4 h-4 mr-1" />
                                         Preview
+                                    </button>
+                                    <button className="text-xs text-gray-500 font-normal hover:underline cursor-pointer"
+                                        onClick={() => handleEditBlogModal(blog)}>
+                                        <CiEdit className="inline-block w-4 h-4 mr-1" />
+                                        Edit
                                     </button>
                                 </div>
                             </div>
@@ -120,6 +139,10 @@ const MyBlogs = () => {
 
             {modalOpen && selectedBlog && (
                 <BlogModal blog={selectedBlog} onViewClose={closeModal} />
+            )}
+
+            {isEditBlogModalOpen && (
+                <EditBlogModal data={editSelectedBlog} isOpen={isEditBlogModalOpen} onViewClose={closeEditBlogModal}  onRefresh={fetchBlogByAuthor} />
             )}
         </>
     );

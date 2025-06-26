@@ -170,6 +170,26 @@ export async function generateAIContent(token: string | null, prompt: string) {
     }
 }
 
+export async function updateBlog(token: string | null, blogId: string, formData: FormData) {
+    const url = `${api.baseUrl}/blog/author/${blogId}/edit`
+    try {
+        const response = await axios.put(url, formData, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        console.log("edit blog api resp", response.data)
+        if (response.status === 200) {
+            return response.data;
+        } else {
+            throw new Error('Update blog failed.');
+        }
+    } catch (error) {
+        console.error(error);
+    }
+
+}
+
 export async function publishBlog(token: string | null, id: string) {
     const url = `${api.baseUrl}/blog/blogs/toggle-publish`;
     try {
