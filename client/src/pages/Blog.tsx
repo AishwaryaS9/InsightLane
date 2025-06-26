@@ -181,15 +181,6 @@ const Blog = () => {
                             className='bg-primary text-white rounded p-2 px-8 hover:scale-102 transition-all cursor-pointer'>Submit</button>
                     </form>
                 </div>
-
-                {/* Share Buttons */}
-                <div className='my-24 max-w-3xl mx-auto'>
-                    <p className='font-semibold my-4'>Share this article on social media</p>
-                    <div className='flex'>
-                        <img src={assets.facebook} alt="" className='w-5 h-5 cursor-pointer' />
-                        <img src={assets.twitter} alt="" className='w-5 h-5 mx-5 cursor-pointer' />
-                    </div>
-                </div>
             </div>
 
             {/* Related Blogs */}
