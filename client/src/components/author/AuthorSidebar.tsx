@@ -2,6 +2,8 @@ import { NavLink } from 'react-router-dom'
 import { PiNotebook } from "react-icons/pi";
 import { MdOutlinePostAdd } from "react-icons/md";
 import { RiHome3Line } from "react-icons/ri";
+import { BiUser } from "react-icons/bi";
+
 
 const AuthorSidebar = () => {
     return (
@@ -25,6 +27,13 @@ const AuthorSidebar = () => {
             md:min-w-64 cursor-pointer ${isActive && "bg-primary/10 border-r-4 border-primary"}`} >
                 <PiNotebook className='min-w-4 w-5' />
                 <p>My Blogs</p>
+            </NavLink>
+
+            <NavLink to='/author/profile'
+                className={({ isActive }) => `flex items-center gap-3 py-3.5 px-3 md:px-9
+            md:min-w-64 cursor-pointer ${isActive && "bg-primary/10 border-r-4 border-primary"}`} >
+                <BiUser className='min-w-4 w-5' />
+                <p>My Profile</p>
             </NavLink>
 
         </div>

@@ -126,7 +126,6 @@ export async function addBlogComment(token: string | null, blogId: string, conte
                 'Authorization': `Bearer ${token}`
             }
         });
-        console.log("add comment api response", response.data)
         if (response.status === 200) {
             return response.data
         }
@@ -145,7 +144,6 @@ export async function addBlog(token: string | null, formData: FormData) {
                 'Content-Type': 'multipart/form-data',
             }
         });
-        console.log("Add blog api response", response);
         if (response.status === 200) {
             return response.data;
         }
@@ -210,25 +208,6 @@ export async function deleteBlogApi(token: string | null, id: string) {
 
 }
 
-// export async function getBlogByAuthorId(token: string | null, authorId: string | null) {
-//     const url = `${api.baseUrl}/blog/author/${authorId}`
-//     try {
-//         const response = await axios.get(url, {
-//             headers: {
-//                 'Authorization': `Bearer ${token}`
-//             }
-//         })
-//         if (response.status === 200) {
-//             return response.data;
-//         } else if(response.status === 404){
-//             console.log("data messgae", response.data.message)
-//             return response.data.message
-//         }
-//     } catch (error) {
-//         console.error(error)
-//     }
-// }
-
 export async function getBlogByAuthorId(token: string | null, authorId: string | null) {
     const url = `${api.baseUrl}/blog/author/${authorId}`;
     try {
@@ -239,7 +218,7 @@ export async function getBlogByAuthorId(token: string | null, authorId: string |
         });
 
         if (response.status === 200) {
-            return response.data; 
+            return response.data;
         } else {
             return {
                 success: false,

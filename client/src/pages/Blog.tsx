@@ -8,7 +8,6 @@ import toast from 'react-hot-toast';
 import type { Comment } from '../utils/interface';
 import { LiaComments } from 'react-icons/lia';
 import { useAppSelector } from '../redux/store/hooks';
-import { getUserProfileById } from '../api/userApi';
 
 const Blog = () => {
     const { id } = useParams();
@@ -17,10 +16,9 @@ const Blog = () => {
     const [comments, setComments] = useState<Comment[]>([]);
     const [content, setContent] = useState('');
     const [relatedBlogs, setRelatedBlogs] = useState([]);
-    const [userProfile, setUserProfile] = useState(null);
 
     const userToken = useAppSelector((state) => state.login.token);
-
+    const userProfileData = useAppSelector((state) => state.userProfile.data)
 
     const scrollToTop = () => {
         window.scrollTo({
@@ -35,7 +33,6 @@ const Blog = () => {
 
             if (data) {
                 setData(data.blog)
-                fetchUserProfile(data.blog.author._id)
             } else {
                 toast.error(data.message)
             }
@@ -50,7 +47,6 @@ const Blog = () => {
             const blogData = await getBlogById(blogId);
             if (blogData) {
                 setData(blogData.blog);
-                fetchUserProfile(blogData.blog.author._id);
                 const commentData = await getBlogComment(userToken, blogId);
                 if (commentData) {
                     setComments(commentData.comments);
@@ -63,21 +59,6 @@ const Blog = () => {
             toast.error((error as Error).message);
         }
     };
-
-    const fetchUserProfile = async (authorId: string) => {
-        try {
-            const data = await getUserProfileById(authorId);
-            if (data) {
-                setUserProfile(data);
-            } else {
-                toast.error(data.message)
-            }
-
-        } catch (error) {
-            toast.error((error as Error).message);
-        }
-    }
-
 
 
     const fetchComments = async () => {
@@ -150,7 +131,6 @@ const Blog = () => {
                 <div dangerouslySetInnerHTML={{ __html: data.description }}
                     className='rich-text max-w-3xl mx-auto'>
                 </div>
-                {/* <hr className=' border-t border-gray-300' /> */}
 
                 {/* About the Author */}
 
@@ -159,15 +139,15 @@ const Blog = () => {
                         <div className="flex justify-between items-center">
                             <div>
                                 <div className="flex items-center gap-1">
-                                    <img className="h-16 w-16 mr-2 rounded-full" src={userProfile?.profilePicture || assets.defaultAvatar} alt="author" />
+                                    <img className="h-16 w-16 mr-2 rounded-full" src={userProfileData?.profilePicture || assets.defaultAvatar} alt="author" />
                                     <div>
                                         <p className='leading-6'>About the Author</p>
-                                        <p className="font-semibold text-gray-700 text-2xl">{userProfile?.name}</p>
+                                        <p className="font-semibold text-gray-700 text-2xl">{userProfileData?.name}</p>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <p className='leading-6'>{userProfile?.bio}</p>
+                        <p className='leading-6'>{userProfileData?.bio}</p>
                     </div>
                 </div>
 

@@ -242,3 +242,54 @@ export const getBlogsByAuthor = async (req, res) => {
         res.status(500).json({ success: false, message: error.message });
     }
 };
+
+
+export const editBlogById = async (req, res) => {
+    try {
+        const { id } = req.params; 
+        const { title, subTitle, description, category } = req.body; 
+        const imageFile = req.file; 
+
+        const blog = await Blog.findById(id);
+
+        if (!blog) {
+            return res.status(404).json({ success: false, message: "Blog not found" });
+        }
+
+        if (req.user.role === 'author' && blog.author.toString() !== req.user.id) {
+            return res.status(403).json({ success: false, message: "Unauthorized to edit this blog" });
+        }
+
+        if (title) blog.title = title;
+        if (subTitle) blog.subTitle = subTitle;
+        if (description) blog.description = description;
+        if (category) blog.category = category;
+
+        if (imageFile) {
+            const fileBuffer = fs.readFileSync(imageFile.path);
+            const response = await imagekit.upload({
+                file: fileBuffer,
+                fileName: imageFile.originalname,
+                folder: "/blogs",
+            });
+
+            const optimizedImageUrl = imagekit.url({
+                path: response.filePath,
+                transformation: [
+                    { quality: 'auto' },
+                    { format: 'webp' },
+                    { width: '1280' },
+                ],
+            });
+
+            blog.image = optimizedImageUrl;
+        }
+
+        await blog.save();
+
+        res.json({ success: true, message: "Blog updated successfully", blog });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+};
+

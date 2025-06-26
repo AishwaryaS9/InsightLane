@@ -3,6 +3,7 @@ import { assets } from "../assets/assets";
 import { useNavigate } from "react-router-dom";
 import { clearLogin } from "../redux/store/slice/loginSlice";
 import { useAppDispatch, useAppSelector } from "../redux/store/hooks";
+import { clearUserProfileDetails } from "../redux/store/slice/userProfileSlice";
 
 
 const Navbar = () => {
@@ -40,6 +41,7 @@ const Navbar = () => {
             navigate('/login')
         } else {
             dispatch(clearLogin())
+            dispatch(clearUserProfileDetails())
             navigate('/')
         }
     }
@@ -96,7 +98,7 @@ const Navbar = () => {
 
             {/* Desktop Right */}
             <div className="hidden md:flex items-center gap-4">
-                <button onClick={handleLogin} className="bg-primary text-white px-8 py-2.5 rounded-full ml-4 transition-all duration-500">
+                <button onClick={handleLogin} className="bg-primary text-white px-8 py-2.5 rounded-full ml-4 transition-all duration-500 cursor-pointer">
                     {userToken ? 'Logout' : 'Login'}
                 </button>
             </div>
@@ -141,11 +143,21 @@ const Navbar = () => {
                     </a>
                 ))}
 
-                <button className="border px-4 py-1 text-sm font-light rounded-full cursor-pointer transition-all">
-                    New Launch
-                </button>
+                {userToken && userRole === "admin" && (
+                    <button onClick={() => navigate('/admin')}
+                        className="border px-4 py-1 text-sm font-light rounded-full cursor-pointer transition-all">
 
-                <button onClick={handleLogin} className="bg-primary text-white px-8 py-2.5 rounded-full transition-all duration-500">
+                        Dashboard
+                    </button>
+                )}
+
+                {userToken && userRole === "author" && (
+                    <button onClick={() => navigate('/author')}
+                        className="border px-4 py-1 text-sm font-light rounded-full cursor-pointer transition-all">
+                        Dashboard
+                    </button>
+                )}
+                <button onClick={handleLogin} className="bg-primary text-white px-8 py-2.5 rounded-full transition-all duration-500 cursor-pointer">
                     {userToken ? 'Logout' : 'Login'}
                 </button>
             </div>

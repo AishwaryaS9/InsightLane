@@ -12,7 +12,7 @@ import reader from './reader.png'
 import upload_area from './upload_area.svg'
 import facebook from './facebook.svg'
 import twitter from './twitter.svg'
-
+import linkedin from './linkedin.svg'
 
 export const assets = {
     logo: logo,
@@ -28,10 +28,11 @@ export const assets = {
     reader: reader,
     upload_area: upload_area,
     facebook: facebook,
-    twitter: twitter
+    twitter: twitter,
+    linkedin: linkedin
 }
 
 export const blogCategories = ['All', 'Technology', 'Startup', 'Lifestyle', 'Finance']
 
 
-
+export const dropDownCategories = ['Technology', 'Startup', 'Lifestyle', 'Finance']

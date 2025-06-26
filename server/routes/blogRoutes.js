@@ -19,7 +19,7 @@ router.post('/addblog', upload.single('image'), auth, authorize(['author', 'admi
 router.post('/generate', auth, authorize(['author', 'admin']), blogController.generateContent)
 router.get('/author/dashboard', auth, authorize(['author']), blogController.getAuthorDashboard);
 router.get('/author/:authorId', auth, authorize(['author']), blogController.getBlogsByAuthor);
-
+router.put('/author/:id/edit', upload.single('image'), auth, authorize(['author', 'admin']), blogController.editBlogById);
 
 // Admin: Manage all content
 router.patch('/blogs/toggle-publish', auth, authorize(['admin']), blogController.togglePublish);

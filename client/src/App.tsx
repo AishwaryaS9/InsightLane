@@ -16,6 +16,7 @@ import Users from './pages/admin/Users'
 import AuthorDashboard from './pages/author/AuthorDashboard'
 import MyBlogs from './pages/author/MyBlogs'
 import Footer from './components/Footer'
+import Profile from './pages/Profile'
 
 const App = () => {
   const location = useLocation();
@@ -55,6 +56,7 @@ const App = () => {
             <Route index element={<AuthorDashboard />} />
             <Route path='addBlog' element={<AddBlog />} />
             <Route path='myBlogs' element={<MyBlogs />} />
+            <Route path='profile' element={<Profile />} />
           </Route>
         </Routes>
         {!shouldHideFooter && <Footer />}

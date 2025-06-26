@@ -93,15 +93,10 @@ export async function getAllUsers(token: string | null) {
 }
 
 
-export async function getUserProfileById( id: string) {
+export async function getUserProfileById(id: string) {
     const url = `${api.baseUrl}/user/userprofile/${id}`
     try {
-        const response = await axios.get(url, {
-            // headers: {
-            //     'Content-Type': 'application/json',
-            //     'Authorization': `Bearer ${token}`
-            // }
-        })
+        const response = await axios.get(url);
         if (response.status === 200) {
             return response.data
         }
@@ -109,3 +104,23 @@ export async function getUserProfileById( id: string) {
         console.error(error)
     }
 }
+
+export async function updateUserProfile(token: string | null, formData: FormData) {
+    const url = `${api.baseUrl}/user/profile`
+    try {
+        const response = await axios.put(url, formData, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'multipart/form-data',
+            }
+        })
+        if (response.status === 200) {
+            return response.data;
+        } else {
+            throw new Error('Profile update failed.');
+        }
+    } catch (error) {
+        console.error(error)
+        throw error;
+    }
+} 

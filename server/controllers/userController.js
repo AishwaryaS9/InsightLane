@@ -118,7 +118,7 @@ export const getUserProfileById = async (req, res) => {
 
 export const updateUserProfile = async (req, res) => {
     try {
-        const { bio, socialLinks } = req.body;
+        const { name, bio, socialLinks } = req.body;
         let profilePicture;
 
         if (req.file) {
@@ -140,6 +140,7 @@ export const updateUserProfile = async (req, res) => {
         }
 
         const updates = {};
+        if (name) updates.name = name;
         if (bio) updates.bio = bio;
         if (socialLinks) updates.socialLinks = JSON.parse(socialLinks);
         if (profilePicture) updates.profilePicture = profilePicture;

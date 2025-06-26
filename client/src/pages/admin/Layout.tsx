@@ -5,6 +5,7 @@ import Sidebar from '../../components/admin/Sidebar';
 import { useAppDispatch, useAppSelector } from '../../redux/store/hooks';
 import { clearLogin } from '../../redux/store/slice/loginSlice';
 import AuthorSidebar from '../../components/author/AuthorSidebar';
+import { clearUserProfileDetails } from '../../redux/store/slice/userProfileSlice';
 
 const Layout = () => {
     const navigate = useNavigate();
