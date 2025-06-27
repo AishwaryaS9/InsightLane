@@ -1,14 +1,28 @@
 import toast from 'react-hot-toast';
-import type { BlogTableItemProps } from '../../utils/interface';
+import type { Blogs, BlogTableItemProps } from '../../utils/interface';
 import { RxCross2 } from "react-icons/rx";
 import { deleteBlogApi, publishBlog } from '../../api/blogApi';
 import { useAppSelector } from '../../redux/store/hooks';
+import { useState } from 'react';
+import BlogModal from '../author/BlogModal';
 
 const BlogTableItem: React.FC<BlogTableItemProps> = ({ blog, fetchBlogs, index }) => {
     const { title, createdAt } = blog;
     const BlogDate = new Date(createdAt);
+    const [modalOpen, setModalOpen] = useState(false);
+    const [selectedBlog, setSelectedBlog] = useState<Blogs | null>(null);
 
     const userToken = useAppSelector((state) => state.login.token);
+
+    const handleModal = (blog: Blogs) => {
+        setSelectedBlog(blog);
+        setModalOpen(true);
+    };
+
+    const closeModal = () => {
+        setSelectedBlog(null);
+        setModalOpen(false);
+    };
 
     const deleteBlog = async () => {
         const confirm = window.confirm('Are you sure you want to delete this blog?');
@@ -43,7 +57,7 @@ const BlogTableItem: React.FC<BlogTableItemProps> = ({ blog, fetchBlogs, index }
     return (
         <tr className="border-y border-gray-300 hover:bg-gray-50 transition-colors">
             <th className="px-4 py-4 font-medium text-gray-600">{index}</th>
-            <td className="px-4 py-4 font-medium text-gray-600">{title}</td>
+            <td className="px-4 py-4 font-medium text-gray-600 cursor-pointer" onClick={() => handleModal(blog)}>{title}</td>
             <td className="px-4 py-4 hidden sm:table-cell text-gray-500">{BlogDate.toDateString()}</td>
             <td className="px-4 py-4 hidden sm:table-cell">
                 <span
@@ -72,6 +86,9 @@ const BlogTableItem: React.FC<BlogTableItemProps> = ({ blog, fetchBlogs, index }
                     title="Delete Blog"
                 />
             </td>
+            {modalOpen && selectedBlog && (
+                <BlogModal blog={selectedBlog} onViewClose={closeModal} />
+            )}
         </tr >
     );
 };

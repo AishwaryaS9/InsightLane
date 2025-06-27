@@ -78,6 +78,9 @@ export const getUserProfile = async (req, res) => {
         const limitInt = parseInt(limit, 10);
 
         const totalUsers = await User.countDocuments(filter);
+        const totalAdmins = await User.countDocuments({ role: "admin" });
+        const totalAuthors = await User.countDocuments({ role: "author" });
+        const totalReaders = await User.countDocuments({ role: "reader" });
 
         const users = await User.find(filter)
             .skip((pageInt - 1) * limitInt)
@@ -87,6 +90,9 @@ export const getUserProfile = async (req, res) => {
         res.json({
             success: true,
             totalUsers,
+            totalAdmins,
+            totalAuthors,
+            totalReaders,
             currentPage: pageInt,
             totalPages: Math.ceil(totalUsers / limitInt),
             users,

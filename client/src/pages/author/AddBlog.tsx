@@ -4,6 +4,7 @@ import Quill from 'quill';
 import { parse } from 'marked';
 import { addBlog, generateAIContent } from '../../api/blogApi';
 import { useAppSelector } from '../../redux/store/hooks';
+import toast from 'react-hot-toast';
 
 const AddBlog = () => {
     const editorRef = useRef<HTMLDivElement | null>(null);
@@ -74,11 +75,14 @@ const AddBlog = () => {
                     quillRef.current.root.innerHTML = '';
                 }
                 setCategory('Startup');
+                toast.success(data.message);
             } else {
                 setError([{ field: 'general', message: data.message }]);
+                toast.error(data.message)
             }
         } catch (error) {
             setError([{ field: 'general', message: (error as Error).message }]);
+            toast.error((error as Error).message);
         } finally {
             setIsAdding(false);
         }

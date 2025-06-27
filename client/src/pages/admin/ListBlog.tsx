@@ -3,15 +3,19 @@ import BlogTableItem from '../../components/admin/BlogTableItem';
 import toast from 'react-hot-toast';
 import type { Blogs } from '../../utils/interface';
 import { getAllBlogs } from '../../api/blogApi';
+import Pagination from '../../components/Pagination';
 
 const ListBlog = () => {
     const [blogs, setBlogs] = useState<Blogs[]>([]);
+    const [page, setPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
 
     const fetchBlogs = async () => {
         try {
-            const data = await getAllBlogs();
+            const data = await getAllBlogs(page, 5);
             if (data) {
                 setBlogs(data.blogs);
+                setTotalPages(data.totalPages || 1);
             }
         } catch (error) {
             toast.error((error as Error).message);
@@ -20,7 +24,13 @@ const ListBlog = () => {
 
     useEffect(() => {
         fetchBlogs();
-    }, []);
+    }, [page]);
+
+    const handlePageChange = (newPage: number) => {
+        if (newPage >= 1 && newPage <= totalPages) {
+            setPage(newPage);
+        }
+    };
 
     return (
         <div className="flex-1 p-4 sm:p-6 md:p-10 bg-blue-50/50 min-h-screen">
@@ -50,7 +60,7 @@ const ListBlog = () => {
                                     key={blog._id}
                                     blog={blog}
                                     fetchBlogs={fetchBlogs}
-                                    index={index + 1}
+                                    index={(page - 1) * 5 + index + 1}
                                 />
                             ))
                         ) : (
@@ -65,6 +75,16 @@ const ListBlog = () => {
                         )}
                     </tbody>
                 </table>
+            </div>
+
+
+            {/* Pagination */}
+            <div className="my-15">
+                <Pagination
+                    page={page}
+                    totalPages={totalPages}
+                    onPageChange={handlePageChange}
+                />
             </div>
         </div>
     );

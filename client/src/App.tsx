@@ -17,6 +17,7 @@ import AuthorDashboard from './pages/author/AuthorDashboard'
 import MyBlogs from './pages/author/MyBlogs'
 import Footer from './components/Footer'
 import Profile from './pages/Profile'
+import About from './pages/About'
 
 const App = () => {
   const location = useLocation();
@@ -44,6 +45,7 @@ const App = () => {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/blog/:id" element={<Blog />} />
+          <Route path='/about' element={<About />} />
           {/* Admin */}
           <Route path='/admin' element={userToken && userRole === "admin" ? <Layout /> : <Login />}>
             <Route index element={<Dashbaord />} />

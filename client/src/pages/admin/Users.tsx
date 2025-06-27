@@ -1,30 +1,47 @@
 import { useEffect, useState } from 'react';
-import { getAllUsers } from '../../api/userApi';
 import UserCard from '../../components/admin/UserCard';
 import { useAppSelector } from '../../redux/store/hooks';
 import { assets } from '../../assets/assets';
+import { getUserProfile } from '../../api/userApi';
+import toast from 'react-hot-toast';
+import type { UserData, User } from '../../utils/interface';
+import Pagination from '../../components/Pagination';
 
 const Users = () => {
     const userToken = useAppSelector((state) => state.login.token);
 
-    const [userData, setUserData] = useState([]);
-    const [userInfo, setUserInfo] = useState([]);
+    const [userData, setUserData] = useState<UserData[]>([]);
+    const [userInfo, setUserInfo] = useState<User[]>([]);
+    const [page, setPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const [search, setSearch] = useState('');
 
     const getUserData = async () => {
         try {
-            const data = await getAllUsers(userToken);
+            const data = await getUserProfile(page, 8, search, userToken);
             if (data) {
-                setUserData(data.data);
-                setUserInfo(data.data.users);
+                setUserData(data);
+                setUserInfo(data.users);
+                setTotalPages(data.totalPages || 1)
+            } else {
+                toast.error(data.message)
             }
         } catch (error) {
             console.error("Failed to fetch user data:", error);
+            toast.error((error as Error).message);
         }
     };
 
     useEffect(() => {
         getUserData();
-    }, [userToken]);
+    }, [page]);
+
+    const handlePageChange = (newPage: number) => {
+        if (newPage >= 1 && newPage <= totalPages) {
+            setPage(newPage);
+        }
+    };
+
 
     return (
         <div className="w-full min-h-screen bg-blue-50/50 p-4 sm:p-6 flex flex-col">
@@ -63,6 +80,16 @@ const Users = () => {
                         ))}
                     </div>
                 )}
+            </div>
+
+
+            {/* Pagination */}
+            <div className="my-10">
+                <Pagination
+                    page={page}
+                    totalPages={totalPages}
+                    onPageChange={handlePageChange}
+                />
             </div>
         </div>
     );

@@ -76,14 +76,14 @@ export async function loginUser(email: string, password: string) {
     }
 }
 
-export async function getAllUsers(token: string | null) {
-    const url = `${api.baseUrl}/admin/users`;
+export async function getUserProfile(page: number = 1, limit: number = 5, search: string = '', token: string | null) {
+    const url = `${api.baseUrl}/user/profile?search=${search}&page=${page}&limit=${limit}`
     try {
         const response = await axios.get(url, {
             headers: {
                 'Authorization': `Bearer ${token}`
             }
-        })
+        });
         if (response.status === 200) {
             return response.data
         }
@@ -104,6 +104,7 @@ export async function getUserProfileById(id: string) {
         console.error(error)
     }
 }
+
 
 export async function updateUserProfile(token: string | null, formData: FormData) {
     const url = `${api.baseUrl}/user/profile`

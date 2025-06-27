@@ -22,7 +22,7 @@ const Sidebar = () => {
 
             {/* Sidebar */}
             <div
-                className={`fixed md:relative top-0 left-0 h-screen bg-white shadow-md transform ${isOpen ? 'translate-x-0' : '-translate-x-full'
+                className={`fixed md:relative top-0 left-0 h-screen bg-white transform ${isOpen ? 'translate-x-0' : '-translate-x-full'
                     } md:translate-x-0 transition-transform duration-300 ease-in-out z-40 md:z-auto flex flex-col border-r border-gray-200 min-h-full w-64`}
             >
                 <NavLink to='/admin' end={true}

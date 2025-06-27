@@ -7,7 +7,7 @@ const BlogAuthorTableItem: React.FC<BlogTableItemProps> = ({ blog, fetchBlogs, i
 
     return (
         <tr className='border-y border-gray-300'>
-            <th className='px-2 py-4'>{index}</th>
+            <th className='px-4 py-3'>{index}</th>
             <td className='px-2 py-4'>{title}</td>
             <td className='px-2 py-4 max-sm:hidden'>{BlogDate.toDateString()}</td>
             <td className='px-2 py-4 max-sm:hidden'>

@@ -15,14 +15,38 @@ export const getDashboard = async (req, res) => {
     }
 }
 
+
 export const getAllComments = async (req, res) => {
     try {
-        const comments = await Comment.find({}).populate("blog").sort({ createdAt: -1 })
-        res.json({ success: true, comments })
+        const { page = 1, limit = 10 } = req.query;
+
+        const pageNum = parseInt(page, 10);
+        const limitNum = parseInt(limit, 10);
+
+        const comments = await Comment.find({})
+            .populate("blog")
+            .sort({ createdAt: -1 })
+            .skip((pageNum - 1) * limitNum)
+            .limit(limitNum);
+
+        const totalComments = await Comment.countDocuments();
+
+        res.json({
+            success: true,
+            data: {
+                comments,
+                pagination: {
+                    totalComments,
+                    currentPage: pageNum,
+                    totalPages: Math.ceil(totalComments / limitNum),
+                },
+            },
+        });
     } catch (error) {
-        res.json({ success: false, message: error.message })
+        res.status(500).json({ success: false, message: error.message });
     }
-}
+};
+
 
 export const deleteCommentById = async (req, res) => {
     try {
@@ -50,7 +74,7 @@ export const getUsersDetails = async (req, res) => {
     try {
         const users = await User.find({}, 'name email role profilePicture createdAt')
             .sort({ createdAt: -1 })
-            .lean(); 
+            .lean();
         const formattedUsers = users.map(user => ({
             ...user,
             profilePicture: user.profilePicture || null,

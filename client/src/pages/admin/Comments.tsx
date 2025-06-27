@@ -4,18 +4,22 @@ import { getAllComments } from '../../api/blogApi';
 import { useAppSelector } from '../../redux/store/hooks';
 import type { Comment } from '../../utils/interface';
 import CommentTableItem from '../../components/admin/CommentTableItem';
+import Pagination from '../../components/Pagination';
 
 const Comments = () => {
     const [comments, setComments] = useState<Comment[]>([]);
     const [filter, setFilter] = useState('Not Approved');
+    const [page, setPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
 
     const userToken = useAppSelector((state) => state.login.token);
 
     const fetchComments = async () => {
         try {
-            const data = await getAllComments(userToken);
+            const data = await getAllComments(userToken, page, 3);
             if (data) {
-                setComments(data.comments);
+                setComments(data.data.comments);
+                setTotalPages(data.data.pagination.totalPages || 1);
             } else {
                 toast.error(data.message);
             }
@@ -26,7 +30,13 @@ const Comments = () => {
 
     useEffect(() => {
         fetchComments();
-    }, []);
+    }, [page]);
+
+    const handlePageChange = (newPage: number) => {
+        if (newPage >= 1 && newPage <= totalPages) {
+            setPage(newPage);
+        }
+    };
 
     return (
         <div className="flex-1 p-4 sm:p-6 md:p-10 bg-blue-50/50 min-h-screen">
@@ -37,7 +47,7 @@ const Comments = () => {
                 <div className="flex gap-2 sm:gap-4">
                     <button
                         onClick={() => setFilter('Approved')}
-                        className={`px-3 sm:px-4 py-2 text-sm font-medium rounded-lg shadow-md transition-all ${filter === 'Approved'
+                        className={`px-3 sm:px-4 py-2 text-sm font-medium rounded-lg shadow-md transition-all cursor-pointer ${filter === 'Approved'
                             ? 'bg-blue-300 text-white'
                             : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
                             }`}
@@ -46,7 +56,7 @@ const Comments = () => {
                     </button>
                     <button
                         onClick={() => setFilter('Not Approved')}
-                        className={`px-3 sm:px-4 py-2 text-sm font-medium rounded-lg shadow-md transition-all ${filter === 'Not Approved'
+                        className={`px-3 sm:px-4 py-2 text-sm font-medium rounded-lg shadow-md transition-all cursor-pointer ${filter === 'Not Approved'
                             ? 'bg-blue-300 text-white'
                             : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
                             }`}
@@ -99,6 +109,15 @@ const Comments = () => {
                         )}
                     </tbody>
                 </table>
+            </div>
+
+            {/* Pagination */}
+            <div className="my-15">
+                <Pagination
+                    page={page}
+                    totalPages={totalPages}
+                    onPageChange={handlePageChange}
+                />
             </div>
         </div>
     );

@@ -7,6 +7,7 @@ import { CiEdit } from "react-icons/ci";
 import BlogModal from '../../components/author/BlogModal';
 import type { Blogs } from '../../utils/interface';
 import EditBlogModal from '../../components/author/EditBlogModal';
+import Pagination from '../../components/Pagination';
 
 const MyBlogs = () => {
     const [blogs, setBlogs] = useState<Blogs[]>([]);
@@ -16,6 +17,8 @@ const MyBlogs = () => {
     const [error, setError] = useState<string | null>(null);
     const [isEditBlogModalOpen, setIsEditBlogModalOpen] = useState(false);
     const [editSelectedBlog, setEditSelectedBlog] = useState<Blogs | null>(null);
+    const [page, setPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
 
     const userToken = useAppSelector((state) => state.login.token);
     const userId = useAppSelector((state) => state.login.userId);
@@ -24,9 +27,10 @@ const MyBlogs = () => {
         setIsLoading(true);
         setError(null);
         try {
-            const data = await getBlogByAuthorId(userToken, userId);
+            const data = await getBlogByAuthorId(userToken, userId, page, 4);
             if (data.blogs) {
                 setBlogs(data.blogs);
+                setTotalPages(data.totalPages || 1);
             } else {
                 setError(data.message || 'No blogs found');
             }
@@ -40,7 +44,7 @@ const MyBlogs = () => {
 
     useEffect(() => {
         fetchBlogByAuthor();
-    }, []);
+    }, [page]);
 
     const handleModal = (blog: Blogs) => {
         setSelectedBlog(blog);
@@ -61,6 +65,12 @@ const MyBlogs = () => {
         setEditSelectedBlog(null);
         setIsEditBlogModalOpen(false);
     }
+
+    const handlePageChange = (newPage: number) => {
+        if (newPage >= 1 && newPage <= totalPages) {
+            setPage(newPage);
+        }
+    };
 
     return (
         <>
@@ -135,6 +145,16 @@ const MyBlogs = () => {
                         ))}
                     </div>
                 )}
+
+                {/* Pagination */}
+                <div className="my-15">
+                    <Pagination
+                        page={page}
+                        totalPages={totalPages}
+                        onPageChange={handlePageChange}
+                    />
+                </div>
+
             </div >
 
             {modalOpen && selectedBlog && (
@@ -142,7 +162,7 @@ const MyBlogs = () => {
             )}
 
             {isEditBlogModalOpen && (
-                <EditBlogModal data={editSelectedBlog} isOpen={isEditBlogModalOpen} onViewClose={closeEditBlogModal}  onRefresh={fetchBlogByAuthor} />
+                <EditBlogModal data={editSelectedBlog} isOpen={isEditBlogModalOpen} onViewClose={closeEditBlogModal} onRefresh={fetchBlogByAuthor} />
             )}
         </>
     );

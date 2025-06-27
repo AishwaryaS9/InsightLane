@@ -1,18 +1,6 @@
 import axios from "axios";
 import api from "./endPoint";
-
-// export async function getAllBlogs() {
-//     const url = `${api.baseUrl}/blog/blogs`
-
-//     try {
-//         const response = await axios.get(url)
-//         if (response.status === 200) {
-//             return response.data;
-//         }
-//     } catch (error) {
-//         console.error(error)
-//     }
-// }
+import { number } from "framer-motion";
 
 export async function getAllBlogs(page: number = 1, limit: number = 5, search: string = '') {
     const url = `${api.baseUrl}/blog/blogs?page=${page}&limit=${limit}&search=${search}`;
@@ -24,7 +12,7 @@ export async function getAllBlogs(page: number = 1, limit: number = 5, search: s
         }
     } catch (error) {
         console.error(error);
-        throw error; // Ensure the error propagates
+        throw error;
     }
 }
 
@@ -42,8 +30,8 @@ export async function getBlogById(id: string) {
     }
 }
 
-export async function getAllComments(token: string | null) {
-    const url = `${api.baseUrl}/admin/all-comments`;
+export async function getAllComments(token: string | null, page: number = 1, limit: number = 5) {
+    const url = `${api.baseUrl}/admin/all-comments?page=${page}&limit=${limit}`;
     try {
         const response = await axios.get(url, {
             headers: {
@@ -228,8 +216,8 @@ export async function deleteBlogApi(token: string | null, id: string) {
 
 }
 
-export async function getBlogByAuthorId(token: string | null, authorId: string | null) {
-    const url = `${api.baseUrl}/blog/author/${authorId}`;
+export async function getBlogByAuthorId(token: string | null, authorId: string | null, page: number = 1, limit: number = 5) {
+    const url = `${api.baseUrl}/blog/author/${authorId}?page=${page}&limit=${limit}`
     try {
         const response = await axios.get(url, {
             headers: {

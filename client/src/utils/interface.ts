@@ -36,13 +36,15 @@ export interface CommentTableItemProps {
     fetchComments: () => Promise<void>;
 }
 
-export interface Users {
-    createdAt: string;
-    email: string;
-    name: string;
-    profilePicture: null | string;
-    role: string;
+export interface User {
     _id: string;
+    name: string;
+    email: string;
+    role: string;
+    createdAt: string;
+    updatedAt: string;
+    bio: string;
+    profilePicture: null | string;
 }
 
 export interface UserData {
@@ -50,7 +52,9 @@ export interface UserData {
     totalAuthors: number;
     totalReaders: number;
     totalUsers: number;
-    users: Users[];
+    currentPage: number;
+    totalPages: number;
+    users: User[];
 }
 
 

@@ -5,6 +5,7 @@ import BlogCard from './BlogCard';
 import { getAllBlogs } from '../api/blogApi';
 import toast from 'react-hot-toast';
 import type { Blogs } from '../utils/interface';
+import Pagination from './Pagination';
 
 const BlogCategories = () => {
     const [menu, setMenu] = useState('All');
@@ -95,50 +96,11 @@ const BlogCategories = () => {
             </div>
 
             {/* Pagination */}
-            {filteredBlogs.length > 8 && (
-                <div className="flex items-center gap-2 text-gray-500 justify-center mb-10">
-                    <button
-                        type="button"
-                        aria-label="previous"
-                        className="mr-4 flex items-center gap-1"
-                        onClick={() => handlePageChange(page - 1)}
-                        disabled={page === 1}
-                    >
-                        <svg className="mt-px" width={23} height={23} viewBox="0 0 23 23" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M5.75 12.5h11.5m-11.5 0 4.792-4.791M5.75 12.5l4.792 4.792" stroke="#6B7280" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
-                        </svg>
-                        <span>previous</span>
-                    </button>
-
-                    <div className="flex gap-2 text-sm md:text-base">
-                        {Array.from({ length: totalPages }, (_, index) => index + 1).map((pageNumber) => (
-                            <button
-                                key={pageNumber}
-                                type="button"
-                                onClick={() => handlePageChange(pageNumber)}
-                                className={`flex items-center justify-center w-9 md:w-12 h-9 md:h-12 aspect-square rounded-md 
-                                    ${page === pageNumber ? 'bg-indigo-500 text-white' : 'hover:bg-gray-300/10'}
-                                    transition-all`}
-                            >
-                                {pageNumber}
-                            </button>
-                        ))}
-                    </div>
-
-                    <button
-                        type="button"
-                        aria-label="next"
-                        className="ml-4 flex items-center gap-1"
-                        onClick={() => handlePageChange(page + 1)}
-                        disabled={page === totalPages}
-                    >
-                        <span>next</span>
-                        <svg className="mt-px" width={23} height={23} viewBox="0 0 23 23" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M17.25 11.5H5.75m11.5 0-4.792-4.79m4.792 4.79-4.792 4.792" stroke="#6B7280" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
-                        </svg>
-                    </button>
-                </div>
-            )}
+            <Pagination
+                page={page}
+                totalPages={totalPages}
+                onPageChange={handlePageChange}
+            />
         </div>
     );
 };
