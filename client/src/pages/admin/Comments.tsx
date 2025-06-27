@@ -29,13 +29,15 @@ const Comments = () => {
     }, []);
 
     return (
-        <div className="flex-1 p-6 md:p-10 bg-blue-50/50 min-h-screen">
-            <div className="flex justify-between items-center mb-6  max-w-full">
-                <h1 className="text-2xl font-semibold text-gray-700">Comments</h1>
-                <div className="flex gap-4">
+        <div className="flex-1 p-4 sm:p-6 md:p-10 bg-blue-50/50 min-h-screen">
+            <div className="flex flex-wrap justify-between items-center mb-6 gap-4">
+                <h1 className="text-lg sm:text-xl md:text-2xl font-semibold text-gray-700">
+                    Comments
+                </h1>
+                <div className="flex gap-2 sm:gap-4">
                     <button
                         onClick={() => setFilter('Approved')}
-                        className={`px-4 py-2 text-sm font-medium rounded-lg shadow-md transition-all ${filter === 'Approved'
+                        className={`px-3 sm:px-4 py-2 text-sm font-medium rounded-lg shadow-md transition-all ${filter === 'Approved'
                             ? 'bg-blue-300 text-white'
                             : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
                             }`}
@@ -44,7 +46,7 @@ const Comments = () => {
                     </button>
                     <button
                         onClick={() => setFilter('Not Approved')}
-                        className={`px-4 py-2 text-sm font-medium rounded-lg shadow-md transition-all ${filter === 'Not Approved'
+                        className={`px-3 sm:px-4 py-2 text-sm font-medium rounded-lg shadow-md transition-all ${filter === 'Not Approved'
                             ? 'bg-blue-300 text-white'
                             : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
                             }`}
@@ -54,13 +56,13 @@ const Comments = () => {
                 </div>
             </div>
 
-            <div className="relative bg-white shadow-md rounded-lg overflow-hidden max-w-full">
-                <table className="w-full text-sm text-left text-gray-500">
-                    <thead className="bg-gray-100 text-gray-600 text-xs uppercase">
+            <div className="relative bg-white shadow-md rounded-lg overflow-hidden">
+                <table className="w-full text-sm sm:text-base text-left text-gray-500">
+                    <thead className="bg-gray-100 text-gray-600 text-xs sm:text-sm uppercase">
                         <tr>
-                            <th className="px-6 py-4">Blog Title & Comment</th>
-                            <th className="px-6 py-4 hidden sm:table-cell">Date</th>
-                            <th className="px-6 py-4">Action</th>
+                            <th className="px-4 sm:px-6 py-3">Blog Title & Comment</th>
+                            <th className="px-4 sm:px-6 py-3 hidden sm:table-cell">Date</th>
+                            <th className="px-4 sm:px-6 py-3 text-center">Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -78,7 +80,6 @@ const Comments = () => {
                             .length === 0 ? (
                             <tr>
                                 <td colSpan={3} className="text-center py-10 text-gray-500">
-                                    {/* No {filter.toLowerCase()} comments found. */}
                                     No comments found.
                                 </td>
                             </tr>

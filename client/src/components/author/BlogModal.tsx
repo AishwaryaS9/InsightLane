@@ -4,7 +4,7 @@ import { IoCloseOutline } from "react-icons/io5";
 const BlogModal = ({ blog, onViewClose }) => {
     return (
         <div
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm"
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4"
             onClick={onViewClose}
         >
             <div

@@ -180,7 +180,7 @@ const AddBlog = () => {
                     ))}
 
                     <div className='flex gap-2'>
-                        <button disabled={isAdding} type='submit' className='mt-8 w-40 h-10 bg-primary text-white rounded cursor-pointer text-sm'>
+                        <button disabled={isAdding} type='submit' className='mt-8 w-40 h-10 bg-primary hover:bg-primary/75 text-white rounded cursor-pointer text-sm'>
                             {isAdding ? 'Adding...' : 'Add Blog'}
                         </button>
                         {error.filter(err => err.field === 'general').map((err, index) => (

@@ -1,43 +1,68 @@
-import { NavLink } from 'react-router-dom'
+import { useState } from 'react';
+import { NavLink } from 'react-router-dom';
 import { PiNotebook } from "react-icons/pi";
 import { MdOutlinePostAdd } from "react-icons/md";
 import { RiHome3Line } from "react-icons/ri";
 import { BiUser } from "react-icons/bi";
-
+import { HiMenuAlt3 } from "react-icons/hi";
+import { IoClose } from "react-icons/io5";
 
 const AuthorSidebar = () => {
+    const [isOpen, setIsOpen] = useState(false);
+
     return (
-        <div className='flex flex-col border-r border-gray-200 min-h-full pt-6'>
-            <NavLink to='/author' end={true}
-                className={({ isActive }) => `flex items-center gap-3 py-3.5 px-3 md:px-9
-            md:min-w-64 cursor-pointer ${isActive && "bg-primary/10 border-r-4 border-primary"}`} >
-                <RiHome3Line className='min-w-4 w-5' />
-                <p>Dashboard</p>
-            </NavLink>
+        <div className="relative">
+            {/* Hamburger Menu Button for Smaller Screens */}
+            <button
+                className="md:hidden fixed top-4 left-4 z-50 p-2 bg-gray-100 rounded-full shadow-md"
+                onClick={() => setIsOpen(!isOpen)}
+            >
+                {isOpen ? <IoClose className="w-6 h-6 text-gray-700" /> : <HiMenuAlt3 className="w-6 h-6 text-gray-700" />}
+            </button>
 
-            <NavLink to='/author/addBlog'
-                className={({ isActive }) => `flex items-center gap-3 py-3.5 px-3 md:px-9
-            md:min-w-64 cursor-pointer ${isActive && "bg-primary/10 border-r-4 border-primary"}`} >
-                <MdOutlinePostAdd className='min-w-4 w-5' />
-                <p>Add Blogs</p>
-            </NavLink>
+            {/* Sidebar */}
+            <div
+                className={`fixed md:relative top-0 left-0 h-screen bg-white  transform ${isOpen ? 'translate-x-0' : '-translate-x-full'
+                    } md:translate-x-0 transition-transform duration-300 ease-in-out z-40 md:z-auto flex flex-col border-r border-gray-200 min-h-full w-64`}
+            >
+                <NavLink to='/author' end={true}
+                    className={({ isActive }) => `flex items-center gap-4 py-3.5 px-4
+                cursor-pointer ${isActive && "bg-primary/10 border-r-4 border-primary"}`} >
+                    <RiHome3Line className="w-6" />
+                    <p className="text-base">Dashboard</p>
+                </NavLink>
 
-            <NavLink to='/author/myBlogs'
-                className={({ isActive }) => `flex items-center gap-3 py-3.5 px-3 md:px-9
-            md:min-w-64 cursor-pointer ${isActive && "bg-primary/10 border-r-4 border-primary"}`} >
-                <PiNotebook className='min-w-4 w-5' />
-                <p>My Blogs</p>
-            </NavLink>
+                <NavLink to='/author/addBlog'
+                    className={({ isActive }) => `flex items-center gap-4 py-3.5 px-4
+                cursor-pointer ${isActive && "bg-primary/10 border-r-4 border-primary"}`} >
+                    <MdOutlinePostAdd className="w-6" />
+                    <p className="text-base">Add Blogs</p>
+                </NavLink>
 
-            <NavLink to='/author/profile'
-                className={({ isActive }) => `flex items-center gap-3 py-3.5 px-3 md:px-9
-            md:min-w-64 cursor-pointer ${isActive && "bg-primary/10 border-r-4 border-primary"}`} >
-                <BiUser className='min-w-4 w-5' />
-                <p>My Profile</p>
-            </NavLink>
+                <NavLink to='/author/myBlogs'
+                    className={({ isActive }) => `flex items-center gap-4 py-3.5 px-4
+                cursor-pointer ${isActive && "bg-primary/10 border-r-4 border-primary"}`} >
+                    <PiNotebook className="w-6" />
+                    <p className="text-base">My Blogs</p>
+                </NavLink>
 
+                <NavLink to='/author/profile'
+                    className={({ isActive }) => `flex items-center gap-4 py-3.5 px-4
+                cursor-pointer ${isActive && "bg-primary/10 border-r-4 border-primary"}`} >
+                    <BiUser className="w-6" />
+                    <p className="text-base">My Profile</p>
+                </NavLink>
+            </div>
+
+            {/* Overlay for Small Screens */}
+            {isOpen && (
+                <div
+                    className="fixed inset-0 bg-black/30 z-30 md:hidden"
+                    onClick={() => setIsOpen(false)}
+                ></div>
+            )}
         </div>
-    )
+    );
 }
 
-export default AuthorSidebar
+export default AuthorSidebar;

@@ -8,6 +8,7 @@ import toast from 'react-hot-toast';
 import type { Comment } from '../utils/interface';
 import { LiaComments } from 'react-icons/lia';
 import { useAppSelector } from '../redux/store/hooks';
+import { getUserProfileById } from '../api/userApi';
 
 const Blog = () => {
     const { id } = useParams();
@@ -16,9 +17,9 @@ const Blog = () => {
     const [comments, setComments] = useState<Comment[]>([]);
     const [content, setContent] = useState('');
     const [relatedBlogs, setRelatedBlogs] = useState([]);
+    const [authorProfile, setAuthorProfile] = useState(null);
 
     const userToken = useAppSelector((state) => state.login.token);
-    const userProfileData = useAppSelector((state) => state.userProfile.data)
 
     const scrollToTop = () => {
         window.scrollTo({
@@ -29,12 +30,27 @@ const Blog = () => {
 
     const fetchBlogData = async () => {
         try {
-            const data = await getBlogById(id)
+            const blogData = await getBlogById(id)
 
-            if (data) {
-                setData(data.blog)
+            if (blogData) {
+                setData(blogData.blog)
+                fetchUserProfile(blogData.blog.author._id)
             } else {
-                toast.error(data.message)
+                toast.error(blogData.message)
+            }
+
+        } catch (error) {
+            toast.error((error as Error).message);
+        }
+    }
+
+    const fetchUserProfile = async (authorId: string) => {
+        try {
+            const response = await getUserProfileById(authorId);
+            if (response) {
+                setAuthorProfile(response);
+            } else {
+                toast.error(response.message)
             }
 
         } catch (error) {
@@ -139,15 +155,15 @@ const Blog = () => {
                         <div className="flex justify-between items-center">
                             <div>
                                 <div className="flex items-center gap-1">
-                                    <img className="h-16 w-16 mr-2 rounded-full" src={userProfileData?.profilePicture || assets.defaultAvatar} alt="author" />
+                                    <img className="h-16 w-16 mr-2 rounded-full" src={authorProfile?.profilePicture || assets.defaultAvatar} alt="author" />
                                     <div>
                                         <p className='leading-6'>About the Author</p>
-                                        <p className="font-semibold text-gray-700 text-2xl">{userProfileData?.name}</p>
+                                        <p className="font-semibold text-gray-700 text-2xl">{authorProfile?.name}</p>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <p className='leading-6'>{userProfileData?.bio}</p>
+                        <p className='leading-6'>{authorProfile?.bio}</p>
                     </div>
                 </div>
 

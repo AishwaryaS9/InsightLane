@@ -23,18 +23,24 @@ const ListBlog = () => {
     }, []);
 
     return (
-        <div className="flex-1 p-6 md:p-10 bg-blue-50/50 min-h-screen">
-            <h1 className="text-2xl font-semibold text-gray-700 mb-6">All Blogs</h1>
+        <div className="flex-1 p-4 sm:p-6 md:p-10 bg-blue-50/50 min-h-screen">
+            <h1 className="text-lg sm:text-xl md:text-2xl font-semibold text-gray-700 mb-6">
+                All Blogs
+            </h1>
 
-            <div className="relative overflow-x-auto shadow-md rounded-2xl bg-white">
-                <table className="w-full text-sm text-left text-gray-500">
-                    <thead className="bg-gray-100 text-gray-600 uppercase text-xs tracking-wider">
+            <div className="relative overflow-x-auto shadow-md rounded-xl bg-white">
+                <table className="w-full text-sm sm:text-base text-left text-gray-500">
+                    <thead className="bg-gray-100 text-gray-600 uppercase text-xs sm:text-sm tracking-wider">
                         <tr>
-                            <th scope="col" className="px-6 py-4">#</th>
-                            <th scope="col" className="px-6 py-4">Blog Title</th>
-                            <th scope="col" className="px-6 py-4 hidden sm:table-cell">Date</th>
-                            <th scope="col" className="px-6 py-4 hidden sm:table-cell">Status</th>
-                            <th scope="col" className="px-6 py-4">Actions</th>
+                            <th scope="col" className="px-4 sm:px-6 py-3">#</th>
+                            <th scope="col" className="px-4 sm:px-6 py-3">Blog Title</th>
+                            <th scope="col" className="px-4 sm:px-6 py-3 hidden sm:table-cell">
+                                Date
+                            </th>
+                            <th scope="col" className="px-4 sm:px-6 py-3 hidden sm:table-cell">
+                                Status
+                            </th>
+                            <th scope="col" className="px-4 sm:px-6 py-3">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
