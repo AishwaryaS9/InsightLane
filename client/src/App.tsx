@@ -58,6 +58,7 @@ const App = () => {
             <Route path='listBlog' element={<ListBlog />} />
             <Route path='comments' element={<Comments />} />
             <Route path='users' element={<Users />} />
+            <Route path='profile' element={<Profile />} />
           </Route>
           {/* Author */}
           <Route path='/author' element={userToken && userRole === "author" ? <Layout /> : <Login />}>

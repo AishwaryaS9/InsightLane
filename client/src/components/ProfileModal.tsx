@@ -1,14 +1,13 @@
-import { useState } from "react";
-import { useAppSelector } from "../redux/store/hooks";
-import { assets } from "../assets/assets";
-import EditProfileModal from "../components/EditProfileModal";
-import ChangePasswordModal from "../components/ChangePasswordModal";
+import { IoCloseOutline } from 'react-icons/io5'
+import { assets } from '../assets/assets'
+import EditProfileModal from './EditProfileModal'
+import ChangePasswordModal from './ChangePasswordModal'
+import { useState } from 'react'
 
-const Profile = () => {
+const ProfileModal = ({ userData, isProfileOpen, onProfileClose }) => {
+
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
-
-    const userProfileData = useAppSelector((state) => state.userProfile.data);
 
     const handleEditProfile = () => {
         setIsEditModalOpen(true);
@@ -26,32 +25,51 @@ const Profile = () => {
         setIsPasswordModalOpen(false);
     };
 
-    return (
-        <>
+    if (!isProfileOpen) return null;
 
-            <div className="w-full min-h-screen bg-blue-50/50 py-12 px-6 sm:px-16">
-                <div className='bg-white w-full max-w-3xl mx-auto p-6 shadow-lg rounded-lg'>
-                    <div className="relative z-10 bg-white p-6 h-auto w-full rounded-[10px] flex flex-col items-center justify-start text-center">
+    return (
+        <div
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm"
+            onClick={onProfileClose}>
+
+            <div
+                className="relative bg-white rounded-lg shadow-sm w-full max-w-2xl max-h-[90vh] overflow-hidden"
+                onClick={(e) => e.stopPropagation()}
+            >
+                <div className="flex items-center justify-between p-4 md:p-5">
+                    <h3 className="text-lg font-medium text-gray-900">View Profile</h3>
+                    <button
+                        type="button"
+                        onClick={onProfileClose}
+                        className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 inline-flex justify-center items-center"
+                    >
+                        <IoCloseOutline className="w-6 h-6" />
+                    </button>
+                </div>
+
+                {/* Scrollable Content */}
+                <div className="overflow-y-auto p-6" style={{ maxHeight: 'calc(90vh - 72px)' }}>
+                    <div className="bg-white p-6 h-auto w-full rounded-[10px] flex flex-col items-center justify-start text-center">
                         <img
-                            src={userProfileData.profilePicture || assets.defaultAvatar}
+                            src={userData.profilePicture || assets.defaultAvatar}
                             alt="Profile Avatar"
                             className="w-24 h-24 rounded-full shadow-md my-4"
                         />
                         <h2 className="text-2xl font-bold text-gray-800 mb-2">
-                            {userProfileData?.name || ""}
+                            {userData?.name || ""}
                         </h2>
                         <p className="text-sm text-secondary font-normal mb-4">
-                            {userProfileData?.email || ""}
+                            {userData?.email || ""}
                         </p>
                         <p className="text-sm text-primary font-medium mb-4 capitalize">
-                            {userProfileData?.role || "Reader"}
+                            {userData?.role || "Reader"}
                         </p>
                         <p className="text-sm text-gray-500 mb-6 px-4 text-wrap text-justify leading-6">
-                            {userProfileData?.bio || ""}
+                            {userData?.bio || ""}
                         </p>
                         <div className="flex space-x-4 mb-4 text-xl">
                             <a
-                                href={userProfileData.facebook || "http://facebook.com"}
+                                href={userData.facebook || "http://facebook.com"}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="hover:-translate-y-0.5 transition"
@@ -59,7 +77,7 @@ const Profile = () => {
                                 <img src={assets.facebook} className="w-6 h-6" alt="Facebook" />
                             </a>
                             <a
-                                href={userProfileData.twitter || "http://x.com"}
+                                href={userData.twitter || "http://x.com"}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="hover:-translate-y-0.5 transition"
@@ -67,7 +85,7 @@ const Profile = () => {
                                 <img src={assets.twitter} className="w-6 h-6" alt="Twitter" />
                             </a>
                             <a
-                                href={userProfileData.linkedin || "http://linkedin.com"}
+                                href={userData.linkedin || "http://linkedin.com"}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="hover:-translate-y-0.5 transition"
@@ -78,13 +96,13 @@ const Profile = () => {
                         <div className="space-x-4">
                             <button
                                 onClick={handleEditProfile}
-                                className="mt-4 px-6 py-2 cursor-pointer bg-primary text-white rounded-lg hover:bg-primary/75 shadow transition-all "
+                                className="mt-4 px-6 py-2 cursor-pointer bg-primary text-white rounded-lg hover:bg-primary/75 shadow transition-all sm:justify-center"
                             >
                                 Edit Profile
                             </button>
                             <button
                                 onClick={handleChangePassword}
-                                className="mt-4 px-6 py-2 cursor-pointer bg-primary text-white rounded-lg hover:bg-primary/75 shadow transition-all "
+                                className="mt-4 px-6 py-2 cursor-pointer bg-primary text-white rounded-lg hover:bg-primary/75 shadow transition-all sm:justify-center"
                             >
                                 Change Password
                             </button>
@@ -92,15 +110,15 @@ const Profile = () => {
                     </div>
                 </div>
             </div>
+
             {isEditModalOpen && (
-                <EditProfileModal data={userProfileData} isOpen={isEditModalOpen} onViewClose={closeModal} />
+                <EditProfileModal data={userData} isOpen={isEditModalOpen} onViewClose={closeModal} />
             )}
             {isPasswordModalOpen && (
                 <ChangePasswordModal isOpen={isPasswordModalOpen} onViewClose={closePasswordModal} />
             )}
-        </>
-    );
-};
+        </div>
+    )
+}
 
-export default Profile;
-
+export default ProfileModal

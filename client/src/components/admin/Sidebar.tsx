@@ -6,6 +6,7 @@ import { RiHome3Line } from "react-icons/ri";
 import { LuUser } from "react-icons/lu";
 import { HiMenuAlt3 } from "react-icons/hi";
 import { IoClose } from "react-icons/io5";
+import { BiUser } from 'react-icons/bi';
 
 const Sidebar = () => {
     const [isOpen, setIsOpen] = useState(false);
@@ -51,6 +52,12 @@ const Sidebar = () => {
                 cursor-pointer ${isActive && "bg-primary/10 border-r-4 border-primary"}`}>
                     <LuUser className="w-6" />
                     <p className="text-base">Users</p>
+                </NavLink>
+                <NavLink to='/admin/profile'
+                    className={({ isActive }) => `flex items-center gap-4 py-3.5 px-4
+                                cursor-pointer ${isActive && "bg-primary/10 border-r-4 border-primary"}`} >
+                    <BiUser className="w-6" />
+                    <p className="text-base">My Profile</p>
                 </NavLink>
             </div>
 

@@ -3,14 +3,14 @@ const Contact = () => {
     return (
         <div className="max-w-5xl w-full mx-auto p-10 text-gray-800 mt-20">
             <span className="px-2 py-1 text-xs border border-primary/40 bg-primary/10 rounded-full text-secondary">Reach Out To Us</span>
-            <h1 className="text-4xl font-semibold text-left mt-4 text-primary">
+            <h1 className="text-4xl font-semibold text-left mt-4 text-teal">
                 We'd love to Hear From You.
             </h1>
             <p className="text-left mt-4 text-secondary">
                 Or just reach out manually to&nbsp;
                 <a href="mailto:contact@example.com" className="text-teal">contact@example.com</a>
             </p>
-            <div className="grid md:grid-cols-3 mt-16">
+            <div className="grid md:grid-cols-3 mt-16 mb-10">
                 <div>
                     <svg className="text-primary bg-blue-100/100 p-2.5 aspect-square rounded-full size-10" width={24} height={24} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M21 4.125H3A1.125 1.125 0 0 0 1.875 5.25V18a1.875 1.875 0 0 0 1.875 1.875h16.5A1.875 1.875 0 0 0 22.125 18V5.25A1.125 1.125 0 0 0 21 4.125m-2.892 2.25L12 11.974 5.892 6.375zM4.125 17.625V7.808l7.115 6.522a1.125 1.125 0 0 0 1.52 0l7.115-6.522v9.817z" fill="currentColor" />
