@@ -10,8 +10,7 @@ const Navbar = () => {
     const navLinks = [
         { name: 'Home', path: '/' },
         { name: 'About', path: '/about' },
-        { name: 'Categories', path: '/' },
-        { name: 'Contact', path: '/' },
+        { name: 'Contact', path: '/contact' },
     ];
 
     const navigate = useNavigate();

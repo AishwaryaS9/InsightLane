@@ -13,6 +13,7 @@ import upload_area from './upload_area.svg'
 import facebook from './facebook.svg'
 import twitter from './twitter.svg'
 import linkedin from './linkedin.svg'
+import aboutus from './aboutus.jpg'
 
 export const assets = {
     logo: logo,
@@ -29,7 +30,8 @@ export const assets = {
     upload_area: upload_area,
     facebook: facebook,
     twitter: twitter,
-    linkedin: linkedin
+    linkedin: linkedin,
+    aboutus: aboutus
 }
 
 export const blogCategories = ['All', 'Technology', 'Startup', 'Lifestyle', 'Finance']

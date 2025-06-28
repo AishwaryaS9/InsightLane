@@ -14,10 +14,9 @@ const Footer = () => {
           <div>
             <h2 className="font-semibold mb-5 text-gray-800">Company</h2>
             <ul className="text-sm space-y-2">
-              <li><a href="#">Home</a></li>
-              <li><a href="#">About</a></li>
-              <li><a href="#">Categories</a></li>
-              <li><a href="#">Contact</a></li>
+              <li><a href="/">Home</a></li>
+              <li><a href="/about">About</a></li>
+              <li><a href="/contact">Contact</a></li>
             </ul>
           </div>
           <div>
@@ -25,6 +24,7 @@ const Footer = () => {
             <div className="text-sm space-y-2">
               <p>+1-212-456-7890</p>
               <p className='md:text-sm'>insightlane@example.com</p>
+              <p className='md:text-sm'>221b Elementary Avenue, NY</p>
             </div>
           </div>
         </div>
@@ -32,7 +32,7 @@ const Footer = () => {
       <p className="pt-4 text-center text-xs md:text-sm pb-5">
         Copyright  {new Date().getFullYear()} © InsightLane. All Right Reserved.
       </p>
-    </footer>
+    </footer >
 
   )
 }
