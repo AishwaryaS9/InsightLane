@@ -2,8 +2,11 @@ import fs from 'fs';
 import imagekit from '../configs/imageKit.js';
 import Blog from '../models/Blog.js';
 import Comment from '../models/Comment.js';
+import User from "../models/User.js";
 import main from '../configs/gemini.js';
+import { transporter } from "../utils/emailUtil.js";
 
+//Add Blog
 export const addBlog = async (req, res) => {
     try {
         const { title, subTitle, description, category } = JSON.parse(req.body.blog);
@@ -30,7 +33,7 @@ export const addBlog = async (req, res) => {
         });
 
         const image = optimizedImageUrl;
-        await Blog.create({
+        const newBlog = await Blog.create({
             title,
             subTitle,
             description,
@@ -40,11 +43,64 @@ export const addBlog = async (req, res) => {
             author: req.user.id,
         });
 
+        const author = await User.findById(req.user.id);
+        const admins = await User.find({ role: "admin" });
+
+        const emailContent = `
+
+             <div style="font-family: Arial, sans-serif; line-height: 1.5; color: #333;">
+                    <h1 style="font-family: 'Mulish', sans-serif; font-size: 1.5rem; font-weight: 600; display: flex; flex-wrap: wrap; margin-bottom: 20px;">
+                        <span style="color: #00C2CB;">Insight</span>
+                        <span style="color: #00C2CB;">Lane</span>
+                    </h1>
+                    <h2 style="color: #69B99D;">New Blog Added</h2>
+                    <p>Hello Admin,</p>
+                    <p>A new blog titled "${title}" has been added successfully and ready for review!</p>
+                     <p><strong>Title:</strong> ${title}</p>
+                    <p><strong>Description:</strong> ${description}</p>
+                    <p><strong>Category:</strong> ${category}</p>
+                    p><strong>Author:</strong> ${author.name} (${author.email})</p>
+                    <p>Thank you,<br />The InsightLane Team</p>
+                </div >
+        `;
+
+        const htmlContent = `
+                <div style="font-family: Arial, sans-serif; line-height: 1.5; color: #333;">
+                    <h1 style="font-family: 'Kanit', sans-serif; font-size: 1.5rem; font-weight: 600; display: flex; flex-wrap: wrap; margin-bottom: 20px;">
+                        <span style="color: #69B99D;">Insight</span>
+                        <span style="color: #555;">Lane</span>
+                    </h1>
+                    <h2 style="color: #69B99D;">New Blog Added</h2>
+                    <p>Hello,</p>
+                    <p> Your blog titled "${title}" has been added successfully and under review!</p>
+                    <p>Thank you,<br />The InsightLane Team</p>
+                </div >
+    `;
+
+        await transporter.sendMail({
+            from: `"InsightLane" < ${process.env.EMAIL_USER}> `,
+            to: author.email,
+            subject: "Your Blog Has Been Added",
+            html: htmlContent,
+        });
+
+
+        const adminEmails = admins.map(admin => admin.email).join(", ");
+        if (adminEmails) {
+            await transporter.sendMail({
+                from: `"InsightLane" < ${process.env.EMAIL_USER}> `,
+                to: adminEmails,
+                subject: "New Blog Added",
+                html: emailContent,
+            });
+        }
+
         res.json({ success: true, message: "Blog added successfully" });
     } catch (error) {
         res.json({ success: false, message: error.message });
     }
 };
+
 
 //With Search and Pagination
 export const getAllBlogs = async (req, res) => {

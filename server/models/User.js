@@ -12,6 +12,8 @@ const userSchema = new mongoose.Schema({
         twitter: { type: String },
         linkedin: { type: String },
     },
+    resetToken: { type: String },
+    resetTokenExpiry: { type: Date },
 }, { timestamps: true });
 
 const User = mongoose.model("User", userSchema);

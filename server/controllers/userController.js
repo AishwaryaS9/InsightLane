@@ -1,9 +1,10 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import fs from "fs";
+import crypto from "crypto";
 import User from "../models/User.js";
 import imagekit from "../configs/imageKit.js";
-
+import { transporter } from "../utils/emailUtil.js";
 
 const generateToken = (user) => {
     return jwt.sign(
@@ -16,6 +17,11 @@ const generateToken = (user) => {
         { expiresIn: '7d' }
     );
 };
+
+const generateResetToken = () => {
+    return crypto.randomBytes(32).toString("hex");
+};
+
 
 export const registerUser = async (req, res) => {
     try {
@@ -159,3 +165,109 @@ export const updateUserProfile = async (req, res) => {
     }
 };
 
+
+export const forgotPassword = async (req, res) => {
+    try {
+        const { email } = req.body;
+        if (!email) return res.status(400).json({ message: "Email is required" });
+
+        const user = await User.findOne({ email });
+        if (!user) return res.status(404).json({ message: "User not found" });
+
+        const resetToken = generateResetToken();
+        const resetTokenExpiry = Date.now() + 3600000;
+
+        user.resetToken = resetToken;
+        user.resetTokenExpiry = resetTokenExpiry;
+        await user.save();
+
+        const resetLink = `${process.env.CLIENT_URL}/reset-password?resetToken=${resetToken}`;
+        const htmlContent = `
+                <div style="font-family: Arial, sans-serif; line-height: 1.5; color: #333;">
+                    <h1 style="font-family: 'Mulish', sans-serif; font-size: 1.5rem; font-weight: 600; display: flex; flex-wrap: wrap; margin-bottom: 20px;">
+                        <span style="color: #00C2CB;">Insight</span>
+                        <span style="color: #00C2CB;">Lane</span>
+                    </h1>
+                    <h2 style="color: #69B99D;">Password Reset Request</h2>
+                    <p>Hello,</p>
+                    <p>You requested a password reset for your account. Please click the button below to reset your password:</p>
+                    <a href="${resetLink}" style="display: inline-block; padding: 10px 20px; margin-top: 20px; color: #fff; background-color: #69B99D; text-decoration: none; border-radius: 5px;">Reset Password</a>
+                    <p>If you did not request this, please ignore this email. The link will expire in 1 hour.</p>
+                    <p>Thank you,<br/>The InsightLane Team</p>
+                </div>
+            `;
+        const mailOptions = {
+            from: `"InsightLane" <${process.env.EMAIL_USER}>`,
+            to: email,
+            subject: "Password Reset Request",
+            html: htmlContent,
+        };
+
+        await transporter.sendMail(mailOptions);
+
+        res.json({ message: "Password reset link sent to your email" });
+    } catch (error) {
+        console.error("Error in forgot password:", error.message);
+        res.status(500).json({ message: error.message });
+    }
+};
+
+
+export const resetPassword = async (req, res) => {
+    try {
+        const { token, newPassword } = req.body;
+        if (!token || !newPassword) {
+            return res.status(400).json({ message: "Token and new password are required" });
+        }
+
+        const user = await User.findOne({
+            resetToken: token,
+            resetTokenExpiry: { $gt: Date.now() },
+        });
+
+        if (!user) {
+            return res.status(400).json({ message: "Invalid or expired token" });
+        }
+
+        const hashedPassword = await bcrypt.hash(newPassword, 10);
+        user.password = hashedPassword;
+        user.resetToken = undefined;
+        user.resetTokenExpiry = undefined;
+        await user.save();
+
+        res.json({ message: "Password reset successful" });
+    } catch (error) {
+        console.error("Error in reset password:", error.message);
+        res.status(500).json({ message: error.message });
+    }
+};
+
+
+export const changePassword = async (req, res) => {
+    try {
+        const { oldPassword, newPassword } = req.body;
+
+        if (!oldPassword || !newPassword) {
+            return res.status(400).json({ message: "Both old and new passwords are required" });
+        }
+
+        const user = await User.findById(req.user.id);
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        const isMatch = await bcrypt.compare(oldPassword, user.password);
+        if (!isMatch) {
+            return res.status(401).json({ message: "Old password is incorrect" });
+        }
+
+        const hashedPassword = await bcrypt.hash(newPassword, 10);
+        user.password = hashedPassword;
+        await user.save();
+
+        res.json({ message: "Password changed successfully" });
+    } catch (error) {
+        console.error('Error changing password:', error.message);
+        res.status(500).json({ message: error.message });
+    }
+};
