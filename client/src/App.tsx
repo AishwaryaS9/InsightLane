@@ -19,10 +19,12 @@ import Footer from './components/Footer'
 import Profile from './pages/Profile'
 import About from './pages/About'
 import Contact from './pages/Contact'
+import ForgotPassword from './pages/ForgotPassword'
+import ResetPassword from './pages/ResetPassword'
 
 const App = () => {
   const location = useLocation();
-  const hideNavbarRoutes = ['/login', '/register', '/admin', '/author'];
+  const hideNavbarRoutes = ['/login', '/register', '/forgot-password', '/resetpassword/:resetToken', '/admin', '/author'];
   const shouldHideNavbar = hideNavbarRoutes.some((route) =>
     location.pathname.startsWith(route)
   );
@@ -48,6 +50,8 @@ const App = () => {
           <Route path="/blog/:id" element={<Blog />} />
           <Route path='/about' element={<About />} />
           <Route path='/contact' element={<Contact />} />
+          <Route path='/forgot-password' element={<ForgotPassword />} />
+          <Route path='/resetPassword/:resetToken' element={<ResetPassword />} />
           {/* Admin */}
           <Route path='/admin' element={userToken && userRole === "admin" ? <Layout /> : <Login />}>
             <Route index element={<Dashbaord />} />

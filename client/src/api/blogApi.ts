@@ -104,7 +104,6 @@ export async function getBlogComment(token: string | null, blogId: string) {
 
 export async function addBlogComment(token: string | null, blogId: string, content: string) {
     const url = `${api.baseUrl}/blog/blogs/comments`;
-    console.log('api trigg')
     try {
         const response = await axios.post(url, {
             blog: blogId,
@@ -166,7 +165,6 @@ export async function updateBlog(token: string | null, blogId: string, formData:
                 'Authorization': `Bearer ${token}`
             }
         });
-        console.log("edit blog api resp", response.data)
         if (response.status === 200) {
             return response.data;
         } else {

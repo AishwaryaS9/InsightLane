@@ -5,6 +5,8 @@ import connectDB from './configs/db.js';
 import adminRouter from './routes/adminRoutes.js';
 import blogRouter from './routes/blogRoutes.js';
 import userRouter from './routes/userRoutes.js';
+import newsLetterRouter from './routes/newsLetterRoutes.js';
+import './schedulers/newLetterScheduler.js';
 
 const app = express();
 
@@ -19,7 +21,8 @@ app.use(express.json())
 app.get('/', (req, res) => res.send("API is Working"))
 app.use('/api/admin', adminRouter)
 app.use('/api/user', userRouter);
-app.use('/api/blog', blogRouter)
+app.use('/api/blog', blogRouter);
+app.use("/api/newsletter", newsLetterRouter);
 
 const PORT = process.env.PORT || 3000;
 

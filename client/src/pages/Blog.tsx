@@ -58,15 +58,27 @@ const Blog = () => {
         }
     }
 
+
     const handleRelatedBlog = async (blogId: string) => {
         try {
             const blogData = await getBlogById(blogId);
             if (blogData) {
                 setData(blogData.blog);
+
+                fetchUserProfile(blogData.blog.author._id)
+
                 const commentData = await getBlogComment(userToken, blogId);
                 if (commentData) {
                     setComments(commentData.comments);
                 }
+
+                const relatedBlogsData = await getRelatedBlogs(blogId);
+                if (relatedBlogsData) {
+                    setRelatedBlogs(relatedBlogsData.relatedBlogs);
+                } else {
+                    toast.error('Unable to load related blogs.');
+                }
+
                 scrollToTop();
             } else {
                 toast.error('Unable to load the selected blog.');
@@ -75,6 +87,7 @@ const Blog = () => {
             toast.error((error as Error).message);
         }
     };
+
 
 
     const fetchComments = async () => {

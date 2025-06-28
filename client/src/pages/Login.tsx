@@ -112,7 +112,7 @@ const Login = () => {
                                 <input className="h-5" type="checkbox" id="checkbox" />
                                 <label className="text-sm" htmlFor="checkbox">Remember me</label>
                             </div>
-                            <a className="text-sm underline" href="#">Forgot password?</a>
+                            <a className="text-sm underline" href="/forgot-password">Forgot password?</a>
                         </div>
                         <button
                             type="submit"

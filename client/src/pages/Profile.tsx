@@ -2,9 +2,12 @@ import { useState } from "react";
 import { useAppSelector } from "../redux/store/hooks";
 import { assets } from "../assets/assets";
 import EditProfileModal from "../components/EditProfileModal";
+import ChangePasswordModal from "../components/ChangePasswordModal";
 
 const Profile = () => {
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+    const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
+
     const userProfileData = useAppSelector((state) => state.userProfile.data);
 
     const handleEditProfile = () => {
@@ -13,6 +16,14 @@ const Profile = () => {
 
     const closeModal = () => {
         setIsEditModalOpen(false);
+    };
+
+    const handleChangePassword = () => {
+        setIsPasswordModalOpen(true);
+    };
+
+    const closePasswordModal = () => {
+        setIsPasswordModalOpen(false);
     };
 
     return (
@@ -65,17 +76,28 @@ const Profile = () => {
                                 <img src={assets.linkedin} className="w-6 h-6" alt="LinkedIn" />
                             </a>
                         </div>
-                        <button
-                            onClick={handleEditProfile}
-                            className="mt-4 px-6 py-2 cursor-pointer bg-primary text-white rounded-lg hover:bg-primary/75 shadow transition-all "
-                        >
-                            Edit Profile
-                        </button>
+                        <div className="space-x-4">
+                            <button
+                                onClick={handleEditProfile}
+                                className="mt-4 px-6 py-2 cursor-pointer bg-primary text-white rounded-lg hover:bg-primary/75 shadow transition-all "
+                            >
+                                Edit Profile
+                            </button>
+                            <button
+                                onClick={handleChangePassword}
+                                className="mt-4 px-6 py-2 cursor-pointer bg-primary text-white rounded-lg hover:bg-primary/75 shadow transition-all "
+                            >
+                                Change Password
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
             {isEditModalOpen && (
                 <EditProfileModal data={userProfileData} isOpen={isEditModalOpen} onViewClose={closeModal} />
+            )}
+            {isPasswordModalOpen && (
+                <ChangePasswordModal isOpen={isPasswordModalOpen} onViewClose={closePasswordModal} />
             )}
         </>
     );
