@@ -4,6 +4,7 @@ import { assets } from '../assets/assets'
 import { useState } from 'react';
 import { registerUser } from '../api/userApi';
 import toast from 'react-hot-toast';
+import { validateEmail } from '../utils/regex';
 
 const Register = () => {
     const navigate = useNavigate();
@@ -15,6 +16,10 @@ const Register = () => {
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+        if (!validateEmail(email)) {
+            toast.error("Please enter a valid email address.");
+            return;
+        }
         try {
             const data = await registerUser(name, email, password, role)
             if (data) {
@@ -104,7 +109,6 @@ const Register = () => {
                                 type="email"
                                 placeholder="Email id"
                                 className="bg-transparent text-gray-500/80 placeholder-gray-500/80 outline-none text-sm w-full h-full"
-                                required
                             />
                         </div>
 

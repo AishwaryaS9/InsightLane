@@ -1,6 +1,5 @@
 import axios from "axios";
 import api from "./endPoint";
-import { number } from "framer-motion";
 
 export async function getAllBlogs(page: number = 1, limit: number = 5, search: string = '') {
     const url = `${api.baseUrl}/blog/blogs?page=${page}&limit=${limit}&search=${search}`;

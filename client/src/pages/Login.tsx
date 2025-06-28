@@ -5,6 +5,7 @@ import { loginUser } from '../api/userApi';
 import toast from 'react-hot-toast';
 import { userLogin } from '../redux/store/slice/loginSlice';
 import { useAppDispatch } from '../redux/store/hooks';
+import { validateEmail } from '../utils/regex';
 
 const Login = () => {
     const navigate = useNavigate();
@@ -16,6 +17,10 @@ const Login = () => {
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+        if (!validateEmail(email)) {
+            toast.error("Please enter a valid email address.");
+            return;
+        }
         try {
             const data = await loginUser(email, password);
             if (data) {
@@ -82,7 +87,6 @@ const Login = () => {
                                 type="email"
                                 placeholder="Email id"
                                 className="bg-transparent text-gray-500/80 placeholder-gray-500/80 outline-none text-sm w-full h-full"
-                                required
                             />
                         </div>
                         <div className="flex items-center mt-6 w-full bg-transparent border border-gray-300/60 h-12 rounded-full overflow-hidden pl-6 gap-2">

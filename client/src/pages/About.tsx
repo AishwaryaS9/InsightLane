@@ -1,7 +1,32 @@
+import { useState } from 'react';
+import { subscribeToNewsLetter } from '../api/newsLetterApi';
 import { assets } from '../assets/assets';
 import { motion } from "framer-motion";
+import toast from 'react-hot-toast';
+import { validateEmail } from '../utils/regex';
 
 const About = () => {
+    const [email, setEmail] = useState('');
+
+    const handleSubscription = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!validateEmail(email)) {
+            toast.error("Please enter a valid email address.");
+            return;
+        }
+        try {
+            const data = await subscribeToNewsLetter(email);
+            if (data.success) {
+                toast.success(data.message);
+                setEmail('');
+            } else {
+                toast.error(data.message);
+                setEmail('');
+            }
+        } catch (error) {
+            toast.error((error as Error).message);
+        }
+    };
 
     return (
         <div className="relative flex flex-col items-center px-6 md:px-16 lg:px-24 text-secondary mt-20">
@@ -76,12 +101,14 @@ const About = () => {
                 <p className="md:text-lg text-gray-500/70 pb-8">
                     Get the latest stories and updates delivered directly to your inbox. Stay informed, stay inspired!
                 </p>
-                <form className="flex items-center justify-between max-w-2xl w-full md:h-13 h-12">
+                <form onSubmit={handleSubscription} className="flex items-center justify-between max-w-2xl w-full md:h-13 h-12">
                     <input
                         className="border border-gray-300 rounded-md h-full border-r-0 outline-none w-full rounded-r-none px-3 text-gray-500"
                         type="text"
                         placeholder="Enter your email address"
                         required
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
                     />
                     <button type="submit" className="md:px-12 px-8 h-full text-white bg-primary hover:bg-primary/75 transition-all cursor-pointer rounded-md rounded-l-none">
                         Subscribe
