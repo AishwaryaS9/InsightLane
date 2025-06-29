@@ -20,7 +20,7 @@ const Navbar = () => {
     const userToken = useAppSelector((state) => state.login.token);
     const userRole = useAppSelector((state) => state.login.role);
 
-    const userDetails = useAppSelector((state) => state.userProfile.data)
+    const userDetails = useAppSelector((state) => state.userProfile.data) || {};
 
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMenuOpen, setIsMenuOpen] = useState(false);

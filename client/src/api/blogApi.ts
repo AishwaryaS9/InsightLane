@@ -1,20 +1,6 @@
 import axios from "axios";
 import api from "./endPoint";
 
-// export async function getAllBlogs(page: number = 1, limit: number = 5, search: string = '') {
-//     const url = `${api.baseUrl}/blog/blogs?page=${page}&limit=${limit}&search=${search}`;
-
-//     try {
-//         const response = await axios.get(url);
-//         if (response.status === 200) {
-//             return response.data;
-//         }
-//     } catch (error) {
-//         console.error(error);
-//         throw error;
-//     }
-// }
-
 export async function getAllBlogs(page: number = 1, limit: number = 5, search: string = '', category: string = '') {
     const url = `${api.baseUrl}/blog/blogs?page=${page}&limit=${limit}&search=${search}&category=${category}`;
 

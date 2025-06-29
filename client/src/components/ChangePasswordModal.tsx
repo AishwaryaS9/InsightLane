@@ -1,10 +1,13 @@
-import { useState } from 'react'
+import React, { useState } from 'react'
 import toast from 'react-hot-toast';
 import { IoCloseOutline } from 'react-icons/io5'
 import { changePassword } from '../api/userApi';
 import { useAppSelector } from '../redux/store/hooks';
 
-const ChangePasswordModal = ({ isOpen, onViewClose }) => {
+const ChangePasswordModal: React.FC<{
+    isOpen: boolean;
+    onViewClose: () => void;
+}> = ({ isOpen, onViewClose }) => {
     const userToken = useAppSelector((state) => state.login.token);
 
     const [oldPassword, setOldPassword] = useState('');

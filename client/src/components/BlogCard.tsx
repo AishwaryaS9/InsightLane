@@ -1,6 +1,8 @@
+import type React from 'react';
 import { useNavigate } from 'react-router-dom';
+import type { Blogs } from '../utils/interface';
 
-const BlogCard = ({ blog }: any) => {
+const BlogCard:React.FC<{blog: Blogs}> = ({ blog }) => {
     const { title, subTitle, category, image, _id, author, createdAt } = blog;
 
     const navigate = useNavigate();

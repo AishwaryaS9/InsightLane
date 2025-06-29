@@ -1,12 +1,13 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { IoCloseOutline } from 'react-icons/io5';
 import ProfilePhotoSelector from './ProfilePhotoSelector';
 import { updateUserProfile } from '../api/userApi';
 import { useAppDispatch, useAppSelector } from '../redux/store/hooks';
 import toast from 'react-hot-toast';
 import { userProfileDetails } from '../redux/store/slice/userProfileSlice';
+import type { User } from '../utils/interface';
 
-const EditProfileModal = ({ data, isOpen, onViewClose }: any) => {
+const EditProfileModal: React.FC<{ data: User; isOpen: boolean; onViewClose: () => void; }> = ({ data, isOpen, onViewClose }) => {
     const [profilePicture, setProfilePicture] = useState<File | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [name, setName] = useState(data.name || '');

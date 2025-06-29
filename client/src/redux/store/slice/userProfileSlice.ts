@@ -1,8 +1,24 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit'
+import type { User } from '../../../utils/interface';
 
-export const initialState = {
-    data: [],
+export const initialState: { data: User } = {
+    data: {
+        profilePicture: "",
+        name: "",
+        email: "",
+        role: "",
+        bio: "",
+        socialLinks: {
+            facebook: "",
+            twitter: "",
+            linkedin: ""
+        },
+        _id: '',
+        createdAt: '',
+        updatedAt: ''
+    },
 };
+
 
 export const userProfileSlice = createSlice({
     name: "userProfile",
@@ -12,7 +28,7 @@ export const userProfileSlice = createSlice({
             state.data = action.payload.data;
         },
         clearUserProfileDetails(state) {
-            state.data = [];
+            state.data = initialState.data;
         }
 
     }

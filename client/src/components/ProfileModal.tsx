@@ -2,10 +2,14 @@ import { IoCloseOutline } from 'react-icons/io5'
 import { assets } from '../assets/assets'
 import EditProfileModal from './EditProfileModal'
 import ChangePasswordModal from './ChangePasswordModal'
-import { useState } from 'react'
+import React, { useState } from 'react'
+import type { User } from '../utils/interface'
 
-const ProfileModal = ({ userData, isProfileOpen, onProfileClose }) => {
-
+const ProfileModal: React.FC<{
+    userData: User;
+    isProfileOpen: () => void;
+    onProfileClose: () => void;
+}> = ({ userData, isProfileOpen, onProfileClose }) => {
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
 
@@ -69,7 +73,7 @@ const ProfileModal = ({ userData, isProfileOpen, onProfileClose }) => {
                         </p>
                         <div className="flex space-x-4 mb-4 text-xl">
                             <a
-                                href={userData.facebook || "http://facebook.com"}
+                                href={userData?.socialLinks?.facebook || "http://facebook.com"}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="hover:-translate-y-0.5 transition"
@@ -77,7 +81,7 @@ const ProfileModal = ({ userData, isProfileOpen, onProfileClose }) => {
                                 <img src={assets.facebook} className="w-6 h-6" alt="Facebook" />
                             </a>
                             <a
-                                href={userData.twitter || "http://x.com"}
+                                href={userData?.socialLinks?.twitter || "http://x.com"}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="hover:-translate-y-0.5 transition"
@@ -85,7 +89,7 @@ const ProfileModal = ({ userData, isProfileOpen, onProfileClose }) => {
                                 <img src={assets.twitter} className="w-6 h-6" alt="Twitter" />
                             </a>
                             <a
-                                href={userData.linkedin || "http://linkedin.com"}
+                                href={userData?.socialLinks?.linkedin || "http://linkedin.com"}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="hover:-translate-y-0.5 transition"

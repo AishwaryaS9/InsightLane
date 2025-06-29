@@ -8,7 +8,8 @@ const Profile = () => {
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
 
-    const userProfileData = useAppSelector((state) => state.userProfile.data);
+    const userProfileData = useAppSelector((state) => state.userProfile.data) || {};
+
 
     const handleEditProfile = () => {
         setIsEditModalOpen(true);

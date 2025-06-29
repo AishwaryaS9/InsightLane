@@ -45,7 +45,6 @@ const Dashboard = () => {
                 Dashboard
             </h1>
 
-            {/* Stats Cards */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                 {[
                     { icon: <PiNotebook className="w-6 h-6 sm:w-8 sm:h-8 text-blue-500" />, label: "Blogs", value: dashboardData.blogs },
@@ -67,7 +66,6 @@ const Dashboard = () => {
                 ))}
             </div>
 
-            {/* Latest Blogs */}
             <section className="mt-8 sm:mt-10">
                 <div className="flex items-center gap-3 text-gray-700 mb-4">
                     <PiNoteLight className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600" />

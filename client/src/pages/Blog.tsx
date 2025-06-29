@@ -5,7 +5,7 @@ import Navbar from '../components/Navbar';
 import Moment from 'moment';
 import { addBlogComment, getBlogById, getBlogComment, getRelatedBlogs } from '../api/blogApi';
 import toast from 'react-hot-toast';
-import type { Comment } from '../utils/interface';
+import type { Blogs, Comment, RelatedBlogs, User } from '../utils/interface';
 import { LiaComments } from 'react-icons/lia';
 import { useAppSelector } from '../redux/store/hooks';
 import { getUserProfileById } from '../api/userApi';
@@ -13,11 +13,11 @@ import { getUserProfileById } from '../api/userApi';
 const Blog = () => {
     const { id } = useParams();
 
-    const [data, setData] = useState(null);
+    const [data, setData] = useState<Blogs | null>(null);
     const [comments, setComments] = useState<Comment[]>([]);
     const [content, setContent] = useState('');
-    const [relatedBlogs, setRelatedBlogs] = useState([]);
-    const [authorProfile, setAuthorProfile] = useState(null);
+    const [relatedBlogs, setRelatedBlogs] = useState<RelatedBlogs[]>([]);
+    const [authorProfile, setAuthorProfile] = useState<User | null>(null);
 
     const userToken = useAppSelector((state) => state.login.token);
 
@@ -29,6 +29,7 @@ const Blog = () => {
     };
 
     const fetchBlogData = async () => {
+        if (!id) return;
         try {
             const blogData = await getBlogById(id)
 
@@ -75,6 +76,7 @@ const Blog = () => {
                 const relatedBlogsData = await getRelatedBlogs(blogId);
                 if (relatedBlogsData) {
                     setRelatedBlogs(relatedBlogsData.relatedBlogs);
+                    console.log('resp', relatedBlogsData.relatedBlogs)
                 } else {
                     toast.error('Unable to load related blogs.');
                 }
@@ -88,9 +90,8 @@ const Blog = () => {
         }
     };
 
-
-
     const fetchComments = async () => {
+        if (!id) return;
         try {
             const data = await getBlogComment(userToken, id)
             if (data) {
@@ -104,6 +105,7 @@ const Blog = () => {
     }
 
     const addComment = async (e: React.FormEvent<HTMLFormElement>) => {
+        if (!id) return;
         e.preventDefault();
         if (!userToken) {
             toast.error('You are not logged in. Please log in to add a comment.');
@@ -122,6 +124,7 @@ const Blog = () => {
     }
 
     const fetchRelatedBlogs = async () => {
+        if (!id) return;
         try {
             const data = await getRelatedBlogs(id);
             if (data) {
@@ -134,12 +137,15 @@ const Blog = () => {
         }
     }
 
-
     useEffect(() => {
+        if (!id) {
+            toast.error("Invalid blog ID.");
+            return;
+        }
         fetchBlogData();
         fetchComments();
         fetchRelatedBlogs();
-    }, [])
+    }, [id]);
 
     return data ? (
         <div className='relative'>

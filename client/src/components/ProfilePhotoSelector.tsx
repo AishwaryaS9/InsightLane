@@ -1,9 +1,10 @@
-import { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { LuUser, LuUpload, LuTrash } from 'react-icons/lu';
 import { assets } from '../assets/assets';
+import type { ProfilePhotoSelectorProps } from '../utils/interface';
 
-const ProfilePhotoSelector = ({ image, setImage }) => {
-    const inputRef = useRef(null);
+const ProfilePhotoSelector: React.FC<ProfilePhotoSelectorProps> = ({ image, setImage }) => {
+    const inputRef = useRef<HTMLInputElement | null>(null);
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
     useEffect(() => {
@@ -20,8 +21,8 @@ const ProfilePhotoSelector = ({ image, setImage }) => {
         }
     }, [image]);
 
-    const handleImageChange = (event) => {
-        const file = event.target.files[0];
+    const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0];
         if (file) {
             setImage(file);
             const preview = URL.createObjectURL(file);
@@ -39,7 +40,7 @@ const ProfilePhotoSelector = ({ image, setImage }) => {
     };
 
     const onChooseFile = () => {
-        inputRef.current.click();
+        inputRef?.current?.click();
     };
 
     return (

@@ -26,6 +26,7 @@ const BlogTableItem: React.FC<BlogTableItemProps> = ({  blog, fetchBlogs, index,
     };
 
    const deleteBlog = () => {
+    if(setAlert){
         setAlert({
             message: "Are you sure you want to delete this blog?",
             onConfirm: async () => {
@@ -42,6 +43,7 @@ const BlogTableItem: React.FC<BlogTableItemProps> = ({  blog, fetchBlogs, index,
                 }
             },
         });
+    }
     };
 
     const togglePublish = async () => {

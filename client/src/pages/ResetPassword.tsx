@@ -12,6 +12,8 @@ const ResetPassword = () => {
   const { resetToken } = useParams();
 
   const handleResetPassword = async () => {
+    if (!resetToken) return;
+
     if (newPassword !== confirmPassword) {
       toast.error("New password and confirm password do not match.");
       return;

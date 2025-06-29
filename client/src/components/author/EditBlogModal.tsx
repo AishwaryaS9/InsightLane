@@ -1,13 +1,19 @@
 import { IoCloseOutline } from 'react-icons/io5';
 import { assets, dropDownCategories } from '../../assets/assets';
-import { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Quill from 'quill';
 import { useAppSelector } from '../../redux/store/hooks';
 import { generateAIContent, updateBlog } from '../../api/blogApi';
 import toast from 'react-hot-toast';
 import { parse } from 'marked';
+import type { Blogs } from '../../utils/interface';
 
-const EditBlogModal = ({ data, isOpen, onViewClose, onRefresh }: any) => {
+const EditBlogModal: React.FC<{
+    data: Blogs;
+    isOpen: () => void;
+    onViewClose: () => void;
+    onRefresh: () => void;
+}> = ({ data, isOpen, onViewClose, onRefresh }) => {
     const [error, setError] = useState<{ field: string; message: string }[]>([]);
     const [loading, setLoading] = useState(false);
     const [isEditing, setIsEditing] = useState(false);

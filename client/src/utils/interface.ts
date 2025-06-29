@@ -3,23 +3,46 @@ export type SetAlertType = React.Dispatch<React.SetStateAction<{
     onConfirm: () => void;
 } | null>>;
 
+
 export interface BlogTableItemProps {
     blog: Blogs;
     fetchBlogs: () => Promise<void>;
     index: number;
-    setAlert: React.Dispatch<React.SetStateAction<{
+    setAlert?: React.Dispatch<React.SetStateAction<{
         message: string;
         onConfirm: () => void;
     } | null>>;
 }
 
+export interface Author {
+    email: string;
+    name: string;
+    role: string;
+    _id: string;
+}
+
 export interface Blogs {
+    _id: string;
+    author: Author;
+    title: string;
+    subTitle: string;
+    description: string;
+    category: string;
+    image: string;
+    isPublished: boolean;
+    createdAt: string;
+    updatedAt: string;
+    message: string;
+}
+
+export interface RelatedBlogs {
     _id: string;
     title: string;
     subTitle: string;
     description: string;
     category: string;
     image: string;
+    author: string;
     isPublished: boolean;
     createdAt: string;
     updatedAt: string;
@@ -46,6 +69,11 @@ export interface CommentTableItemProps {
 }
 
 export interface User {
+    socialLinks: {
+        facebook: string;
+        twitter: string;
+        linkedin: string;
+    };
     _id: string;
     name: string;
     email: string;
@@ -57,13 +85,27 @@ export interface User {
 }
 
 export interface UserData {
+    totalUsers: number;
     totalAdmins: number;
     totalAuthors: number;
     totalReaders: number;
-    totalUsers: number;
     currentPage: number;
     totalPages: number;
     users: User[];
 }
 
+export interface UserProfileData {
+    profilePicture: string;
+    name: string;
+    email: string;
+    role: string;
+    bio: string;
+    facebook: string;
+    twitter: string;
+    linkedin: string;
+}
 
+export interface ProfilePhotoSelectorProps {
+    image: File | string | null;
+    setImage: (image: File | null) => void;
+}
