@@ -16,7 +16,8 @@ const BlogCategories = () => {
 
     const getBlogData = async () => {
         try {
-            const data = await getAllBlogs(page, 8, search);
+            const category = menu === "All" ? "" : menu;
+            const data = await getAllBlogs(page, 8, search, category);
             if (data) {
                 setBlogs(data.blogs);
                 setTotalPages(data.totalPages || 1);
@@ -36,32 +37,31 @@ const BlogCategories = () => {
         }
     };
 
-    const filteredBlogs = blogs.filter((blog: Blogs) => menu === "All" ? true : blog?.category === menu);
 
     return (
         <div>
-            {/* Categories */}
             <div className='flex justify-center gap-4 sm:gap-8 my-10 relative'>
                 {blogCategories.map((item) => (
                     <div key={item} className='relative'>
-                        <button onClick={() => { setMenu(item); setPage(1); }}
-                            className={`cursor-pointer text-gray-500 ${menu === item && 'text-white px-4 pt-0.5'}`}>
+                        <button
+                            onClick={() => { setMenu(item); setPage(1); }}
+                            className={`cursor-pointer text-gray-500 ${menu === item && 'text-white px-4 pt-0.5'}`}
+                        >
                             {item}
                             {menu === item && (
-                                <motion.div layoutId='underline'
+                                <motion.div
+                                    layoutId='underline'
                                     transition={{ type: 'spring', stiffness: 500, damping: 30 }}
-                                    className='absolute left-0 right-0 top-0 h-7 -z-1 bg-primary rounded-full'>
-                                </motion.div>
+                                    className='absolute left-0 right-0 top-0 h-7 -z-1 bg-primary rounded-full'
+                                />
                             )}
                         </button>
                     </div>
                 ))}
             </div>
 
-            {/* Search */}
             <div className='flex justify-center mb-16'>
-                <div className='flex justify-between max-w-lg mx-auto w-full sm:w-3/4 md:w-2/3
-                border border-gray-300 bg-white rounded overflow-hidden'>
+                <div className='flex justify-between max-w-lg mx-auto w-full sm:w-3/4 md:w-2/3 border border-gray-300 bg-white rounded overflow-hidden'>
                     <input
                         onChange={(e) => {
                             setSearch(e.target.value);
@@ -74,18 +74,16 @@ const BlogCategories = () => {
                     />
                     <button
                         type='submit'
-                        className='bg-primary text-white px-8 py-2 m-1.5 rounded hover:scale-105 
-                        transition-all cursor-pointer'>
+                        className='bg-primary text-white px-8 py-2 m-1.5 rounded hover:scale-105 transition-all cursor-pointer'
+                    >
                         Search
                     </button>
                 </div>
             </div>
 
-            {/* Blog Cards or No Blogs Message */}
-            <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4
-            gap-8 mb-24 mx-8 sm:mx-16 xl:mx-40'>
-                {filteredBlogs.length > 0 ? (
-                    filteredBlogs.map((blog) =>
+            <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-8 mb-24 mx-8 sm:mx-16 xl:mx-40'>
+                {blogs.length > 0 ? (
+                    blogs.map((blog) =>
                         <BlogCard key={blog?._id} blog={blog} />
                     )
                 ) : (
@@ -95,7 +93,6 @@ const BlogCategories = () => {
                 )}
             </div>
 
-            {/* Pagination */}
             <Pagination
                 page={page}
                 totalPages={totalPages}
@@ -104,8 +101,5 @@ const BlogCategories = () => {
         </div>
     );
 };
-
-
-
 
 export default BlogCategories;

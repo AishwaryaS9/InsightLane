@@ -103,9 +103,10 @@ export const addBlog = async (req, res) => {
 
 
 //With Search and Pagination
+
 export const getAllBlogs = async (req, res) => {
     try {
-        const { search, page = 1, limit = 10 } = req.query;
+        const { search, category, page = 1, limit = 10 } = req.query;
 
         let filter = { isPublished: true };
 
@@ -116,6 +117,10 @@ export const getAllBlogs = async (req, res) => {
                 { category: { $regex: search, $options: "i" } },
                 { description: { $regex: search, $options: "i" } },
             ];
+        }
+
+        if (category) {
+            filter.category = { $regex: category, $options: "i" };
         }
 
         const pageInt = parseInt(page, 10);

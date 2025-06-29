@@ -1,19 +1,31 @@
 import { useNavigate } from 'react-router-dom';
 import { assets } from '../assets/assets';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { loginUser } from '../api/userApi';
 import toast from 'react-hot-toast';
 import { userLogin } from '../redux/store/slice/loginSlice';
 import { useAppDispatch } from '../redux/store/hooks';
 import { validateEmail } from '../utils/regex';
+import { PiEyeLight, PiEyeSlashLight } from "react-icons/pi";
+
 
 const Login = () => {
     const navigate = useNavigate();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [token, setToken] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
+    const [rememberMe, setRememberMe] = useState(false);
 
     const dispatch = useAppDispatch();
+
+    useEffect(() => {
+        const savedEmail = localStorage.getItem('rememberedEmail');
+        if (savedEmail) {
+            setEmail(savedEmail);
+            setRememberMe(true);
+        }
+    }, []);
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -26,6 +38,11 @@ const Login = () => {
             if (data) {
                 setToken(data.token);
                 dispatch(userLogin({ token: data.token, userId: data.id, role: data.role }));
+                if (rememberMe) {
+                    localStorage.setItem('rememberedEmail', email);
+                } else {
+                    localStorage.removeItem('rememberedEmail');
+                }
                 toast.success('Logged in successfully!');
                 navigate('/');
             } else {
@@ -105,15 +122,28 @@ const Login = () => {
                             <input
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
-                                type="password"
+                                type={showPassword ? 'text' : 'password'}
                                 placeholder="Password"
                                 className="bg-transparent text-gray-500/80 placeholder-gray-500/80 outline-none text-sm w-full h-full"
                                 required
                             />
+                            <button
+                                type="button"
+                                onClick={() => setShowPassword(!showPassword)}
+                                className="pr-4 text-gray-500/80"
+                            >
+                                {showPassword ? <PiEyeSlashLight /> : <PiEyeLight />}
+                            </button>
                         </div>
                         <div className="w-full flex items-center justify-between mt-8 text-gray-500/80">
                             <div className="flex items-center gap-2">
-                                <input className="h-5" type="checkbox" id="checkbox" />
+                                <input
+                                    className="h-5"
+                                    type="checkbox"
+                                    id="checkbox"
+                                    checked={rememberMe}
+                                    onChange={() => setRememberMe(!rememberMe)}
+                                />
                                 <label className="text-sm" htmlFor="checkbox">Remember me</label>
                             </div>
                             <a className="text-sm underline" href="/forgot-password">Forgot password?</a>

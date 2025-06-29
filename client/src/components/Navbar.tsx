@@ -5,6 +5,7 @@ import { clearLogin } from "../redux/store/slice/loginSlice";
 import { useAppDispatch, useAppSelector } from "../redux/store/hooks";
 import { clearUserProfileDetails } from "../redux/store/slice/userProfileSlice";
 import ProfileModal from "./ProfileModal";
+import toast from "react-hot-toast";
 
 
 const Navbar = () => {
@@ -46,6 +47,7 @@ const Navbar = () => {
             dispatch(clearLogin())
             dispatch(clearUserProfileDetails())
             navigate('/')
+            toast.success("Logged out successfully!")
         }
     }
 

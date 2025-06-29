@@ -114,6 +114,7 @@ const Blog = () => {
             if (data) {
                 toast.success(data.message)
                 setContent('')
+                fetchComments()
             }
         } catch (error) {
             toast.error((error as Error).message);

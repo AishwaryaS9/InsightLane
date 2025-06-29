@@ -69,33 +69,44 @@ export const approveCommentById = async (req, res) => {
     }
 }
 
-
-export const getUsersDetails = async (req, res) => {
-    try {
-        const users = await User.find({}, 'name email role profilePicture createdAt')
-            .sort({ createdAt: -1 })
-            .lean();
-        const formattedUsers = users.map(user => ({
-            ...user,
-            profilePicture: user.profilePicture || null,
-        }));
-
-        const authors = formattedUsers.filter(user => user.role === 'author');
-        const readers = formattedUsers.filter(user => user.role === 'reader');
-        const admins = formattedUsers.filter(user => user.role === 'admin');
-
-        const response = {
-            totalUsers: formattedUsers.length,
-            totalAuthors: authors.length,
-            totalReaders: readers.length,
-            totalAdmins: admins.length,
-            users: formattedUsers,
-        };
-
-        res.json({ success: true, data: response });
-    } catch (error) {
-        res.status(500).json({ success: false, message: error.message });
+    export const disApproveCommentById = async (req, res) => {
+        try {
+            const { id } = req.body;
+            await Comment.findByIdAndUpdate(id, { isApproved: false });
+            res.json({ success: true, message: "Comment disapproved successfully" })
+        } catch (error) {
+            res.json({ success: false, message: error.message })
+        }
     }
-};
+
+
+
+    export const getUsersDetails = async (req, res) => {
+        try {
+            const users = await User.find({}, 'name email role profilePicture createdAt')
+                .sort({ createdAt: -1 })
+                .lean();
+            const formattedUsers = users.map(user => ({
+                ...user,
+                profilePicture: user.profilePicture || null,
+            }));
+
+            const authors = formattedUsers.filter(user => user.role === 'author');
+            const readers = formattedUsers.filter(user => user.role === 'reader');
+            const admins = formattedUsers.filter(user => user.role === 'admin');
+
+            const response = {
+                totalUsers: formattedUsers.length,
+                totalAuthors: authors.length,
+                totalReaders: readers.length,
+                totalAdmins: admins.length,
+                users: formattedUsers,
+            };
+
+            res.json({ success: true, data: response });
+        } catch (error) {
+            res.status(500).json({ success: false, message: error.message });
+        }
+    };
 
 

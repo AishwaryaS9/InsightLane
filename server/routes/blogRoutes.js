@@ -25,6 +25,7 @@ router.put('/author/:id/edit', upload.single('image'), auth, authorize(['author'
 router.patch('/blogs/toggle-publish', auth, authorize(['admin']), blogController.togglePublish);
 router.delete('/blogs', auth, authorize(['author', 'admin']), blogController.deleteBlogById);
 router.post('/blogs/approve-comment', auth, authorize(['admin']), adminController.approveCommentById);
+router.post('/blogs/disapprove-comment', auth, authorize(['admin']), adminController.disApproveCommentById);
 router.delete('/blogs/delete-comment', auth, authorize(['admin']), adminController.deleteCommentById);
 
 export default router;

@@ -1,7 +1,16 @@
+export type SetAlertType = React.Dispatch<React.SetStateAction<{
+    message: string;
+    onConfirm: () => void;
+} | null>>;
+
 export interface BlogTableItemProps {
     blog: Blogs;
     fetchBlogs: () => Promise<void>;
     index: number;
+    setAlert: React.Dispatch<React.SetStateAction<{
+        message: string;
+        onConfirm: () => void;
+    } | null>>;
 }
 
 export interface Blogs {

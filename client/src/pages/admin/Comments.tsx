@@ -7,7 +7,8 @@ import CommentTableItem from '../../components/admin/CommentTableItem';
 import Pagination from '../../components/Pagination';
 
 const Comments = () => {
-    const [comments, setComments] = useState<Comment[]>([]);
+    const [allComments, setAllComments] = useState<Comment[]>([]);
+    const [filteredComments, setFilteredComments] = useState<Comment[]>([]);
     const [filter, setFilter] = useState('Not Approved');
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
@@ -16,10 +17,9 @@ const Comments = () => {
 
     const fetchComments = async () => {
         try {
-            const data = await getAllComments(userToken, page, 3);
+            const data = await getAllComments(userToken, 1, 1000);
             if (data) {
-                setComments(data.data.comments);
-                setTotalPages(data.data.pagination.totalPages || 1);
+                setAllComments(data.data.comments);
             } else {
                 toast.error(data.message);
             }
@@ -30,7 +30,19 @@ const Comments = () => {
 
     useEffect(() => {
         fetchComments();
-    }, [page]);
+    }, []);
+
+    useEffect(() => {
+        const filtered = allComments.filter((comment) =>
+            filter === 'Approved' ? comment.isApproved : !comment.isApproved
+        );
+
+        const startIndex = (page - 1) * 5;
+        const endIndex = startIndex + 5;
+        setFilteredComments(filtered.slice(startIndex, endIndex));
+
+        setTotalPages(Math.ceil(filtered.length / 5));
+    }, [allComments, filter, page]);
 
     const handlePageChange = (newPage: number) => {
         if (newPage >= 1 && newPage <= totalPages) {
@@ -46,7 +58,10 @@ const Comments = () => {
                 </h1>
                 <div className="flex gap-2 sm:gap-4">
                     <button
-                        onClick={() => setFilter('Approved')}
+                        onClick={() => {
+                            setFilter('Approved');
+                            setPage(1);
+                        }}
                         className={`px-3 sm:px-4 py-2 text-sm font-medium rounded-lg shadow-md transition-all cursor-pointer ${filter === 'Approved'
                             ? 'bg-blue-300 text-white'
                             : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
@@ -55,7 +70,10 @@ const Comments = () => {
                         Approved
                     </button>
                     <button
-                        onClick={() => setFilter('Not Approved')}
+                        onClick={() => {
+                            setFilter('Not Approved');
+                            setPage(1);
+                        }}
                         className={`px-3 sm:px-4 py-2 text-sm font-medium rounded-lg shadow-md transition-all cursor-pointer ${filter === 'Not Approved'
                             ? 'bg-blue-300 text-white'
                             : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
@@ -76,49 +94,34 @@ const Comments = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {comments.length === 0 ? (
-                            <tr>
-                                <td colSpan={3} className="text-center py-10 text-gray-500">
-                                    No comments available.
-                                </td>
-                            </tr>
-                        ) : comments
-                            .filter((comment) => {
-                                if (filter === 'Approved') return comment.isApproved === true;
-                                return comment.isApproved === false;
-                            })
-                            .length === 0 ? (
+                        {filteredComments.length === 0 ? (
                             <tr>
                                 <td colSpan={3} className="text-center py-10 text-gray-500">
                                     No comments found.
                                 </td>
                             </tr>
                         ) : (
-                            comments
-                                .filter((comment) => {
-                                    if (filter === 'Approved') return comment.isApproved === true;
-                                    return comment.isApproved === false;
-                                })
-                                .map((comment) => (
-                                    <CommentTableItem
-                                        key={comment._id}
-                                        comment={comment}
-                                        fetchComments={fetchComments}
-                                    />
-                                ))
+                            filteredComments.map((comment) => (
+                                <CommentTableItem
+                                    key={comment._id}
+                                    comment={comment}
+                                    fetchComments={fetchComments}
+                                />
+                            ))
                         )}
                     </tbody>
                 </table>
             </div>
 
-            {/* Pagination */}
-            <div className="my-15">
-                <Pagination
-                    page={page}
-                    totalPages={totalPages}
-                    onPageChange={handlePageChange}
-                />
-            </div>
+            {totalPages > 1 && (
+                <div className="my-15">
+                    <Pagination
+                        page={page}
+                        totalPages={totalPages}
+                        onPageChange={handlePageChange}
+                    />
+                </div>
+            )}
         </div>
     );
 };

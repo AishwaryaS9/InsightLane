@@ -6,6 +6,7 @@ import { getDashboardData } from '../../api/dashboardApi';
 import { useAppSelector } from '../../redux/store/hooks';
 import BlogTableItem from '../../components/admin/BlogTableItem';
 import type { Blogs } from '../../utils/interface';
+import AlertModal from '../../components/AlertModal';
 
 const Dashboard = () => {
     const [dashboardData, setDashboardData] = useState({
@@ -14,6 +15,10 @@ const Dashboard = () => {
         drafts: 0,
         recentBlogs: [],
     });
+    const [alertConfig, setAlertConfig] = useState<{
+        message: string;
+        onConfirm: () => void;
+    } | null>(null);
 
     const userToken = useAppSelector((state) => state.login.token);
 
@@ -88,6 +93,7 @@ const Dashboard = () => {
                                         blog={blog}
                                         fetchBlogs={fetchDashboardData}
                                         index={index + 1}
+                                        setAlert={setAlertConfig}
                                     />
                                 ))
                             ) : (
@@ -104,6 +110,18 @@ const Dashboard = () => {
                     </table>
                 </div>
             </section>
+            {alertConfig && (
+                <div className="fixed inset-0 flex items-center justify-center z-50">
+                    <AlertModal
+                        message={alertConfig.message}
+                        onConfirm={() => {
+                            alertConfig.onConfirm();
+                            setAlertConfig(null);
+                        }}
+                        onCancel={() => setAlertConfig(null)}
+                    />
+                </div>
+            )}
         </div>
     );
 };
