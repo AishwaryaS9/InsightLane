@@ -42,6 +42,11 @@ const Users = () => {
         }
     };
 
+    const handleUserDeleted = (deletedUserId: string) => {
+        setUserInfo((prevUsers) => prevUsers.filter((user) => user._id !== deletedUserId));
+    };
+
+
 
     return (
         <div className="w-full min-h-screen bg-blue-50/50 p-4 sm:p-6 flex flex-col">
@@ -78,7 +83,7 @@ const Users = () => {
                 ) : (
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
                         {userInfo.map((user) => (
-                            <UserCard key={user?._id} userInfo={user} />
+                            <UserCard key={user?._id} userInfo={user} onUserDeleted={handleUserDeleted} />
                         ))}
                     </div>
                 )}

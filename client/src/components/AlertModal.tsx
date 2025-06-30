@@ -4,6 +4,7 @@ const AlertModal: React.FC<{
     message: string;
     onConfirm: () => void;
     onCancel: () => void;
+
 }> = ({ message, onConfirm, onCancel }) => {
     return (
         <div

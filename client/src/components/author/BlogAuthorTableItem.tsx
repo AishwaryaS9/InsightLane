@@ -1,7 +1,7 @@
 import React from 'react'
-import type { BlogTableItemProps } from '../../utils/interface';
+import type { BlogAuthorTableItemProps } from '../../utils/interface';
 
-const BlogAuthorTableItem: React.FC<BlogTableItemProps> = ({ blog, fetchBlogs, index }) => {
+const BlogAuthorTableItem: React.FC<BlogAuthorTableItemProps> = ({ blog, fetchBlogs, index }) => {
     const { title, createdAt } = blog;
     const BlogDate = new Date(createdAt);
 

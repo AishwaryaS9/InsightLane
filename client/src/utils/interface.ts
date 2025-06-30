@@ -12,6 +12,17 @@ export interface BlogTableItemProps {
         message: string;
         onConfirm: () => void;
     } | null>>;
+    onSelectBlog: (blog: Blogs) => void;
+}
+
+export interface BlogAuthorTableItemProps {
+    blog: Blogs;
+    fetchBlogs: () => Promise<void>;
+    index: number;
+    setAlert?: React.Dispatch<React.SetStateAction<{
+        message: string;
+        onConfirm: () => void;
+    } | null>>;
 }
 
 export interface Author {
@@ -33,6 +44,7 @@ export interface Blogs {
     createdAt: string;
     updatedAt: string;
     message: string;
+    authorName: string;
 }
 
 export interface RelatedBlogs {

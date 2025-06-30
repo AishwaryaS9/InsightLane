@@ -40,7 +40,7 @@ export async function getAllComments(token: string | null, page: number = 1, lim
             return response.data;
         }
     } catch (error) {
-        console.log(error)
+        console.error(error)
     }
 }
 

@@ -13,7 +13,7 @@ const roleColors: Record<string, string> = {
     author: 'bg-green-500',
 };
 
-const UserCard: React.FC<{ userInfo: User }> = ({ userInfo }) => {
+const UserCard: React.FC<{ userInfo: User, onUserDeleted: (userId: string) => void }> = ({ userInfo, onUserDeleted }) => {
 
     const [showModal, setShowModal] = useState(false);
 
@@ -44,6 +44,7 @@ const UserCard: React.FC<{ userInfo: User }> = ({ userInfo }) => {
             const data = await deleteUserApi(userToken, userInfo._id)
             if (data) {
                 toast.success(data.message)
+                onUserDeleted(userInfo._id);
             } else {
                 toast.error(data.message)
             }

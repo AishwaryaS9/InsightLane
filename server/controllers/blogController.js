@@ -131,21 +131,25 @@ export const getAllBlogs = async (req, res) => {
         const blogs = await Blog.find(filter)
             .populate('author', 'name email role')
             .skip((pageInt - 1) * limitInt)
-            .limit(limitInt);
+            .limit(limitInt)
+            .lean();
+
+        const blogsWithAuthorName = blogs.map(blog => ({
+            ...blog,
+            authorName: blog.author?.name || "Unknown",
+        }));
 
         res.json({
             success: true,
             totalBlogs,
             currentPage: pageInt,
             totalPages: Math.ceil(totalBlogs / limitInt),
-            blogs,
+            blogs: blogsWithAuthorName,
         });
     } catch (error) {
         res.json({ success: false, message: error.message });
     }
 };
-
-
 
 export const getBlogById = async (req, res) => {
     try {

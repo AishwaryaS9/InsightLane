@@ -7,6 +7,7 @@ import { useAppSelector } from '../../redux/store/hooks';
 import BlogTableItem from '../../components/admin/BlogTableItem';
 import type { Blogs } from '../../utils/interface';
 import AlertModal from '../../components/AlertModal';
+import BlogModal from '../../components/author/BlogModal';
 
 const Dashboard = () => {
     const [dashboardData, setDashboardData] = useState({
@@ -19,6 +20,8 @@ const Dashboard = () => {
         message: string;
         onConfirm: () => void;
     } | null>(null);
+
+    const [selectedBlog, setSelectedBlog] = useState<Blogs | null>(null);
 
     const userToken = useAppSelector((state) => state.login.token);
 
@@ -92,6 +95,7 @@ const Dashboard = () => {
                                         fetchBlogs={fetchDashboardData}
                                         index={index + 1}
                                         setAlert={setAlertConfig}
+                                        onSelectBlog={setSelectedBlog}
                                     />
                                 ))
                             ) : (
@@ -119,6 +123,9 @@ const Dashboard = () => {
                         onCancel={() => setAlertConfig(null)}
                     />
                 </div>
+            )}
+            {selectedBlog && (
+                <BlogModal blog={selectedBlog} onViewClose={() => setSelectedBlog(null)} />
             )}
         </div>
     );

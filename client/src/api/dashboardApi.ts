@@ -29,6 +29,6 @@ export async function getAuthorDashboardData(token: string | null) {
             return response.data;
         }
     } catch (error) {
-        console.log(error)
+        console.error(error)
     }
 }

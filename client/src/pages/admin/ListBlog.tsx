@@ -4,11 +4,13 @@ import toast from 'react-hot-toast';
 import type { Blogs } from '../../utils/interface';
 import { getAllBlogs } from '../../api/blogApi';
 import Pagination from '../../components/Pagination';
+import BlogModal from '../../components/author/BlogModal';
 
 const ListBlog = () => {
     const [blogs, setBlogs] = useState<Blogs[]>([]);
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
+    const [selectedBlog, setSelectedBlog] = useState<Blogs | null>(null);
 
     const fetchBlogs = async () => {
         try {
@@ -61,6 +63,7 @@ const ListBlog = () => {
                                     blog={blog}
                                     fetchBlogs={fetchBlogs}
                                     index={(page - 1) * 5 + index + 1}
+                                    onSelectBlog={setSelectedBlog}
                                 />
                             ))
                         ) : (
@@ -76,9 +79,10 @@ const ListBlog = () => {
                     </tbody>
                 </table>
             </div>
+            {selectedBlog && (
+                <BlogModal blog={selectedBlog} onViewClose={() => setSelectedBlog(null)} />
+            )}
 
-
-            {/* Pagination */}
             <div className="my-15">
                 <Pagination
                     page={page}
