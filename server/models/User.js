@@ -14,6 +14,7 @@ const userSchema = new mongoose.Schema({
     },
     resetToken: { type: String },
     resetTokenExpiry: { type: Date },
+    deleted: { type: Boolean, default: false },
 }, { timestamps: true });
 
 const User = mongoose.model("User", userSchema);

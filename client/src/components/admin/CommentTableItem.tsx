@@ -104,7 +104,7 @@ const CommentTableItem: React.FC<CommentTableItemProps> = ({ comment, fetchComme
                                 </span>
                                 <button
                                     onClick={disapproveBlogComment}
-                                    className="p-1 transition-all text-xs relative group"
+                                    className="p-1 transition-all text-xs relative group  cursor-pointer"
                                     aria-label="Disapprove Comment"
                                 >
                                     <FaTimesCircle className="w-5 h-5  text-yellow-500" />
@@ -116,7 +116,7 @@ const CommentTableItem: React.FC<CommentTableItemProps> = ({ comment, fetchComme
                         )}
                         <button
                             onClick={handleDeleteClick}
-                            className="p-2 rounded-full bg-red-50 hover:bg-red-100 text-red-500 shadow hover:shadow-md transition-all"
+                            className="p-2 rounded-full bg-red-50 hover:bg-red-100 text-red-500 shadow hover:shadow-md transition-all cursor-pointer"
                             aria-label="Delete Comment"
                         >
                             <RiDeleteBin6Line className="w-5 h-5" />

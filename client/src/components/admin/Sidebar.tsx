@@ -7,6 +7,7 @@ import { LuUser } from "react-icons/lu";
 import { HiMenuAlt3 } from "react-icons/hi";
 import { IoClose } from "react-icons/io5";
 import { BiUser } from 'react-icons/bi';
+import { MdOutlinePostAdd } from 'react-icons/md';
 
 const Sidebar = () => {
     const [isOpen, setIsOpen] = useState(false);
@@ -31,6 +32,13 @@ const Sidebar = () => {
                 cursor-pointer ${isActive && "bg-primary/10 border-r-4 border-primary"}`}>
                     <RiHome3Line className="w-6" />
                     <p className="text-base">Dashboard</p>
+                </NavLink>
+
+                <NavLink to='/admin/addBlog'
+                    className={({ isActive }) => `flex items-center gap-4 py-3.5 px-4
+                                cursor-pointer ${isActive && "bg-primary/10 border-r-4 border-primary"}`} >
+                    <MdOutlinePostAdd className="w-6" />
+                    <p className="text-base">Add Blogs</p>
                 </NavLink>
 
                 <NavLink to='/admin/listBlog'

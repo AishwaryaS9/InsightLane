@@ -92,9 +92,7 @@ const MyBlogs = () => {
                         {blogs.map((blog) => (
                             <div
                                 className="relative bg-white rounded-lg shadow-md hover:shadow-lg transition-all duration-300 overflow-hidden flex flex-col h-full"
-                                key={blog._id}
-                            >
-                                {/* Thumbnail */}
+                                key={blog._id}>
                                 <div className="h-36 w-full">
                                     <img
                                         className="h-full w-full object-cover"
@@ -103,30 +101,28 @@ const MyBlogs = () => {
                                     />
                                 </div>
 
-                                {/* Content */}
                                 <div className="p-4 flex flex-col space-y-2 flex-grow">
                                     <h2 className="text-md font-semibold text-gray-900">{blog.title}</h2>
                                     <p
                                         className="text-gray-600 font-light text-sm line-clamp-2"
-                                        dangerouslySetInnerHTML={{ __html: blog.description }}
-                                    ></p>
+                                        dangerouslySetInnerHTML={{ __html: blog.description }}></p>
                                     <div className="flex items-center justify-between text-sm text-gray-500 mt-auto">
-                                        <div
-                                            className={`px-3 py-1 rounded-full font-medium text-xs ${blog.isPublished ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
-                                                }`}
-                                        >
+                                        <div className={`px-3 py-1 rounded-full font-medium text-xs ${blog.isPublished ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
+                                            }`}>
                                             {blog.isPublished ? 'Published' : 'Unpublished'}
                                         </div>
-                                        <div className="flex items-center">
+                                        <div className="flex items-center relative group">
                                             <PiCalendarDots className="w-4 h-4 mr-1" />
-                                            <span className="text-xs" title="Created On">
+                                            <span className="text-xs">
                                                 {new Date(blog.createdAt).toLocaleDateString()}
+                                            </span>
+                                            <span className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-1 px-2 py-1 text-xs text-white bg-gray-800 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                                                Created On
                                             </span>
                                         </div>
                                     </div>
                                 </div>
 
-                                {/* Actions */}
                                 <div className="p-3 bg-gray-100 border-t border-gray-200 flex justify-between items-center flex-row" >
                                     <button
                                         className="text-xs text-blue-600 font-normal hover:underline cursor-pointer"
@@ -161,7 +157,7 @@ const MyBlogs = () => {
                 <BlogModal blog={selectedBlog} onViewClose={closeModal} />
             )}
 
-            {isEditBlogModalOpen && (
+            {isEditBlogModalOpen && editSelectedBlog &&  (
                 <EditBlogModal data={editSelectedBlog} isOpen={isEditBlogModalOpen} onViewClose={closeEditBlogModal} onRefresh={fetchBlogByAuthor} />
             )}
         </>

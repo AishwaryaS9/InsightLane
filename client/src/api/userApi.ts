@@ -233,4 +233,23 @@ export async function updateUserProfile(token: string | null, formData: FormData
         console.error(error)
         throw error;
     }
-} 
+}
+
+export async function deleteUserApi(token: string | null, id: string) {
+    const url = `${api.baseUrl}/admin/delete/${id}`
+    try {
+        const response = await axios.patch(url, {}, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        })
+        if (response.status === 200) {
+            return response.data
+        } else {
+            throw new Error('Failed to delete User');
+        }
+    } catch (error) {
+        console.error(error)
+        throw error;
+    }
+}

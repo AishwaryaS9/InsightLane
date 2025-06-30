@@ -10,7 +10,7 @@ import type { Blogs } from '../../utils/interface';
 
 const EditBlogModal: React.FC<{
     data: Blogs;
-    isOpen: () => void;
+    isOpen: boolean;
     onViewClose: () => void;
     onRefresh: () => void;
 }> = ({ data, isOpen, onViewClose, onRefresh }) => {

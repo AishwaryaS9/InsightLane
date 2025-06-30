@@ -95,7 +95,7 @@ export const addBlog = async (req, res) => {
             });
         }
 
-        res.json({ success: true, message: "Blog added successfully" });
+        res.json({ success: true, message: "Blog added successfully and sent for review." });
     } catch (error) {
         res.json({ success: false, message: error.message });
     }
@@ -288,6 +288,39 @@ export const getRelatedBlogs = async (req, res) => {
     }
 };
 
+// export const getBlogsByAuthor = async (req, res) => {
+//     try {
+//         const { authorId } = req.params;
+//         const { page = 1, limit = 10 } = req.query;
+
+//         const pageInt = parseInt(page, 10);
+//         const limitInt = parseInt(limit, 10);
+
+//         const filter = { author: authorId };
+
+//         const totalBlogs = await Blog.countDocuments(filter);
+
+//         const blogs = await Blog.find(filter)
+//             .sort({ createdAt: -1 })
+//             .skip((pageInt - 1) * limitInt)
+//             .limit(limitInt);
+
+//         if (!blogs.length) {
+//             return res.status(404).json({ success: false, message: "No blogs found" });
+//         }
+
+//         res.json({
+//             success: true,
+//             totalBlogs,
+//             currentPage: pageInt,
+//             totalPages: Math.ceil(totalBlogs / limitInt),
+//             blogs,
+//         });
+//     } catch (error) {
+//         res.status(500).json({ success: false, message: error.message });
+//     }
+// };
+
 export const getBlogsByAuthor = async (req, res) => {
     try {
         const { authorId } = req.params;
@@ -300,14 +333,25 @@ export const getBlogsByAuthor = async (req, res) => {
 
         const totalBlogs = await Blog.countDocuments(filter);
 
-        const blogs = await Blog.find(filter)
+        const blogsData = await Blog.find(filter)
             .sort({ createdAt: -1 })
             .skip((pageInt - 1) * limitInt)
-            .limit(limitInt);
+            .limit(limitInt)
+            .populate('author', 'name')
+            .lean();
 
-        if (!blogs.length) {
+        if (!blogsData.length) {
             return res.status(404).json({ success: false, message: "No blogs found" });
         }
+
+        const blogs = blogsData.map(blog => {
+            const { author, ...rest } = blog;
+            return {
+                ...rest,
+                author: author?._id || null,
+                authorName: author?.name || "Unknown",
+            };
+        });
 
         res.json({
             success: true,
@@ -320,7 +364,6 @@ export const getBlogsByAuthor = async (req, res) => {
         res.status(500).json({ success: false, message: error.message });
     }
 };
-
 
 
 export const editBlogById = async (req, res) => {

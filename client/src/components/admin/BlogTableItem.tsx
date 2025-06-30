@@ -6,12 +6,12 @@ import { useAppSelector } from '../../redux/store/hooks';
 import { useState } from 'react';
 import BlogModal from '../author/BlogModal';
 
-const BlogTableItem: React.FC<BlogTableItemProps> = ({  blog, fetchBlogs, index, setAlert }) => {
+const BlogTableItem: React.FC<BlogTableItemProps> = ({ blog, fetchBlogs, index, setAlert }) => {
     const { title, createdAt } = blog;
     const BlogDate = new Date(createdAt);
     const [modalOpen, setModalOpen] = useState(false);
     const [selectedBlog, setSelectedBlog] = useState<Blogs | null>(null);
-   
+
 
     const userToken = useAppSelector((state) => state.login.token);
 
@@ -25,25 +25,25 @@ const BlogTableItem: React.FC<BlogTableItemProps> = ({  blog, fetchBlogs, index,
         setModalOpen(false);
     };
 
-   const deleteBlog = () => {
-    if(setAlert){
-        setAlert({
-            message: "Are you sure you want to delete this blog?",
-            onConfirm: async () => {
-                try {
-                    const data = await deleteBlogApi(userToken, blog._id);
-                    if (data) {
-                        toast.success(data.message);
-                        await fetchBlogs();
-                    } else {
-                        toast.error(data.message);
+    const deleteBlog = () => {
+        if (setAlert) {
+            setAlert({
+                message: "Are you sure you want to delete this blog?",
+                onConfirm: async () => {
+                    try {
+                        const data = await deleteBlogApi(userToken, blog._id);
+                        if (data) {
+                            toast.success(data.message);
+                            await fetchBlogs();
+                        } else {
+                            toast.error(data.message);
+                        }
+                    } catch (error) {
+                        toast.error((error as Error).message);
                     }
-                } catch (error) {
-                    toast.error((error as Error).message);
-                }
-            },
-        });
-    }
+                },
+            });
+        }
     };
 
     const togglePublish = async () => {
@@ -93,11 +93,10 @@ const BlogTableItem: React.FC<BlogTableItemProps> = ({  blog, fetchBlogs, index,
                         title="Delete Blog"
                     />
                 </td>
-                {modalOpen && selectedBlog && (
-                    <BlogModal blog={selectedBlog} onViewClose={closeModal} />
-                )}
             </tr >
-          
+            {modalOpen && selectedBlog && (
+                <BlogModal blog={selectedBlog} onViewClose={closeModal} />
+            )}
         </>
     );
 };

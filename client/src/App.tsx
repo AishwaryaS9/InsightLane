@@ -55,6 +55,7 @@ const App = () => {
           {/* Admin */}
           <Route path='/admin' element={userToken && userRole === "admin" ? <Layout /> : <Login />}>
             <Route index element={<Dashbaord />} />
+            <Route path='addBlog' element={<AddBlog />} />
             <Route path='listBlog' element={<ListBlog />} />
             <Route path='comments' element={<Comments />} />
             <Route path='users' element={<Users />} />

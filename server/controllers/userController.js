@@ -22,21 +22,38 @@ const generateResetToken = () => {
     return crypto.randomBytes(32).toString("hex");
 };
 
-
 export const registerUser = async (req, res) => {
     try {
         const { name, email, password, role } = req.body;
-        if (!name || !email || !password) return res.status(400).json({ message: "All fields are required" });
+
+        if (!name || !email || !password) {
+            return res.status(400).json({ message: "All fields are required" });
+        }
+
         const validRoles = ["reader", "author", "admin"];
         if (role && !validRoles.includes(role)) {
             return res.status(400).json({ message: `Invalid role. Valid roles are: ${validRoles.join(", ")}` });
         }
 
+        const existingUser = await User.findOne({ email });
+        if (existingUser) {
+            if (existingUser.deleted) {
+                return res.status(403).json({
+                    message: "This email is associated with a deactivated account. Please contact support to reactivate.",
+                });
+            }
+            return res.status(409).json({ message: "Email is already registered" });
+        }
+
         const hashedPassword = await bcrypt.hash(password, 10);
-        const user = await User.create({ name, email, password: hashedPassword, role: role || "reader", });
+        const user = await User.create({
+            name,
+            email,
+            password: hashedPassword,
+            role: role || "reader",
+        });
+
         const token = generateToken(user);
-
-
 
         res.json({ message: "User registered successfully", token });
     } catch (error) {
@@ -47,11 +64,20 @@ export const registerUser = async (req, res) => {
 export const loginUser = async (req, res) => {
     try {
         const { email, password } = req.body;
+
         const user = await User.findOne({ email });
-        if (!user) return res.status(404).json({ message: "User not found" });
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        if (user.deleted) {
+            return res.status(403).json({ message: "This account is no longer active" });
+        }
 
         const isMatch = await bcrypt.compare(password, user.password);
-        if (!isMatch) return res.status(401).json({ message: "Invalid credentials" });
+        if (!isMatch) {
+            return res.status(401).json({ message: "Invalid credentials" });
+        }
 
         const token = generateToken(user);
 
@@ -61,16 +87,16 @@ export const loginUser = async (req, res) => {
     }
 };
 
+
 export const socialLogin = async (req, res) => {
     res.json({ message: "Social login not implemented yet" });
 };
-
 
 export const getUserProfile = async (req, res) => {
     try {
         const { search, page = 1, limit = 10 } = req.query;
 
-        let filter = {};
+        let filter = { deleted: false };
 
         if (search) {
             filter.$or = [
@@ -84,9 +110,9 @@ export const getUserProfile = async (req, res) => {
         const limitInt = parseInt(limit, 10);
 
         const totalUsers = await User.countDocuments(filter);
-        const totalAdmins = await User.countDocuments({ role: "admin" });
-        const totalAuthors = await User.countDocuments({ role: "author" });
-        const totalReaders = await User.countDocuments({ role: "reader" });
+        const totalAdmins = await User.countDocuments({ role: "admin", deleted: false });
+        const totalAuthors = await User.countDocuments({ role: "author", deleted: false });
+        const totalReaders = await User.countDocuments({ role: "reader", deleted: false });
 
         const users = await User.find(filter)
             .skip((pageInt - 1) * limitInt)
@@ -109,11 +135,10 @@ export const getUserProfile = async (req, res) => {
     }
 };
 
-
 export const getUserProfileById = async (req, res) => {
     try {
         const { id } = req.params;
-        const user = await User.findById(id).select('-password');
+        const user = await User.findOne({ _id: id }).select('-password');
 
         if (!user) {
             return res.status(404).json({ message: "User not found" });
@@ -125,7 +150,6 @@ export const getUserProfileById = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
-
 
 
 export const updateUserProfile = async (req, res) => {
@@ -271,3 +295,26 @@ export const changePassword = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
+
+export const deleteUser = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        const user = await User.findById(id);
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+        if (user.deleted) {
+            return res.status(400).json({ message: "User is already soft-deleted" });
+        }
+
+        user.deleted = true;
+        await user.save();
+
+        res.json({ message: "User soft-deleted successfully", user });
+    } catch (error) {
+        console.error("Error in soft-deleting user:", error.message);
+        res.status(500).json({ message: error.message });
+    }
+};
+

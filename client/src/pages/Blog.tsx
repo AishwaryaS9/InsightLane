@@ -76,7 +76,6 @@ const Blog = () => {
                 const relatedBlogsData = await getRelatedBlogs(blogId);
                 if (relatedBlogsData) {
                     setRelatedBlogs(relatedBlogsData.relatedBlogs);
-                    console.log('resp', relatedBlogsData.relatedBlogs)
                 } else {
                     toast.error('Unable to load related blogs.');
                 }
@@ -238,8 +237,6 @@ const Blog = () => {
                     </div>
                 </div>
             )}
-
-
         </div >
 
     ) : <p>Loading...</p>

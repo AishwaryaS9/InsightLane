@@ -109,3 +109,15 @@ export interface ProfilePhotoSelectorProps {
     image: File | string | null;
     setImage: (image: File | null) => void;
 }
+
+
+export interface DeleteUser {
+    _id: string;
+    name: string;
+    email: string;
+    password: string;
+    role: string;
+    deleted: boolean;
+    createdAt: number;
+    updatedAt: number;
+}
