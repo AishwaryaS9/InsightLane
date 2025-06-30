@@ -10,7 +10,6 @@ const Profile = () => {
 
     const userProfileData = useAppSelector((state) => state.userProfile.data) || {};
 
-
     const handleEditProfile = () => {
         setIsEditModalOpen(true);
     };
@@ -52,7 +51,7 @@ const Profile = () => {
                         </p>
                         <div className="flex space-x-4 mb-4 text-xl">
                             <a
-                                href={userProfileData.facebook || "http://facebook.com"}
+                                href={userProfileData?.socialLinks?.facebook || "http://facebook.com"}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="hover:-translate-y-0.5 transition"
@@ -60,7 +59,7 @@ const Profile = () => {
                                 <img src={assets.facebook} className="w-6 h-6" alt="Facebook" />
                             </a>
                             <a
-                                href={userProfileData.twitter || "http://x.com"}
+                                href={userProfileData?.socialLinks?.twitter || "http://x.com"}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="hover:-translate-y-0.5 transition"
@@ -68,7 +67,7 @@ const Profile = () => {
                                 <img src={assets.twitter} className="w-6 h-6" alt="Twitter" />
                             </a>
                             <a
-                                href={userProfileData.linkedin || "http://linkedin.com"}
+                                href={userProfileData?.socialLinks?.linkedin || "http://linkedin.com"}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="hover:-translate-y-0.5 transition"
