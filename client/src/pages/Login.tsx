@@ -3,7 +3,7 @@ import { assets } from '../assets/assets';
 import { useState, useEffect } from 'react';
 import { loginUser } from '../api/userApi';
 import toast from 'react-hot-toast';
-import { userLogin } from '../redux/store/slice/loginSlice';
+import { authTokenDetails, userLogin } from '../redux/store/slice/loginSlice';
 import { useAppDispatch } from '../redux/store/hooks';
 import { validateEmail } from '../utils/regex';
 import { PiEyeLight, PiEyeSlashLight } from "react-icons/pi";
@@ -43,6 +43,7 @@ const Login = () => {
             if (data) {
                 setToken(data.token);
                 dispatch(userLogin({ token: data.token, userId: data.id, role: data.role }));
+                dispatch(authTokenDetails({ authToken: token }))
                 if (rememberMe) {
                     localStorage.setItem('rememberedEmail', email);
                 } else {

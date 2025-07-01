@@ -5,12 +5,17 @@ import type { Blogs } from '../../utils/interface';
 import { getAllBlogs } from '../../api/blogApi';
 import Pagination from '../../components/Pagination';
 import BlogModal from '../../components/author/BlogModal';
+import AlertModal from '../../components/AlertModal';
 
 const ListBlog = () => {
     const [blogs, setBlogs] = useState<Blogs[]>([]);
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [selectedBlog, setSelectedBlog] = useState<Blogs | null>(null);
+    const [alertConfig, setAlertConfig] = useState<{
+        message: string;
+        onConfirm: () => void;
+    } | null>(null);
 
     const fetchBlogs = async () => {
         try {
@@ -64,6 +69,7 @@ const ListBlog = () => {
                                     fetchBlogs={fetchBlogs}
                                     index={(page - 1) * 5 + index + 1}
                                     onSelectBlog={setSelectedBlog}
+                                    setAlert={setAlertConfig}
                                 />
                             ))
                         ) : (
@@ -79,6 +85,18 @@ const ListBlog = () => {
                     </tbody>
                 </table>
             </div>
+            {alertConfig && (
+                <div className="fixed inset-0 flex items-center justify-center z-50">
+                    <AlertModal
+                        message={alertConfig.message}
+                        onConfirm={() => {
+                            alertConfig.onConfirm();
+                            setAlertConfig(null);
+                        }}
+                        onCancel={() => setAlertConfig(null)}
+                    />
+                </div>
+            )}
             {selectedBlog && (
                 <BlogModal blog={selectedBlog} onViewClose={() => setSelectedBlog(null)} />
             )}

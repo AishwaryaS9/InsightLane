@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { assets } from "../assets/assets";
 import { useNavigate } from "react-router-dom";
-import { clearLogin } from "../redux/store/slice/loginSlice";
+import { clearAuthTokenDetails, clearLogin } from "../redux/store/slice/loginSlice";
 import { useAppDispatch, useAppSelector } from "../redux/store/hooks";
 import { clearUserProfileDetails } from "../redux/store/slice/userProfileSlice";
 import ProfileModal from "./ProfileModal";
@@ -46,6 +46,7 @@ const Navbar = () => {
         } else {
             dispatch(clearLogin())
             dispatch(clearUserProfileDetails())
+            dispatch(clearAuthTokenDetails())
             navigate('/')
             toast.success("Logged out successfully!")
         }

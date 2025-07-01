@@ -23,6 +23,7 @@ const Users = () => {
                 setUserData(data);
                 setUserInfo(data.users);
                 setTotalPages(data.totalPages || 1)
+                setSearch(search);
             } else {
                 toast.error(data.message)
             }

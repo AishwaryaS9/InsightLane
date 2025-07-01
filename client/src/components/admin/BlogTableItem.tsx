@@ -47,9 +47,9 @@ const BlogTableItem: React.FC<BlogTableItemProps> = ({ blog, fetchBlogs, index, 
 
     return (
         <tr className="border-y border-gray-300 hover:bg-gray-50 transition-colors">
-            <th className="px-4 py-4 ">{index}</th>
-            <td className="px-4 py-4 cursor-pointer" onClick={() => onSelectBlog(blog)}>{title}</td>
-            <td className="px-4 py-4 hidden sm:table-cell text-gray-500">{BlogDate.toDateString()}</td>
+            <th className="px-4 py-4 text-sm">{index}</th>
+            <td className="px-4 py-4 text-sm cursor-pointer" onClick={() => onSelectBlog(blog)}>{title}</td>
+            <td className="px-4 py-4 hidden sm:table-cell text-gray-500 text-sm">{BlogDate.toDateString()}</td>
             <td className="px-4 py-4 hidden sm:table-cell">
                 <span
                     className={`px-2 py-1 text-sm rounded-full ${blog.isPublished

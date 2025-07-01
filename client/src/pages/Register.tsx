@@ -6,6 +6,8 @@ import { registerUser } from '../api/userApi';
 import toast from 'react-hot-toast';
 import { validateEmail, validatePassword } from '../utils/regex';
 import { PiEyeLight, PiEyeSlashLight } from 'react-icons/pi';
+import { useAppDispatch } from '../redux/store/hooks';
+import { clearRegisterUser, userRegistration } from '../redux/store/slice/registerslice';
 
 const Register = () => {
     const navigate = useNavigate();
@@ -15,6 +17,8 @@ const Register = () => {
     const [role, setRole] = useState('reader');
     const [token, setToken] = useState('');
     const [showPassword, setShowPassword] = useState(false);
+
+    const dispatch = useAppDispatch();
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -30,8 +34,10 @@ const Register = () => {
             const data = await registerUser(name, email, password, role)
             if (data) {
                 setToken(data.token)
+                dispatch(userRegistration({ token: token }))
                 toast.success("Registered successfully!")
                 navigate('/login')
+                dispatch(clearRegisterUser())
             }
             else {
                 toast.error(data.message)

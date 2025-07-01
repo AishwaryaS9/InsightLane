@@ -1,14 +1,13 @@
+import { useEffect } from "react"
 import toast from "react-hot-toast"
 import BlogCategories from "../components/BlogCategories"
 import Hero from "../components/Hero"
 import { useAppDispatch, useAppSelector } from "../redux/store/hooks"
-import { useEffect, useState } from "react"
 import { getUserProfileById } from "../api/userApi"
 import { userProfileDetails } from "../redux/store/slice/userProfileSlice"
 
 const Home = () => {
 
-    const [userProfile, setUserProfile] = useState(null);
     const dispatch = useAppDispatch();
 
     const userToken = useAppSelector((state) => state.login.token)
@@ -19,7 +18,6 @@ const Home = () => {
         try {
             const data = await getUserProfileById(userId);
             if (data) {
-                setUserProfile(data);
                 dispatch(userProfileDetails({
                     data: data
                 }))
@@ -36,7 +34,7 @@ const Home = () => {
         if (userToken) {
             fetchUserProfile(userId)
         }
-    }, [userId])
+    }, [userId, userToken])
 
     return (
         <>

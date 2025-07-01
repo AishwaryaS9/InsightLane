@@ -7,6 +7,7 @@ export const initialState = {
     role: null,
     isLoading: false,
     data: [],
+    authToken: null,
 };
 
 export const loginSlice = createSlice({
@@ -26,10 +27,16 @@ export const loginSlice = createSlice({
             state.role = null;
             state.data = [];
         },
+        authTokenDetails(state: any, action: PayloadAction<{ authToken: string }>) {
+            state.authToken = action.payload.authToken;
+        },
+        clearAuthTokenDetails(state) {
+            state.authToken = null;
+        }
 
     }
 })
 
-export const { userLogin, clearLogin } = loginSlice.actions;
+export const { userLogin, clearLogin, authTokenDetails, clearAuthTokenDetails } = loginSlice.actions;
 
 export default loginSlice.reducer;

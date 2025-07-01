@@ -17,7 +17,7 @@ export interface BlogTableItemProps {
 
 export interface BlogAuthorTableItemProps {
     blog: Blogs;
-    fetchBlogs: () => Promise<void>;
+    fetchBlogs?: () => Promise<void>;
     index: number;
     setAlert?: React.Dispatch<React.SetStateAction<{
         message: string;

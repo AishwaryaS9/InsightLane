@@ -17,6 +17,7 @@ export const initialState: { data: User } = {
         createdAt: '',
         updatedAt: ''
     },
+ 
 };
 
 

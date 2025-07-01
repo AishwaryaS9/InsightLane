@@ -3,6 +3,8 @@ import toast from 'react-hot-toast';
 import { IoCloseOutline } from 'react-icons/io5'
 import { changePassword } from '../api/userApi';
 import { useAppSelector } from '../redux/store/hooks';
+import { validatePassword } from '../utils/regex';
+import { PiEyeLight, PiEyeSlashLight } from 'react-icons/pi';
 
 const ChangePasswordModal: React.FC<{
     isOpen: boolean;
@@ -14,6 +16,9 @@ const ChangePasswordModal: React.FC<{
     const [newPassword, setNewPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [loading, setLoading] = useState(false);
+    const [showOldPassword, setShowOldPassword] = useState(false);
+    const [showNewPassword, setShowNewPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -21,6 +26,11 @@ const ChangePasswordModal: React.FC<{
 
         if (newPassword !== confirmPassword) {
             toast.error("New password and confirm password do not match.");
+            return;
+        }
+
+        if (!validatePassword(newPassword)) {
+            toast.error("Password must contain atleast six characters");
             return;
         }
 
@@ -61,24 +71,60 @@ const ChangePasswordModal: React.FC<{
                     </button>
                 </div>
                 <form onSubmit={handleSubmit} className="p-4 md:p-5 space-y-2">
-
-
-                    <div>
+                    <div className="relative w-full">
                         <label htmlFor="oldPassword">Old Password</label>
-                        <input id="oldPassword" className="w-full border mt-1 border-gray-500/30 focus:border-primary outline-none rounded py-2.5 px-4" type="password"
-                            placeholder="Enter your old password" value={oldPassword} onChange={(e) => setOldPassword(e.target.value)} />
+                        <div className="relative w-full">
+                            <input
+                                id="oldPassword"
+                                className="w-full border mt-1 border-gray-500/30 focus:border-primary outline-none rounded py-2.5 px-4 pr-10"
+                                type={showOldPassword ? "text" : "password"}
+                                placeholder="Enter your old password"
+                                value={oldPassword}
+                                onChange={(e) => setOldPassword(e.target.value)}
+                            />
+                            <button
+                                type="button"
+                                onClick={() => setShowOldPassword(!showOldPassword)}
+                                className="absolute inset-y-0 right-0 flex items-center pr-4 text-gray-500/80"
+                            >
+                                {showOldPassword ? <PiEyeSlashLight /> : <PiEyeLight />}
+                            </button>
+                        </div>
                     </div>
 
-                    <div>
+                    <div className="relative w-full">
                         <label htmlFor="newPassword">New Password</label>
-                        <input id="newPassword" className="w-full border mt-1 border-gray-500/30 focus:border-primary outline-none rounded py-2.5 px-4" type="password"
-                            placeholder="Enter your new password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} />
+                        <div className="relative w-full">
+                            <input id="newPassword"
+                                className="w-full border mt-1 border-gray-500/30 focus:border-primary outline-none rounded py-2.5 px-4 pr-10"
+                                type={showNewPassword ? "text" : "password"}
+                                placeholder="Enter your new password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} />
+
+                            <button
+                                type="button"
+                                onClick={() => setShowNewPassword(!showNewPassword)}
+                                className="absolute inset-y-0 right-0 flex items-center pr-4 text-gray-500/80"
+                            >
+                                {showNewPassword ? <PiEyeSlashLight /> : <PiEyeLight />}
+                            </button>
+                        </div>
                     </div>
 
-                    <div>
+                    <div className="relative w-full">
                         <label htmlFor="confirmPassword">Confirm Password</label>
-                        <input id="confirmPassword" className="w-full border mt-1 border-gray-500/30 focus:border-primary outline-none rounded py-2.5 px-4" type="password"
-                            placeholder="Enter your confirm password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
+                        <div className="relative w-full">
+                            <input id="confirmPassword"
+                                className="w-full border mt-1 border-gray-500/30 focus:border-primary outline-none rounded py-2.5 px-4 pr-10"
+                                type={showConfirmPassword ? "text" : "password"}
+                                placeholder="Enter your confirm password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
+                            <button
+                                type="button"
+                                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                                className="absolute inset-y-0 right-0 flex items-center pr-4 text-gray-500/80"
+                            >
+                                {showConfirmPassword ? <PiEyeSlashLight /> : <PiEyeLight />}
+                            </button>
+                        </div>
                     </div>
                     <div className="p-4 md:p-5 flex justify-end">
                         <button
