@@ -8,7 +8,7 @@
 
 ## 🌐 Live URL & Repository
 
-- **Live Application**: []()
+- **Live Application**: [https://insight-lane-blog.vercel.app/](https://insight-lane-blog.vercel.app/)
 - **GitHub Repository**: [https://github.com/AishwaryaS9/InsightLane.git](https://github.com/AishwaryaS9/InsightLane.git)
 
 ---
@@ -28,7 +28,7 @@ To access the Author Dashboard and explore the full features of InsightLane, use
 To login as a Reader, use these credentials:
 
 - Email: hitesh@yopmail.com
-- Password: hitesh123
+- Password: hitesh1234
 
 ---
 
