@@ -7,7 +7,7 @@ import toast from 'react-hot-toast';
 import { validateEmail, validatePassword } from '../utils/regex';
 import { PiEyeLight, PiEyeSlashLight } from 'react-icons/pi';
 import { useAppDispatch } from '../redux/store/hooks';
-import { clearRegisterUser, userRegistration } from '../redux/store/slice/registerslice';
+import { clearRegisterUser, userRegistration } from '../redux/store/slice/registerSlice';
 
 const Register = () => {
     const navigate = useNavigate();
