@@ -1,33 +1,76 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { Route, Routes, useLocation } from 'react-router-dom'
+import Home from './pages/Home'
+import Navbar from './components/Navbar'
+import { assets } from './assets/assets'
+import Login from './pages/Login'
+import Register from './pages/Register'
+import { Toaster } from 'react-hot-toast'
+import Blog from './pages/Blog'
+import { useAppSelector } from './redux/store/hooks'
+import Layout from './pages/admin/Layout'
+import Dashbaord from './pages/admin/Dashboard'
+import AddBlog from './pages/author/AddBlog'
+import ListBlog from './pages/admin/ListBlog'
+import Comments from './pages/admin/Comments'
+import Users from './pages/admin/Users'
+import AuthorDashboard from './pages/author/AuthorDashboard'
+import MyBlogs from './pages/author/MyBlogs'
+import Footer from './components/Footer'
+import Profile from './pages/Profile'
+import About from './pages/About'
+import Contact from './pages/Contact'
+import ForgotPassword from './pages/ForgotPassword'
+import ResetPassword from './pages/ResetPassword'
 
-function App() {
-  const [count, setCount] = useState(0)
+const App = () => {
+  const location = useLocation();
+  const hideNavbarRoutes = ['/login', '/register', '/forgot-password', '/resetPassword', '/admin', '/author'];
+  const shouldHideNavbar = hideNavbarRoutes.some((route) =>
+    location.pathname.startsWith(route)
+  );
+  const hideFooterRoutes = ['/login', '/register', '/forgot-password', '/resetPassword', '/admin', '/author'];
+  const shouldHideFooter = hideFooterRoutes.some((route) =>
+    location.pathname.startsWith(route)
+  );
+  const userToken = useAppSelector((state) => state.login.token);
+  const userRole = useAppSelector((state) => state.login.role);
+
 
   return (
     <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+      <Toaster />
+      <img src={assets.gradientBackground} alt=""
+        className='absolute -top-50 -z-1 opacity-50' />
+      {!shouldHideNavbar && <Navbar />}
+      <div className='min-h-[70vh]'>
+        <Routes>
+          <Route path='/' element={<Home />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/blog/:id" element={<Blog />} />
+          <Route path='/about' element={<About />} />
+          <Route path='/contact' element={<Contact />} />
+          <Route path='/forgot-password' element={<ForgotPassword />} />
+          <Route path='/resetPassword/:resetToken' element={<ResetPassword />} />
+          {/* Admin */}
+          <Route path='/admin' element={userToken && userRole === "admin" ? <Layout /> : <Login />}>
+            <Route index element={<Dashbaord />} />
+            <Route path='addBlog' element={<AddBlog />} />
+            <Route path='listBlog' element={<ListBlog />} />
+            <Route path='comments' element={<Comments />} />
+            <Route path='users' element={<Users />} />
+            <Route path='profile' element={<Profile />} />
+          </Route>
+          {/* Author */}
+          <Route path='/author' element={userToken && userRole === "author" ? <Layout /> : <Login />}>
+            <Route index element={<AuthorDashboard />} />
+            <Route path='addBlog' element={<AddBlog />} />
+            <Route path='myBlogs' element={<MyBlogs />} />
+            <Route path='profile' element={<Profile />} />
+          </Route>
+        </Routes>
+        {!shouldHideFooter && <Footer />}
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
     </>
   )
 }
