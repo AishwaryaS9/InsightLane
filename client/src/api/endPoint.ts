@@ -1,5 +1,5 @@
 const api = {
-    baseUrl: "http://localhost:3000/api"
+    baseUrl: "https://insight-lane-server.vercel.app/api"
 }
 
 export default api
