@@ -48,7 +48,6 @@ const Users = () => {
     };
 
 
-
     return (
         <div className="w-full min-h-screen bg-blue-50/50 p-4 sm:p-6 flex flex-col">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6">
