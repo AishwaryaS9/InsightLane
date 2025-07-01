@@ -74,7 +74,7 @@ const Login = () => {
                 <div className="w-full md:w-1/2 hidden md:block">
                     <img className="h-full w-full object-cover" src={assets.blogAuth} alt="leftSideImage" />
                 </div>
-                <div className="w-full md:w-1/2 flex flex-col items-center justify-center px-6 sm:px-8 md:px-0">
+                <div className="w-full md:w-1/2 flex flex-col items-center justify-center px-6 sm:px-8 md:px-0 py-25">
                     <form onSubmit={handleSubmit} className="md:w-96 w-full flex flex-col items-center justify-center">
                         <h2 className="text-3xl md:text-4xl text-gray-900 font-medium text-center">Sign in</h2>
                         <p className="text-sm text-gray-500/90 mt-3 text-center">Welcome back! Please sign in to continue</p>
@@ -168,3 +168,4 @@ const Login = () => {
 };
 
 export default Login;
+

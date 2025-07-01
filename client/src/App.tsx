@@ -24,11 +24,11 @@ import ResetPassword from './pages/ResetPassword'
 
 const App = () => {
   const location = useLocation();
-  const hideNavbarRoutes = ['/login', '/register', '/forgot-password', '/resetpassword/:resetToken', '/admin', '/author'];
+  const hideNavbarRoutes = ['/login', '/register', '/forgot-password', '/resetPassword', '/admin', '/author'];
   const shouldHideNavbar = hideNavbarRoutes.some((route) =>
     location.pathname.startsWith(route)
   );
-  const hideFooterRoutes = ['/login', '/register', '/admin', '/author'];
+  const hideFooterRoutes = ['/login', '/register', '/forgot-password', '/resetPassword', '/admin', '/author'];
   const shouldHideFooter = hideFooterRoutes.some((route) =>
     location.pathname.startsWith(route)
   );
