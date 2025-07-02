@@ -205,7 +205,7 @@ export const forgotPassword = async (req, res) => {
         user.resetTokenExpiry = resetTokenExpiry;
         await user.save();
 
-        const resetLink = `${process.env.CLIENT_URL}/resetPassword/${resetToken}`;
+        const resetLink = `https://insight-lane-blog.vercel.app/resetPassword/${resetToken}`;
         const htmlContent = `
                 <div style="font-family: Arial, sans-serif; line-height: 1.5; color: #333;">
                     <h1 style="font-family: 'Mulish', sans-serif; font-size: 1.5rem; font-weight: 600; display: flex; flex-wrap: wrap; margin-bottom: 20px;">
