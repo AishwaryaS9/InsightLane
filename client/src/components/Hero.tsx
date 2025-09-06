@@ -3,17 +3,16 @@ import { assets } from "../assets/assets";
 
 const Hero = () => {
     return (
-        <div className="flex flex-col justify-center px-6 md:px-16 
+        <section className="flex flex-col justify-center px-6 md:px-16 
         lg:px-24 xl:px-32 text-white mt-20">
             <div className="text-center mt-20 mb-8">
                 <div
                     className="inline-flex items-center justify-center gap-4 px-6 py-1.5
-                    mb-4 border border-primary/40 bg-primary/10 rounded-full text-sm"
-                >
+                    mb-4 border border-primary/40 bg-primary/10 rounded-full text-sm">
                     <p className="text-secondary">New: AI-enabled features</p>
                     <motion.img
                         src={assets.star_icon}
-                        alt=""
+                        alt="Rotating star icon"
                         className="w-2.5"
                         animate={{ rotate: [0, 360] }}
                         transition={{
@@ -44,10 +43,11 @@ const Hero = () => {
             </div>
             <img
                 src={assets.gradientBackground}
-                alt=""
+                alt="Gradient background decoration"
+                aria-hidden="true"
                 className="absolute -top-50 -z-1 opacity-50"
             />
-        </div>
+        </section>
     );
 };
 

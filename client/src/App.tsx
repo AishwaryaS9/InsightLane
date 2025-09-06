@@ -35,14 +35,23 @@ const App = () => {
   const userToken = useAppSelector((state) => state.login.token);
   const userRole = useAppSelector((state) => state.login.role);
 
-
   return (
     <>
-      <Toaster />
-      <img src={assets.gradientBackground} alt=""
+      <Toaster position="top-center"
+        toastOptions={{
+          className: 'rounded-md shadow-md',
+        }}
+        containerStyle={{ zIndex: 9999 }} />
+      <img src={assets.gradientBackground} alt="Decorative gradient background"
+        aria-hidden="true"
         className='absolute -top-50 -z-1 opacity-50' />
-      {!shouldHideNavbar && <Navbar />}
-      <div className='min-h-[70vh]'>
+      {!shouldHideNavbar && (
+        <nav aria-label="Main navigation">
+          <Navbar />
+        </nav>
+      )}
+
+      <main className="flex-1" role="main" aria-live="polite">
         <Routes>
           <Route path='/' element={<Home />} />
           <Route path="/login" element={<Login />} />
@@ -69,8 +78,13 @@ const App = () => {
             <Route path='profile' element={<Profile />} />
           </Route>
         </Routes>
-        {!shouldHideFooter && <Footer />}
-      </div>
+      </main>
+
+      {!shouldHideFooter && (
+        <footer aria-label="Site footer">
+          <Footer />
+        </footer>
+      )}
     </>
   )
 }

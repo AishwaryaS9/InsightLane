@@ -2,19 +2,33 @@ import type React from 'react';
 import { useNavigate } from 'react-router-dom';
 import type { Blogs } from '../utils/interface';
 
-const BlogCard:React.FC<{blog: Blogs}> = ({ blog }) => {
+const BlogCard: React.FC<{ blog: Blogs }> = ({ blog }) => {
     const { title, subTitle, category, image, _id, author, createdAt } = blog;
+
+    const handleClick = () => {
+        navigate(`/blog/${_id}`);
+    };
+
+    const handleKeyDown = (e: React.KeyboardEvent) => {
+        if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            handleClick();
+        }
+    };
 
     const navigate = useNavigate();
     return (
 
-        <div
-            onClick={() => navigate(`/blog/${_id}`)}
+        <article aria-label={`Read blog post: ${title}`}
+            role="button"
+            tabIndex={0}
+            onClick={handleClick}
+            onKeyDown={handleKeyDown}
             className="w-full rounded-lg overflow-hidden shadow hover:scale-102 duration-300 cursor-pointer flex flex-col justify-between h-full"
         >
-            <div>
-                <img src={image} alt="" className="aspect-video" />
-                <span
+            <header>
+                <img src={image} alt={title || "Blog thumbnail"} className="aspect-video" />
+                <span aria-label={`Category: ${category}`}
                     className="ml-4 mt-3 px-2 py-0.5 inline-block bg-primary/20 rounded-full text-primary text-xs capitalize"
                 >
                     {category}
@@ -25,24 +39,28 @@ const BlogCard:React.FC<{blog: Blogs}> = ({ blog }) => {
                         {subTitle}
                     </p>
                 </div>
-            </div>
-            <div className="flex justify-between items-center p-4 border-t border-gray-200 mt-auto">
-                <div className="text-xs text-gray-600">
+            </header>
+
+            <footer className="flex justify-between items-center p-4 border-t border-gray-200 mt-auto">
+                <div className="text-xs text-gray-600" aria-label={`Written by ${author.name}`}>
                     <span className="block font-normal">Written by</span>
                     <span className="block  font-medium">{author.name}</span>
                 </div>
-                <div className="text-xs text-gray-600 text-right">
+                <div className="text-xs text-gray-600 text-right" aria-label={`Posted on ${new Date(createdAt).toLocaleDateString()}`}>
                     <span className="block font-normal">Posted on</span>
-                    <span className="block font-medium">
+                    <time
+                        dateTime={new Date(createdAt).toISOString()}
+                        className="block font-medium"
+                    >
                         {new Date(createdAt).toLocaleDateString(undefined, {
                             year: 'numeric',
                             month: 'short',
                             day: 'numeric',
                         })}
-                    </span>
+                    </time>
                 </div>
-            </div>
-        </div>
+            </footer>
+        </article>
 
     )
 }

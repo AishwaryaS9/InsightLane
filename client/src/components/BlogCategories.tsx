@@ -6,6 +6,7 @@ import { getAllBlogs } from '../api/blogApi';
 import toast from 'react-hot-toast';
 import type { Blogs } from '../utils/interface';
 import Pagination from './Pagination';
+import { ClipLoader } from 'react-spinners';
 
 const BlogCategories = () => {
     const [menu, setMenu] = useState('All');
@@ -13,9 +14,11 @@ const BlogCategories = () => {
     const [page, setPage] = useState(1);
     const [search, setSearch] = useState('');
     const [totalPages, setTotalPages] = useState(1);
+    const [loading, setLoading] = useState(false);
 
     const getBlogData = async () => {
         try {
+            setLoading(true);
             const category = menu === "All" ? "" : menu;
             const data = await getAllBlogs(page, 8, search, category);
             if (data) {
@@ -24,6 +27,8 @@ const BlogCategories = () => {
             }
         } catch (error) {
             toast.error((error as Error).message);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -37,13 +42,12 @@ const BlogCategories = () => {
         }
     };
 
-
     return (
-        <div>
-            <div className='flex justify-center gap-4 sm:gap-8 my-10 relative'>
+        <main>
+            <nav aria-label="Blog categories" className='flex justify-center gap-4 sm:gap-8 my-10 relative'>
                 {blogCategories.map((item) => (
                     <div key={item} className='relative'>
-                        <button
+                        <button aria-pressed={menu === item}
                             onClick={() => { setMenu(item); setPage(1); }}
                             className={`cursor-pointer text-gray-500 ${menu === item && 'text-white px-4 pt-0.5'}`}
                         >
@@ -58,11 +62,14 @@ const BlogCategories = () => {
                         </button>
                     </div>
                 ))}
-            </div>
+            </nav>
 
-            <div className='flex justify-center mb-16'>
+            <section className='flex justify-center mb-16'>
                 <div className='flex justify-between max-w-lg mx-auto w-full sm:w-3/4 md:w-2/3 border border-gray-300 bg-white rounded overflow-hidden'>
-                    <input
+                    <label htmlFor="search" className="sr-only">
+                        Search blogs
+                    </label>
+                    <input role="search" aria-label="Search blogs"
                         onChange={(e) => {
                             setSearch(e.target.value);
                             setPage(1);
@@ -79,26 +86,32 @@ const BlogCategories = () => {
                         Search
                     </button>
                 </div>
-            </div>
+            </section>
 
-            <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-8 mb-24 mx-8 sm:mx-16 xl:mx-40'>
-                {blogs.length > 0 ? (
+            <section aria-label="Blog posts"
+                aria-live="polite"
+                className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-8 mb-24 mx-8 sm:mx-16 xl:mx-40'>
+                {loading ? (
+                    <div className="col-span-full flex justify-center items-center min-h-[200px]">
+                        <ClipLoader color="#00C2CB" size={35} />
+                    </div>
+                ) : blogs.length > 0 ? (
                     blogs.map((blog) =>
                         <BlogCard key={blog?._id} blog={blog} />
                     )
                 ) : (
-                    <div className='col-span-full text-center text-gray-500 text-lg'>
+                    <p role="status" className='col-span-full text-center text-gray-500 text-lg'>
                         No blogs available in this category.
-                    </div>
+                    </p>
                 )}
-            </div>
+            </section>
 
             <Pagination
                 page={page}
                 totalPages={totalPages}
                 onPageChange={handlePageChange}
             />
-        </div>
+        </main>
     );
 };
 

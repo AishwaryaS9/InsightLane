@@ -147,6 +147,10 @@ const EditBlogModal: React.FC<{
         <div
             className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4"
             onClick={onViewClose}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="edit-blog-title"
+            aria-describedby="edit-blog-description"
         >
             <div
                 className="relative bg-white rounded-2xl shadow-lg w-full max-w-3xl h-[80vh] flex flex-col overflow-hidden"
@@ -155,28 +159,28 @@ const EditBlogModal: React.FC<{
                 <div className="flex items-center justify-between p-4 md:p-5">
                     <h3 className="text-lg font-medium text-gray-900">Edit Blog</h3>
                     <button
-                        type="button"
+                        type="button" aria-label="Close edit blog modal"
                         onClick={onViewClose}
                         className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 inline-flex justify-center items-center"
                     >
-                        <IoCloseOutline className="w-6 h-6" />
+                        <IoCloseOutline className="w-6 h-6" aria-hidden="true" />
                     </button>
                 </div>
 
-                <div className="space-y-1 p-4 md:p-5 overflow-y-auto">
+                <div className="space-y-1 p-4 md:p-5 overflow-y-auto" id="edit-blog-description">
                     <div>
-                        <label className="block text-sm font-medium text-gray-600">Upload Thumbnail</label>
+                        <label htmlFor="image" className="block text-sm font-medium text-gray-600">Upload Thumbnail</label>
                         <label htmlFor="image">
                             {image ? (
                                 <img
                                     src={image}
-                                    alt="Thumbnail"
+                                    alt="Current blog thumbnail"
                                     className="mt-2 h-16 rounded cursor-pointer"
                                 />
                             ) : (
                                 <img
                                     src={assets.upload_area}
-                                    alt="Default Thumbnail"
+                                    alt="Default thumbnail placeholder"
                                     className="mt-2 h-16 rounded cursor-pointer"
                                 />
                             )}
@@ -196,30 +200,31 @@ const EditBlogModal: React.FC<{
                         {error
                             .filter((err) => err.field === 'image')
                             .map((err, index) => (
-                                <p key={index} className="text-red-500 text-xs">
+                                <p key={index} className="text-red-500 text-xs" id="error-image">
                                     {err.message}
                                 </p>
                             ))}
                     </div>
 
                     <p className="mt-4">Blog Title</p>
-                    <input
+                    <input id="title"
                         type="text"
                         placeholder="Type here"
                         onChange={(e) => setTitle(e.target.value)}
                         value={title}
+                        aria-describedby="error-title"
                         className="w-full max-w-2xl mt-2 p-2 border border-gray-300 outline-none rounded"
                     />
                     {error
                         .filter((err) => err.field === 'title')
                         .map((err, index) => (
-                            <p key={index} className="text-red-500 text-xs">
+                            <p key={index} className="text-red-500 text-xs" id="error-title">
                                 {err.message}
                             </p>
                         ))}
 
                     <p className="mt-4">Sub Title</p>
-                    <input
+                    <input id="subTitle" aria-describedby="error-subTitle"
                         type="text"
                         placeholder="Type here"
                         className="w-full max-w-2xl mt-2 p-2 border border-gray-300 outline-none rounded"
@@ -229,23 +234,24 @@ const EditBlogModal: React.FC<{
                     {error
                         .filter((err) => err.field === 'subTitle')
                         .map((err, index) => (
-                            <p key={index} className="text-red-500 text-xs">
+                            <p key={index} id="error-subTitle" className="text-red-500 text-xs">
                                 {err.message}
                             </p>
                         ))}
 
                     <p className="mt-4">Blog Description</p>
-                    <div className="max-w-2xl h-74 pb-16 sm:pb-10 pt-2 relative">
+                    <div id="description" className="max-w-2xl h-74 pb-16 sm:pb-10 pt-2 relative">
                         <div ref={editorRef}></div>
                         {error
                             .filter((err) => err.field === 'description')
                             .map((err, index) => (
-                                <p key={index} className="text-red-500 text-xs mt-2">
+                                <p key={index} className="text-red-500 text-xs mt-2" id="error-description">
                                     {err.message}
                                 </p>
                             ))}
                         {loading && (
-                            <div className="absolute right-0 top-0 bottom-0 left-0 flex items-center justify-center bg-black/10 mt-2">
+                            <div role="status"
+                                aria-live="polite" className="absolute right-0 top-0 bottom-0 left-0 flex items-center justify-center bg-black/10 mt-2">
                                 <div className="w-8 h-8 rounded-full border-2 border-t-white animate-spin"></div>
                             </div>
                         )}
@@ -254,17 +260,19 @@ const EditBlogModal: React.FC<{
                             className="absolute bottom-1 right-2 ml-2 text-xs text-white bg-black/70 px-4 py-1.5 rounded hover:underline cursor-pointer"
                             type="button"
                             onClick={generateContent}
+                            aria-label="Generate blog description with AI"
                         >
                             Generate with AI
                         </button>
                     </div>
 
                     <p className="mt-6">Blog Category</p>
-                    <select
+                    <select id="category"
                         name="category"
                         className="mt-2 px-3 py-2 border text-gray-500 border-gray-300 outline-none rounded"
                         onChange={(e) => setCategory(e.target.value)}
                         value={category}
+                        aria-describedby="error-category"
                     >
                         <option value="">Select Category</option>
                         {dropDownCategories.map((item, index) => (
@@ -276,7 +284,7 @@ const EditBlogModal: React.FC<{
                     {error
                         .filter((err) => err.field === 'category')
                         .map((err, index) => (
-                            <p key={index} className="text-red-500 text-xs">
+                            <p key={index} className="text-red-500 text-xs" id="error-category">
                                 {err.message}
                             </p>
                         ))}
@@ -287,6 +295,7 @@ const EditBlogModal: React.FC<{
                             type="submit"
                             className="mt-8 w-40 h-10 bg-primary text-white rounded cursor-pointer text-sm"
                             onClick={handleSubmit}
+                            aria-label="Update blog"
                         >
                             {isEditing ? 'Updating...' : 'Update Blog'}
                         </button>
@@ -299,8 +308,8 @@ const EditBlogModal: React.FC<{
                             ))}
                     </div>
                 </div>
-            </div>
-        </div>
+            </div >
+        </div >
     );
 };
 

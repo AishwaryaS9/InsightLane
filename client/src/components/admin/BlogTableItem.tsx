@@ -46,12 +46,15 @@ const BlogTableItem: React.FC<BlogTableItemProps> = ({ blog, fetchBlogs, index, 
     };
 
     return (
-        <tr className="border-y border-gray-300 hover:bg-gray-50 transition-colors">
-            <th className="px-4 py-4 text-sm">{index}</th>
-            <td className="px-4 py-4 text-sm cursor-pointer" onClick={() => onSelectBlog(blog)}>{title}</td>
+        <tr className="border-y border-gray-300 hover:bg-gray-50 transition-colors" aria-live="polite">
+            <th className="px-4 py-4 text-sm" scope="row" >{index}</th>
+            <td className="px-4 py-4 text-sm cursor-pointer"
+                aria-label={`View details for blog titled ${title}`}
+                onClick={() => onSelectBlog(blog)}>{title}</td>
             <td className="px-4 py-4 hidden sm:table-cell text-gray-500 text-sm">{BlogDate.toDateString()}</td>
             <td className="px-4 py-4 hidden sm:table-cell">
-                <span
+                <span role="status"
+                    aria-label={`Status: ${blog.isPublished ? 'Published' : 'Unpublished'}`}
                     className={`px-2 py-1 text-sm rounded-full ${blog.isPublished
                         ? "bg-green-100 text-green-600"
                         : "bg-orange-100 text-orange-600"
@@ -70,8 +73,9 @@ const BlogTableItem: React.FC<BlogTableItemProps> = ({ blog, fetchBlogs, index, 
                 >
                     {blog.isPublished ? 'Unpublish' : 'Publish'}
                 </button>
-                <RxCross2
-                    onClick={deleteBlog}
+
+                <RxCross2 aria-label={`Delete blog titled ${title}`}
+                    onClick={deleteBlog} aria-hidden="true" focusable="false"
                     className="w-6 h-6 p-1  rounded-full border border-red-200 text-red-400 hover:text-red-600 hover:border-red-400 hover:scale-110 transition-transform cursor-pointer"
                     title="Delete Blog"
                 />

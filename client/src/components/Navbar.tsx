@@ -69,7 +69,7 @@ const Navbar = () => {
                 <a href="/" className="flex items-center gap-2">
                     <img
                         src={assets.logo}
-                        alt="logo"
+                        alt="InsightLane Logo"
                         className={`h-9 ${isScrolled ? "text-primary" : ""}`}
                     />
                 </a>
@@ -90,6 +90,7 @@ const Navbar = () => {
                             />
                         </a>
                     ))}
+
                     {userToken && userRole === "admin" && (
                         <button onClick={() => navigate('/admin')}
                             className={`border px-4 py-1 text-sm font-light rounded-full cursor-pointer ${isScrolled ? "text-black" : "text-primary"
@@ -114,7 +115,7 @@ const Navbar = () => {
                 <div className="hidden md:flex items-center gap-4">
                     {userToken && userDetails.role === "reader" && (
                         <div className="w-10 h-10 rounded-full cursor-pointer" onClick={handleProfileModalOpen}>
-                            <img className="w-10 h-10 rounded-full" src={userDetails?.profilePicture || assets.defaultAvatar} alt="" />
+                            <img className="w-10 h-10 rounded-full" src={userDetails?.profilePicture || assets.defaultAvatar} alt={`${userDetails.name} profile`} />
                         </div>
                     )}
 
@@ -179,7 +180,7 @@ const Navbar = () => {
                     )}
                     {userToken && userDetails.role === "reader" && (
                         <div className="w-10 h-10 rounded-full cursor-pointer" onClick={handleProfileModalOpen}>
-                            <img className="w-10 h-10 rounded-full" src={userDetails?.profilePicture || assets.defaultAvatar} alt="" />
+                            <img className="w-10 h-10 rounded-full" src={userDetails?.profilePicture || assets.defaultAvatar} alt={`${userDetails.name} profile`} />
                         </div>
                     )}
 

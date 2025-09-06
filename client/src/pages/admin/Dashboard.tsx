@@ -8,6 +8,7 @@ import BlogTableItem from '../../components/admin/BlogTableItem';
 import type { Blogs } from '../../utils/interface';
 import AlertModal from '../../components/AlertModal';
 import BlogModal from '../../components/author/BlogModal';
+import { ClipLoader } from 'react-spinners';
 
 const Dashboard = () => {
     const [dashboardData, setDashboardData] = useState({
@@ -22,11 +23,13 @@ const Dashboard = () => {
     } | null>(null);
 
     const [selectedBlog, setSelectedBlog] = useState<Blogs | null>(null);
+    const [loading, setLoading] = useState(false);
 
     const userToken = useAppSelector((state) => state.login.token);
 
     const fetchDashboardData = async () => {
         try {
+            setLoading(true);
             const data = await getDashboardData(userToken);
             if (data) {
                 setDashboardData(data.dashboardData);
@@ -35,6 +38,8 @@ const Dashboard = () => {
             }
         } catch (error) {
             toast.error((error as Error).message);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -43,19 +48,25 @@ const Dashboard = () => {
     }, []);
 
     return (
-        <div className="flex-1 p-4 sm:p-6 md:p-10 bg-blue-50/50 min-h-screen">
+        <main id='main-content' role='main' className="flex-1 p-4 sm:p-6 md:p-10 bg-blue-50/50 min-h-screen">
             <h1 className="text-lg sm:text-xl md:text-2xl font-semibold text-gray-700 mb-6">
                 Dashboard
             </h1>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+            <section aria-labelledby="dashboard-stats-heading"
+                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+                <h2 id="dashboard-stats-heading" className="sr-only">
+                    Dashboard statistics
+                </h2>
                 {[
-                    { icon: <PiNotebook className="w-6 h-6 sm:w-8 sm:h-8 text-blue-500" />, label: "Blogs", value: dashboardData.blogs },
-                    { icon: <LiaComments className="w-6 h-6 sm:w-8 sm:h-8 text-green-500" />, label: "Comments", value: dashboardData.comments },
-                    { icon: <PiNotePencil className="w-6 h-6 sm:w-8 sm:h-8 text-yellow-500" />, label: "Drafts", value: dashboardData.drafts },
+                    { icon: <PiNotebook aria-hidden="true" className="w-6 h-6 sm:w-8 sm:h-8 text-blue-500" />, label: "Blogs", value: dashboardData.blogs },
+                    { icon: <LiaComments aria-hidden="true" className="w-6 h-6 sm:w-8 sm:h-8 text-green-500" />, label: "Comments", value: dashboardData.comments },
+                    { icon: <PiNotePencil aria-hidden="true" className="w-6 h-6 sm:w-8 sm:h-8 text-yellow-500" />, label: "Drafts", value: dashboardData.drafts },
                 ].map((stat, index) => (
                     <div
                         key={index}
+                        role="status"
+                        aria-label={`${stat.value} ${stat.label}`}
                         className="flex items-center gap-3 sm:gap-4 bg-white p-4 sm:p-6 rounded-xl shadow hover:scale-105 transition-transform duration-300"
                     >
                         {stat.icon}
@@ -67,18 +78,20 @@ const Dashboard = () => {
                         </div>
                     </div>
                 ))}
-            </div>
+            </section>
 
-            <section className="mt-8 sm:mt-10">
+            <section className="mt-8 sm:mt-10" aria-labelledby="latest-blogs-heading">
                 <div className="flex items-center gap-3 text-gray-700 mb-4">
-                    <PiNoteLight className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600" />
-                    <h2 className="text-lg sm:text-xl font-medium">Latest Blogs</h2>
+                    <PiNoteLight className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600" aria-hidden="true" />
+                    <h2 id="latest-blogs-heading" className="text-lg sm:text-xl font-medium">Latest Blogs</h2>
                 </div>
 
                 <div className="relative overflow-x-auto shadow rounded-xl bg-white">
-                    <table className="w-full text-sm sm:text-base text-left text-gray-500">
+                    <table className="w-full text-sm sm:text-base text-left text-gray-500"
+                        role="table"
+                        aria-describedby="latest-blogs-heading">
                         <thead className="bg-gray-100 text-gray-600 uppercase text-xs sm:text-sm">
-                            <tr>
+                            <tr role="row">
                                 <th scope="col" className="px-4 py-3">#</th>
                                 <th scope="col" className="px-4 py-3">Blog Title</th>
                                 <th scope="col" className="px-4 py-3 hidden sm:table-cell">Date</th>
@@ -87,7 +100,13 @@ const Dashboard = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {dashboardData.recentBlogs.length > 0 ? (
+                            {loading ? (
+                                <tr>
+                                    <td colSpan={5} className="text-center py-6 text-gray-500" aria-live="polite">
+                                        <ClipLoader color="#00C2CB" size={35} />
+                                    </td>
+                                </tr>
+                            ) : dashboardData.recentBlogs.length > 0 ? (
                                 dashboardData.recentBlogs.map((blog: Blogs, index) => (
                                     <BlogTableItem
                                         key={blog._id}
@@ -103,6 +122,7 @@ const Dashboard = () => {
                                     <td
                                         colSpan={5}
                                         className="text-center text-gray-500 py-6"
+                                        role="row"
                                     >
                                         No blogs to display.
                                     </td>
@@ -113,7 +133,10 @@ const Dashboard = () => {
                 </div>
             </section>
             {alertConfig && (
-                <div className="fixed inset-0 flex items-center justify-center z-50">
+                <div className="fixed inset-0 flex items-center justify-center z-50"
+                    role="dialog"
+                    aria-modal="true"
+                    aria-label="Alert">
                     <AlertModal
                         message={alertConfig.message}
                         onConfirm={() => {
@@ -127,7 +150,7 @@ const Dashboard = () => {
             {selectedBlog && (
                 <BlogModal blog={selectedBlog} onViewClose={() => setSelectedBlog(null)} />
             )}
-        </div>
+        </main>
     );
 };
 
