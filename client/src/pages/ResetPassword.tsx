@@ -35,20 +35,20 @@ const ResetPassword = () => {
   };
 
   return (
-    <div className="w-full h-full ">
+    <main className="w-full h-full ">
       <div className="absolute top-6 left-6">
         <img
           src={assets.logo}
-          alt="Logo"
+          alt="InsightLane Logo - Go to homepage"
           className="h-9 cursor-pointer"
           onClick={() => navigate('/')}
         />
       </div>
 
-      <div className="relative flex flex-col items-center px-6 md:px-16 lg:px-24 text-secondary my-20">
+      <section className="relative flex flex-col items-center px-6 md:px-16 lg:px-24 text-secondary my-20" aria-labelledby="reset-password-heading">
         <div className="mt-10 w-full max-w-lg">
           <div className="text-gray-700 p-6 md:p-8">
-            <h2 className="text-3xl md:text-4xl font-medium mb-3 text-center text-gray-900">
+            <h2 id="reset-password-heading" className="text-3xl md:text-4xl font-medium mb-3 text-center text-gray-900">
               Reset Password
             </h2>
             <p className="text-sm text-gray-500/90 text-center mb-6">
@@ -59,7 +59,7 @@ const ResetPassword = () => {
                 e.preventDefault();
                 handleResetPassword();
               }}
-              className="space-y-4"
+              className="space-y-4" aria-describedby="reset-password-instructions"
             >
               <div className='space-y-2'>
                 <label
@@ -72,12 +72,16 @@ const ResetPassword = () => {
                   id="newPassword"
                   type="password"
                   placeholder="Enter your new password"
-                  className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none transition"
+                  className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-1 focus:ring-primary transition"
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
                   required
+                  aria-required="true"
                   aria-label="New Password"
                 />
+                <p id="reset-password-instructions" className="sr-only">
+                  Password must be at least 8 characters long and contain letters and numbers.
+                </p>
               </div>
 
               <div className='space-y-2'>
@@ -91,24 +95,25 @@ const ResetPassword = () => {
                   id="confirmPassword"
                   type="password"
                   placeholder="Confirm your new password"
-                  className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none transition"
+                  className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none  focus:ring-1 focus:ring-primary transition"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   required
+                  aria-required="true"
                   aria-label="Confirm Password"
                 />
               </div>
 
               <button
-                type="submit"
+                type="submit" aria-label="Save new password"
                 className="w-full bg-primary text-white py-2.5 rounded-lg hover:opacity-90 transition-opacity cursor-pointer">
                 Save Password
               </button>
             </form>
           </div>
         </div>
-      </div>
-    </div>
+      </section>
+    </main>
   );
 };
 

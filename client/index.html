@@ -2,13 +2,59 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link href="//cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+
+    <link href="//cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet" />
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>InsightLane</title>
+
+    <title>InsightLane - Read, Write & Share Blogs</title>
+    <meta
+      name="description"
+      content="InsightLane is your platform to read, write, and share blogs. Discover insights, connect with authors, and join meaningful discussions."
+    />
+    <meta
+      name="keywords"
+      content="blogs, writing, insights, authors, readers, community, articles"
+    />
+    <meta name="author" content="InsightLane Team" />
+
+    <meta
+      property="og:title"
+      content="InsightLane - Read, Write & Share Blogs"
+    />
+    <meta
+      property="og:description"
+      content="Explore insightful blogs and discussions on InsightLane. Join the community of authors and readers today."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://insightlane.vercel.app/" />
+    <meta
+      property="og:image"
+      content="https://insightlane.vercel.app/preview-image.jpg"
+    />
+
+    <meta name="theme-color" content="#00C2CB" />
   </head>
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+    <style>
+      .skip-link {
+        position: absolute;
+        top: -40px;
+        left: 0;
+        background: #00c2cb;
+        color: white;
+        padding: 8px 12px;
+        border-radius: 4px;
+        z-index: 100;
+        transition: top 0.3s;
+      }
+      .skip-link:focus {
+        top: 10px;
+      }
+    </style>
   </body>
 </html>

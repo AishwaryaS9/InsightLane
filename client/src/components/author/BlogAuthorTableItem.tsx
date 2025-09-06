@@ -7,11 +7,13 @@ const BlogAuthorTableItem: React.FC<BlogAuthorTableItemProps> = ({ blog, index }
 
     return (
         <tr className='border-y border-gray-300'>
-            <th className='px-4 py-3'>{index}</th>
-            <td className='px-2 py-4'>{title}</td>
-            <td className='px-2 py-4 max-sm:hidden'>{BlogDate.toDateString()}</td>
+            <th className='px-4 py-3' scope="row" aria-label={`Row ${index}`}>{index}</th>
+            <td className='px-2 py-4' aria-label={`Blog title: ${title}`}>{title}</td>
+            <td className='px-2 py-4 max-sm:hidden' aria-label={`Created on ${BlogDate.toDateString()}`}>{BlogDate.toDateString()}</td>
             <td className='px-2 py-4 max-sm:hidden'>
-                <p className={`${blog.isPublished ? "text-green-600" : "text-orange-700"}`}>
+                <p className={`${blog.isPublished ? "text-green-600" : "text-orange-700"}`}
+                    role="status"
+                    aria-label={`Blog is ${blog.isPublished ? "published" : "unpublished"}`}>
                     {blog.isPublished ? 'Published' : 'Unpublished'}</p>
             </td>
 

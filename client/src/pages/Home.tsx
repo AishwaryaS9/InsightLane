@@ -7,12 +7,9 @@ import { getUserProfileById } from "../api/userApi"
 import { userProfileDetails } from "../redux/store/slice/userProfileSlice"
 
 const Home = () => {
-
     const dispatch = useAppDispatch();
-
-    const userToken = useAppSelector((state) => state.login.token)
-    const userId = useAppSelector((state) => state.login.userId) || ""
-
+    const userToken = useAppSelector((state) => state.login.token);
+    const userId = useAppSelector((state) => state.login.userId) || "";
 
     const fetchUserProfile = async (userId: string) => {
         try {
@@ -24,7 +21,6 @@ const Home = () => {
             } else {
                 toast.error(data.message)
             }
-
         } catch (error) {
             toast.error((error as Error).message);
         }
@@ -37,10 +33,14 @@ const Home = () => {
     }, [userId, userToken])
 
     return (
-        <>
-            <Hero />
-            <BlogCategories />
-        </>
+        <main>
+            <section aria-label="Hero Section">
+                <Hero />
+            </section>
+            <section aria-label="Blog Categories">
+                <BlogCategories />
+            </section>
+        </main>
     )
 }
 

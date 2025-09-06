@@ -25,30 +25,39 @@ const Layout = () => {
 
     return (
         <>
-            <div className='flex items-center justify-between py-2 h-[70px]
-            max-h-screen px-4 sm:px-12 border-b border-gray-200'>
-                <img src={assets.logo} alt="" onClick={() => navigate('/')}
+            <header className='flex items-center justify-between py-2 h-[70px]
+            max-h-screen px-4 sm:px-12 border-b border-gray-200' role="banner">
+                <img src={assets.logo} alt="Company logo - navigate to homepage" onClick={() => navigate('/')}
                     className='w-32 sm:w-40 cursor-pointer' />
-                <button onClick={logout}
+                <button onClick={logout} aria-label="Logout from your account"
                     className='text-sm px-8 py-2 bg-primary text-white rounded-full cursor-pointer'>Logout</button>
-            </div>
+            </header>
+
             {userToken && userRole === "admin" && (
                 <div className='flex min-h-screen'>
 
-                    <div>
+                    <nav aria-label="Admin sidebar navigation"
+                        className="shrink-0">
                         <Sidebar />
-                    </div>
-                    <Outlet />
+                    </nav>
+                    <main id="main-content" role="main" className="flex-1">
+                        <Outlet />
+                    </main>
                 </div>
             )}
 
             {userToken && userRole === "author" && (
                 <div className='flex min-h-screen'>
-                    <div>
+                    <nav
+                        aria-label="Author sidebar navigation"
+                        className="shrink-0"
+                    >
                         <AuthorSidebar />
-                    </div>
-                    <Outlet />
-                </div>
+                    </nav>
+                    <main id="main-content" role="main" className="flex-1">
+                        <Outlet />
+                    </main>
+                </div >
             )}
 
         </>

@@ -7,6 +7,7 @@ import { getAuthorDashboardData } from '../../api/dashboardApi';
 import toast from 'react-hot-toast';
 import type { Blogs } from '../../utils/interface';
 import BlogAuthorTableItem from '../../components/author/BlogAuthorTableItem';
+import { ClipLoader } from 'react-spinners';
 
 const AuthorDashboard = () => {
   const [authorDashboardData, setAuthorDashboardData] = useState({
@@ -16,11 +17,13 @@ const AuthorDashboard = () => {
     approvedComments: 0,
     recentBlogs: [],
   });
+  const [loading, setLoading] = useState(false);
 
   const userToken = useAppSelector((state) => state.login.token);
 
   const fetchAuthorDashboardData = async () => {
     try {
+      setLoading(true);
       const data = await getAuthorDashboardData(userToken);
       if (data) {
         setAuthorDashboardData(data.dashboardData);
@@ -29,6 +32,8 @@ const AuthorDashboard = () => {
       }
     } catch (error) {
       toast.error((error as Error).message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -37,19 +42,21 @@ const AuthorDashboard = () => {
   }, []);
 
   return (
-    <div className="flex-1 p-6 md:p-10 bg-blue-50/50 min-h-screen">
-      <h1 className="text-2xl font-semibold text-gray-700 mb-6">Author Dashboard</h1>
+    <main className="flex-1 p-6 md:p-10 bg-blue-50/50 min-h-screen" aria-labelledby="author-dashboard-heading">
+      <h1 id="author-dashboard-heading" className="text-2xl font-semibold text-gray-700 mb-6">Author Dashboard</h1>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6" aria-label="Author Statistics">
         {[
-          { icon: <PiNotebook className="w-8 h-8 text-blue-500" />, label: "Blogs", value: authorDashboardData.totalBlogs },
-          { icon: <PiNotePencil className="w-8 h-8 text-yellow-500" />, label: "Drafts", value: authorDashboardData.drafts },
-          { icon: <LiaComments className="w-8 h-8 text-green-500" />, label: "Comments", value: authorDashboardData.totalComments },
-          { icon: <BiCommentCheck className="w-8 h-8 text-purple-500" />, label: "Approved Comments", value: authorDashboardData.approvedComments },
+          { icon: <PiNotebook className="w-8 h-8 text-blue-500" aria-hidden="true" />, label: "Blogs", value: authorDashboardData.totalBlogs },
+          { icon: <PiNotePencil className="w-8 h-8 text-yellow-500" aria-hidden="true" />, label: "Drafts", value: authorDashboardData.drafts },
+          { icon: <LiaComments className="w-8 h-8 text-green-500" aria-hidden="true" />, label: "Comments", value: authorDashboardData.totalComments },
+          { icon: <BiCommentCheck className="w-8 h-8 text-purple-500" aria-hidden="true" />, label: "Approved Comments", value: authorDashboardData.approvedComments },
         ].map((stat, index) => (
           <div
             key={index}
+            role="status"
+            aria-label={`${stat.label}: ${stat.value}`}
             className="flex items-center gap-4 bg-white p-6 rounded-2xl shadow-lg hover:scale-105 transition-transform duration-300"
           >
             {stat.icon}
@@ -59,17 +66,17 @@ const AuthorDashboard = () => {
             </div>
           </div>
         ))}
-      </div>
+      </section>
 
       {/* Latest Blogs */}
       <section className="mt-10">
         <div className="flex items-center gap-3 text-gray-700 mb-4">
-          <PiNoteLight className="w-6 h-6 text-blue-600" />
-          <h2 className="text-xl font-medium">Latest Blogs</h2>
+          <PiNoteLight className="w-6 h-6 text-blue-600" aria-hidden="true" />
+          <h2 id="latest-blogs-heading" className="text-xl font-medium">Latest Blogs</h2>
         </div>
 
         <div className="relative overflow-x-auto shadow rounded-2xl bg-white">
-          <table className="w-full text-sm text-left text-gray-500">
+          <table className="w-full text-sm text-left text-gray-500" aria-describedby="latest-blogs-heading">
             <thead className="bg-gray-100 text-gray-600 uppercase text-xs">
               <tr>
                 <th scope="col" className="px-4 py-3">#</th>
@@ -79,7 +86,13 @@ const AuthorDashboard = () => {
               </tr>
             </thead>
             <tbody>
-              {authorDashboardData.recentBlogs.length > 0 ? (
+              {loading ? (
+                <tr>
+                  <td colSpan={5} className="text-center py-6 text-gray-500" aria-live="polite">
+                    <ClipLoader color="#00C2CB" size={35} />
+                  </td>
+                </tr>
+              ) : authorDashboardData.recentBlogs.length > 0 ? (
                 authorDashboardData.recentBlogs.map((blog: Blogs, index) => (
                   <BlogAuthorTableItem
                     key={blog._id}
@@ -99,7 +112,7 @@ const AuthorDashboard = () => {
           </table>
         </div>
       </section>
-    </div>
+    </main>
   );
 };
 

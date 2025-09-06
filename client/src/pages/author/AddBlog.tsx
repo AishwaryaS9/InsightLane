@@ -118,80 +118,100 @@ const AddBlog = () => {
     }, []);
 
     return (
-        <form onSubmit={onSubmitHandler} className='flex-1 bg-blue-50/50 text-gray-600 h-full overflow-scroll p-4'>
+        <form onSubmit={onSubmitHandler}
+            className='flex-1 bg-blue-50/50 text-gray-600 h-full overflow-scroll p-4'
+        >
             <div className='bg-white w-full max-w-3xl mx-auto p-6 shadow-lg rounded-lg'>
-                <h1 className="text-2xl font-semibold mb-4 text-gray-700">Add New Blog</h1>
-                <div className="space-y-1">
+                <h1 id="add-blog-heading" className="text-2xl font-semibold mb-4 text-gray-700">Add New Blog</h1>
+
+                <section className="space-y-1">
                     <div>
-                        <label className="block text-sm font-medium text-gray-600">Upload Thumbnail</label>
+                        <label htmlFor="image" className="block text-sm font-medium text-gray-600 mt-6">Upload Thumbnail</label>
                         <label htmlFor="image">
-                            <img src={!image ? assets.upload_area : URL.createObjectURL(image)} alt=""
+                            <img src={!image ? assets.upload_area : URL.createObjectURL(image)}
+                                alt={!image ? 'Upload placeholder' : 'Selected thumbnail'}
                                 className='mt-2 h-16 rounded cursor-pointer' />
                             <input onChange={(e) => setImage(e.target.files?.[0] || null)}
-                                type="file" id='image' hidden />
+                                type="file" id='image' hidden accept="image/*" />
                         </label>
                         {error.filter(err => err.field === 'image').map((err, index) => (
                             <p key={index} className='text-red-500 text-xs'>{err.message}</p>
                         ))}
                     </div>
 
-                    <p className='mt-4'>Blog Title</p>
-                    <input type="text" placeholder='Type here'
-                        className='w-full max-w-lg mt-2 p-2 border border-gray-300 outline-none rounded'
-                        onChange={e => setTitle(e.target.value)} value={title} />
-                    {error.filter(err => err.field === 'title').map((err, index) => (
-                        <p key={index} className='text-red-500 text-xs'>{err.message}</p>
-                    ))}
-
-                    <p className='mt-4'>Sub Title</p>
-                    <input type="text" placeholder='Type here'
-                        className='w-full max-w-lg mt-2 p-2 border border-gray-300 outline-none rounded'
-                        onChange={e => setSubTitle(e.target.value)} value={subTitle} />
-                    {error.filter(err => err.field === 'subTitle').map((err, index) => (
-                        <p key={index} className='text-red-500 text-xs'>{err.message}</p>
-                    ))}
-
-                    <p className="mt-4">Blog Description</p>
-                    <div className='max-w-lg h-74 pb-16 sm:pb-10 pt-2 relative'>
-                        <div ref={editorRef}></div>
-                        {error.filter(err => err.field === 'description').map((err, index) => (
-                            <p key={index} className='text-red-500 text-xs mt-2'>{err.message}</p>
+                    <div>
+                        <label htmlFor="title" className="block text-sm font-medium text-gray-600 mt-6">
+                            Blog Title
+                        </label>
+                        <input type="text" placeholder='Type here' id="title"
+                            className='w-full max-w-lg mt-2 p-2 border border-gray-300 outline-none rounded'
+                            onChange={e => setTitle(e.target.value)} value={title}
+                            aria-describedby={error.some((err) => err.field === 'title') ? 'title-error' : undefined} />
+                        {error.filter(err => err.field === 'title').map((err, index) => (
+                            <p key={index} className='text-red-500 text-xs' id="title-error" >{err.message}</p>
                         ))}
-                        {loading && (
-                            <div className='absolute right-0 top-0 bottom-0 left-0
-                        flex items-center justify-center bg-black/10 mt-2'>
-                                <div className='w-8 h-8 rounded-full border-2 border-t-white
-                            animate-spin'></div>
-                            </div>
-                        )}
-                        <button disabled={loading} className='absolute bottom-1 right-2 ml-2 text-xs text-white
-                    bg-black/70 px-4 py-1.5 rounded hover:underline cursor-pointer'
-                            type='button'
-                            onClick={generateContent}
-                        >Generate with AI</button>
                     </div>
 
-                    <p className="mt-6">Blog Category</p>
-                    <select name="category" className='mt-2 px-3 py-2 border text-gray-500 border-gray-300 outline-none rounded'
-                        onChange={e => setCategory(e.target.value)} value={category}>
-                        <option value="">Select Category</option>
-                        {dropDownCategories.map((item, index) => {
-                            return <option key={index} value={item}>{item}</option>;
-                        })}
-                    </select>
-                    {error.filter(err => err.field === 'category').map((err, index) => (
-                        <p key={index} className='text-red-500 text-xs'>{err.message}</p>
-                    ))}
+                    <div>
+                        <label htmlFor="subTitle" className="block text-sm font-medium text-gray-600 mt-6">
+                            Sub Title
+                        </label>
+                        <input id="subTitle" type="text" placeholder='Type here' aria-describedby={error.some((err) => err.field === 'subTitle') ? 'subtitle-error' : undefined}
+                            className='w-full max-w-lg mt-2 p-2 border border-gray-300 outline-none rounded'
+                            onChange={e => setSubTitle(e.target.value)} value={subTitle} />
+                        {error.filter(err => err.field === 'subTitle').map((err, index) => (
+                            <p key={index} className='text-red-500 text-xs'>{err.message}</p>
+                        ))}
+                    </div>
+
+                    <div>
+                        <label className="block text-sm font-medium text-gray-600 mt-6">Blog Description</label>
+                        <div className='max-w-lg h-74 pb-16 sm:pb-10 pt-2 relative'>
+                            <div ref={editorRef} aria-label="Blog description editor"></div>
+                            {error.filter(err => err.field === 'description').map((err, index) => (
+                                <p key={index} className='text-red-500 text-xs mt-2'>{err.message}</p>
+                            ))}
+                            {loading && (
+                                <div className='absolute right-0 top-0 bottom-0 left-0 flex items-center justify-center bg-black/10 mt-2' aria-busy="true"
+                                    aria-live="polite">
+                                    <div className='w-8 h-8 rounded-full border-2 border-t-white animate-spin'></div>
+                                </div>
+                            )}
+                            <button disabled={loading} className='absolute bottom-1 right-2 ml-2 text-xs text-white bg-black/70 px-4 py-1.5 rounded hover:underline cursor-pointer'
+                                type='button'
+                                onClick={generateContent}
+                            >Generate with AI</button>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label htmlFor="category" className="block text-sm font-medium text-gray-600 mt-6">
+                            Blog Category
+                        </label>
+                        <select id="category" name="category" className='mt-2 px-3 py-2 border text-gray-500 border-gray-300 outline-none rounded'
+                            onChange={e => setCategory(e.target.value)} value={category}
+                            aria-describedby={error.some((err) => err.field === 'category') ? 'category-error' : undefined}>
+
+                            <option value="">Select Category</option>
+                            {dropDownCategories.map((item, index) => {
+                                return <option key={index} value={item}>{item}</option>;
+                            })}
+                        </select>
+                        {error.filter(err => err.field === 'category').map((err, index) => (
+                            <p key={index} className='text-red-500 text-xs'>{err.message}</p>
+                        ))}
+                    </div>
 
                     <div className='flex gap-2'>
-                        <button disabled={isAdding} type='submit' className='mt-8 w-40 h-10 bg-primary hover:bg-primary/75 text-white rounded cursor-pointer text-sm'>
+                        <button disabled={isAdding} type='submit' aria-busy={isAdding}
+                            className='mt-8 w-40 h-10 bg-primary hover:bg-primary/75 text-white rounded cursor-pointer text-sm'>
                             {isAdding ? 'Adding...' : 'Add Blog'}
                         </button>
                         {error.filter(err => err.field === 'general').map((err, index) => (
                             <p key={index} className='text-red-500 text-xs mt-2'>{err.message}</p>
                         ))}
                     </div>
-                </div>
+                </section>
             </div>
         </form>
     );

@@ -57,7 +57,10 @@ const EditProfileModal: React.FC<{ data: User; isOpen: boolean; onViewClose: () 
     if (!isOpen) return null;
 
     return (
-        <div
+        <div role="dialog"
+            aria-modal="true"
+            aria-labelledby="edit-profile-title"
+            aria-describedby="edit-profile-description"
             className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm"
             onClick={onViewClose}>
             <div
@@ -70,14 +73,21 @@ const EditProfileModal: React.FC<{ data: User; isOpen: boolean; onViewClose: () 
                         type="button"
                         onClick={onViewClose}
                         className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 inline-flex justify-center items-center"
+                        aria-label="Close edit profile modal"
                     >
                         <IoCloseOutline className="w-6 h-6" />
                     </button>
                 </div>
-                <form onSubmit={handleSubmit} className="p-4 md:p-5 space-y-2">
+                <form onSubmit={handleSubmit} className="p-4 md:p-5 space-y-2" aria-describedby="edit-profile-description">
+                    <p
+                        id="edit-profile-description"
+                        className="sr-only"
+                    >
+                        Update your profile information including name, bio, social links, and profile picture.
+                    </p>
                     <div>
-                        <label className="text-xs font-medium text-slate-600">Name</label>
-                        <input
+                        <label htmlFor="name" className="text-xs font-medium text-slate-600">Name</label>
+                        <input name="name"
                             type="text"
                             className="form-input mt-1"
                             placeholder="Enter your name"
@@ -87,8 +97,9 @@ const EditProfileModal: React.FC<{ data: User; isOpen: boolean; onViewClose: () 
                     </div>
 
                     <div>
-                        <label className="text-xs font-medium text-slate-600">Bio</label>
-                        <textarea
+                        <label htmlFor="bio" className="text-xs font-medium text-slate-600">Bio</label>
+                        <textarea id="bio"
+                            name="bio"
                             rows={6}
                             className="form-input mt-1"
                             placeholder="Enter your bio"

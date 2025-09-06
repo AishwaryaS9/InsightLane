@@ -51,16 +51,18 @@ const ProfilePhotoSelector: React.FC<ProfilePhotoSelectorProps> = ({ image, setI
                 ref={inputRef}
                 onChange={handleImageChange}
                 className="hidden"
+                aria-label="Upload profile photo"
             />
             {!previewUrl ? (
-                <div
-                    onClick={onChooseFile}
+                <div role="button"
+                    tabIndex={0}
+                    onClick={onChooseFile} aria-label="Choose profile photo"
                     className="w-20 h-20 flex items-center justify-center rounded-full relative cursor-pointer
                                bg-blue-100/50 dark:bg-blue-900/50"
                 >
                     <LuUser className="text-4xl text-primary dark:text-cyan-400" />
                     <button
-                        type="button"
+                        type="button" aria-label="Upload profile photo"
                         className="w-8 h-8 flex items-center justify-center rounded-full absolute -bottom-1 -right-1
                                    bg-primary dark:bg-cyan-600 text-white"
                     >
@@ -71,13 +73,13 @@ const ProfilePhotoSelector: React.FC<ProfilePhotoSelectorProps> = ({ image, setI
                 <div className="relative">
                     <img
                         src={previewUrl}
-                        alt="profile photo"
+                        alt="Profile photo preview"
                         className="w-20 h-20 rounded-full object-cover border-2 border-gray-300 dark:border-gray-600"
                         onError={handleImageError}
                     />
                     <button
                         type="button"
-                        onClick={handleRemoveImage}
+                        onClick={handleRemoveImage} aria-label="Remove profile photo"
                         className="w-8 h-8 flex items-center justify-center rounded-full absolute -bottom-1 -right-1
                                    bg-red-500 dark:bg-red-600 text-white"
                     >

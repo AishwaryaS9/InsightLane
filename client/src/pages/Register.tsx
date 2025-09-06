@@ -48,25 +48,31 @@ const Register = () => {
     }
 
     return (
-        <div className="relative w-full h-full">
-            <div className="absolute top-6 left-6">
+        <main className="relative w-full h-full flex flex-col md:flex-row">
+            <header className="absolute top-6 left-6">
                 <img
                     src={assets.logo}
-                    alt="logo"
+                    alt="InsightLane logo, click to go to homepage"
                     className="h-9 cursor-pointer"
                     onClick={() => navigate('/')}
                 />
-            </div>
+            </header>
             <div className="flex flex-col-reverse md:flex-row h-screen w-full">
-                <div className="w-full md:w-1/2 hidden md:block">
-                    <img className="h-full w-full object-cover" src={assets.blogAuth} alt="leftSideImage" />
-                </div>
-                <div className="w-full md:w-1/2 flex flex-col items-center justify-center px-6 sm:px-8 md:px-0 py-25">
+                <aside className="w-1/2 hidden md:block">
+                    <img className="h-full w-full object-cover" src={assets.blogAuth}
+                        alt="Illustrative image for registration page" />
+                </aside>
+
+                <section className="w-full md:w-1/2 flex flex-col items-center justify-center px-6 sm:px-8 md:px-0 py-25"
+                    aria-labelledby="register-heading">
                     <form onSubmit={handleSubmit} className="md:w-96 w-full flex flex-col items-center justify-center">
-                        <h2 className="text-3xl md:text-4xl text-gray-900 font-medium text-center">Sign Up</h2>
+                        <h2 id="register-heading" className="text-3xl md:text-4xl text-gray-900 font-medium text-center">Sign Up</h2>
                         <p className="text-sm text-gray-500/90 mt-3 text-center">Please sign up to continue</p>
                         <div className="flex items-center gap-4 w-full my-5">
                         </div>
+                        <label htmlFor="name" className="sr-only">
+                            Name
+                        </label>
                         <div className="flex items-center w-full bg-transparent border border-gray-300/60 h-12 rounded-full overflow-hidden pl-6 gap-2">
                             <svg
                                 xmlns="http://www.w3.org/2000/svg"
@@ -82,16 +88,22 @@ const Register = () => {
                                     d="M15.75 6.75A3.75 3.75 0 1112 3a3.75 3.75 0 013.75 3.75zM12 14.25a7.5 7.5 0 00-7.5 7.5h15a7.5 7.5 0 00-7.5-7.5z"
                                 />
                             </svg>
-                            <input
+
+                            <input id="name"
+                                name="name"
                                 value={name}
                                 onChange={(e) => setName(e.target.value)}
                                 type="text"
-                                placeholder="Name"
+                                placeholder="Full Name"
                                 className="bg-transparent text-gray-500/80 placeholder-gray-500/80 outline-none text-sm w-full h-full"
                                 required
+                                aria-required="true"
                             />
                         </div>
                         <div className="flex items-center mt-6 w-full bg-transparent border border-gray-300/60 h-12 rounded-full overflow-hidden pl-6 gap-2">
+                            <label htmlFor="email" className="sr-only">
+                                Email Address
+                            </label>
                             <svg
                                 width={16}
                                 height={11}
@@ -107,14 +119,20 @@ const Register = () => {
                                 />
                             </svg>
                             <input
+                                id="email"
+                                name="email"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
                                 type="email"
-                                placeholder="Email id"
+                                placeholder="Email Address"
                                 className="bg-transparent text-gray-500/80 placeholder-gray-500/80 outline-none text-sm w-full h-full"
+                                aria-required="true"
                             />
                         </div>
                         <div className="flex items-center mt-6 w-full bg-transparent border border-gray-300/60 h-12 rounded-full overflow-hidden pl-6 gap-2">
+                            <label htmlFor="password" className="sr-only">
+                                Password
+                            </label>
                             <svg
                                 width={13}
                                 height={17}
@@ -127,26 +145,42 @@ const Register = () => {
                                     fill="#6B7280"
                                 />
                             </svg>
-                            <input
+                            <input id="password"
+                                name="password"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                                 type={showPassword ? 'text' : 'password'}
                                 placeholder="Password"
                                 className="bg-transparent text-gray-500/80 placeholder-gray-500/80 outline-none text-sm w-full h-full"
+                                aria-required="true"
+                                aria-describedby="password-requirements"
+                                required
                             />
+                            <span
+                                id="password-requirements"
+                                className="sr-only"
+                            >
+                                Password must contain at least six characters
+                            </span>
                             <button
                                 type="button"
                                 onClick={() => setShowPassword(!showPassword)}
                                 className="pr-4 text-gray-500/80"
+                                aria-label={showPassword ? 'Hide password' : 'Show password'}
                             >
                                 {showPassword ? <PiEyeSlashLight /> : <PiEyeLight />}
                             </button>
                         </div>
                         <div className="flex items-center mt-6 w-full bg-transparent border border-gray-300/60 h-12 rounded-full pl-6">
-                            <select
+                            <label htmlFor="role" className="sr-only">
+                                Select Role
+                            </label>
+                            <select id="role"
+                                name="role"
                                 value={role}
                                 onChange={(e) => setRole(e.target.value)}
                                 className="w-full bg-transparent text-gray-500/80 placeholder-gray-500/80 outline-none text-sm"
+                                aria-required="true"
                             >
                                 <option value="" disabled>
                                     Select Role
@@ -158,6 +192,7 @@ const Register = () => {
                         <button
                             type="submit"
                             className="mt-8 w-full h-11 rounded-full text-white bg-primary hover:opacity-90 transition-opacity cursor-pointer"
+                            aria-label="Register Account"
                         >
                             Register
                         </button>
@@ -172,10 +207,10 @@ const Register = () => {
                             </a>
                         </p>
                     </form>
-                </div>
+                </section>
 
             </div>
-        </div>
+        </main>
     )
 }
 

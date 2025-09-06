@@ -8,7 +8,6 @@ import { useAppDispatch } from '../redux/store/hooks';
 import { validateEmail } from '../utils/regex';
 import { PiEyeLight, PiEyeSlashLight } from "react-icons/pi";
 
-
 const Login = () => {
     const navigate = useNavigate();
     const [email, setEmail] = useState('');
@@ -60,27 +59,32 @@ const Login = () => {
     };
 
     return (
-        <div className="relative w-full h-full">
-            <div className="absolute top-6 left-6">
+        <main className="relative w-full h-full" aria-label="Login Page">
+            <header className="absolute top-6 left-6">
                 <img
                     src={assets.logo}
-                    alt="logo"
+                    alt="Website Logo"
                     className="h-9 cursor-pointer"
                     onClick={() => navigate('/')}
                 />
-            </div>
+            </header>
 
-            <div className="flex flex-col-reverse md:flex-row h-screen w-full">
+            <section className="flex flex-col-reverse md:flex-row h-screen w-full">
                 <div className="w-full md:w-1/2 hidden md:block">
-                    <img className="h-full w-full object-cover" src={assets.blogAuth} alt="leftSideImage" />
+                    <img className="h-full w-full object-cover" src={assets.blogAuth}
+                        alt="Illustration showing blog authentication" />
                 </div>
                 <div className="w-full md:w-1/2 flex flex-col items-center justify-center px-6 sm:px-8 md:px-0 py-25">
-                    <form onSubmit={handleSubmit} className="md:w-96 w-full flex flex-col items-center justify-center">
-                        <h2 className="text-3xl md:text-4xl text-gray-900 font-medium text-center">Sign in</h2>
+                    <form onSubmit={handleSubmit} aria-labelledby="login-heading" className="md:w-96 w-full flex flex-col items-center justify-center">
+                        <h2 id="login-heading" className="text-3xl md:text-4xl text-gray-900 font-medium text-center">Sign in</h2>
                         <p className="text-sm text-gray-500/90 mt-3 text-center">Welcome back! Please sign in to continue</p>
                         <div className="flex items-center gap-4 w-full my-5">
                         </div>
+
                         <div className="flex items-center w-full bg-transparent border border-gray-300/60 h-12 rounded-full overflow-hidden pl-6 gap-2">
+                            <label htmlFor="email" className="sr-only">
+                                Email address
+                            </label>
                             <svg
                                 width={16}
                                 height={11}
@@ -95,15 +99,18 @@ const Login = () => {
                                     fill="#6B7280"
                                 />
                             </svg>
-                            <input
+                            <input id="email" aria-label="Email Address"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
                                 type="email"
-                                placeholder="Email id"
+                                placeholder="Email address"
                                 className="bg-transparent text-gray-500/80 placeholder-gray-500/80 outline-none text-sm w-full h-full"
                             />
                         </div>
                         <div className="flex items-center mt-6 w-full bg-transparent border border-gray-300/60 h-12 rounded-full overflow-hidden pl-6 gap-2">
+                            <label htmlFor="password" className="sr-only">
+                                Password
+                            </label>
                             <svg
                                 width={13}
                                 height={17}
@@ -116,7 +123,7 @@ const Login = () => {
                                     fill="#6B7280"
                                 />
                             </svg>
-                            <input
+                            <input id="password" aria-label="Password"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                                 type={showPassword ? 'text' : 'password'}
@@ -124,46 +131,47 @@ const Login = () => {
                                 className="bg-transparent text-gray-500/80 placeholder-gray-500/80 outline-none text-sm w-full h-full"
                             />
                             <button
-                                type="button"
+                                type="button" aria-label={showPassword ? "Hide password" : "Show password"}
                                 onClick={() => setShowPassword(!showPassword)}
                                 className="pr-4 text-gray-500/80"
                             >
                                 {showPassword ? <PiEyeSlashLight /> : <PiEyeLight />}
                             </button>
                         </div>
+
                         <div className="w-full flex items-center justify-between mt-8 text-gray-500/80">
                             <div className="flex items-center gap-2">
                                 <input
                                     className="h-5"
                                     type="checkbox"
-                                    id="checkbox"
+                                    id="rememberMe"
                                     checked={rememberMe}
                                     onChange={() => setRememberMe(!rememberMe)}
                                 />
                                 <label className="text-sm" htmlFor="checkbox">Remember me</label>
                             </div>
-                            <a className="text-sm underline" href="/forgot-password">Forgot password?</a>
+                            <a className="text-sm underline" href="/forgot-password" aria-label="Forgot Password">Forgot password?</a>
                         </div>
                         <button
-                            type="submit"
+                            type="submit" aria-label="Login"
                             className="mt-8 w-full h-11 rounded-full text-white bg-primary hover:opacity-90 transition-opacity cursor-pointer"
                         >
                             Login
                         </button>
                         <p className="text-gray-500/90 text-sm mt-4 text-center">
-                            Don’t have an account?{' '}
-                            <a
+                            Don't have an account?{' '}
+                            <button
                                 className="text-primary hover:underline"
-                                href="#"
                                 onClick={() => navigate('/register')}
+                                aria-label="Navigate to Sign Up"
                             >
                                 Sign up
-                            </a>
+                            </button>
                         </p>
                     </form>
                 </div>
-            </div>
-        </div>
+            </section>
+        </main>
     );
 };
 

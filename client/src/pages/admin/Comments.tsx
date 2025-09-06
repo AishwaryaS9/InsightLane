@@ -51,13 +51,14 @@ const Comments = () => {
     };
 
     return (
-        <div className="flex-1 p-4 sm:p-6 md:p-10 bg-blue-50/50 min-h-screen">
-            <div className="flex flex-wrap justify-between items-center mb-6 gap-4">
+        <main id='main-content' role='main' className="flex-1 p-4 sm:p-6 md:p-10 bg-blue-50/50 min-h-screen">
+            <header className="flex flex-wrap justify-between items-center mb-6 gap-4">
                 <h1 className="text-lg sm:text-xl md:text-2xl font-semibold text-gray-700">
                     Comments
                 </h1>
-                <div className="flex gap-2 sm:gap-4">
-                    <button
+                <nav className="flex gap-2 sm:gap-4" role="navigation"
+                    aria-label="Filter comments">
+                    <button aria-pressed={filter === 'Approved'}
                         onClick={() => {
                             setFilter('Approved');
                             setPage(1);
@@ -69,7 +70,7 @@ const Comments = () => {
                     >
                         Approved
                     </button>
-                    <button
+                    <button aria-pressed={filter === 'Not Approved'}
                         onClick={() => {
                             setFilter('Not Approved');
                             setPage(1);
@@ -81,22 +82,28 @@ const Comments = () => {
                     >
                         Not Approved
                     </button>
-                </div>
-            </div>
+                </nav>
+            </header>
 
-            <div className="relative bg-white shadow-md rounded-lg overflow-hidden">
-                <table className="w-full text-sm sm:text-base text-left text-gray-500">
+            <section aria-labelledby="comments-table-heading" className="relative bg-white shadow-md rounded-lg overflow-hidden">
+                <h2 id="comments-table-heading" className="sr-only">
+                    Comments List
+                </h2>
+                <table className="w-full text-sm sm:text-base text-left text-gray-500"
+                    role="table"
+                    aria-describedby="comments-table-heading">
                     <thead className="bg-gray-100 text-gray-600 text-xs sm:text-sm uppercase">
-                        <tr>
-                            <th className="px-4 sm:px-6 py-3">Blog Title & Comment</th>
-                            <th className="px-4 sm:px-6 py-3 hidden sm:table-cell">Date</th>
-                            <th className="px-4 sm:px-6 py-3 text-center">Action</th>
+                        <tr role="row">
+                            <th scope="col" className="px-4 sm:px-6 py-3">Blog Title & Comment</th>
+                            <th scope="col" className="px-4 sm:px-6 py-3 hidden sm:table-cell">Date</th>
+                            <th scope="col" className="px-4 sm:px-6 py-3 text-center">Action</th>
                         </tr>
                     </thead>
                     <tbody>
                         {filteredComments.length === 0 ? (
-                            <tr>
-                                <td colSpan={3} className="text-center py-10 text-gray-500">
+                            <tr role='row'>
+                                <td colSpan={3} className="text-center py-10 text-gray-500"
+                                    role="cell">
                                     No comments found.
                                 </td>
                             </tr>
@@ -111,18 +118,19 @@ const Comments = () => {
                         )}
                     </tbody>
                 </table>
-            </div>
+            </section >
 
             {totalPages > 1 && (
-                <div className="my-15">
+                <nav className="my-15" role="navigation"
+                    aria-label="Comments pagination">
                     <Pagination
                         page={page}
                         totalPages={totalPages}
                         onPageChange={handlePageChange}
                     />
-                </div>
+                </nav>
             )}
-        </div>
+        </main >
     );
 };
 

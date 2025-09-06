@@ -6,12 +6,14 @@ import { getAllBlogs } from '../../api/blogApi';
 import Pagination from '../../components/Pagination';
 import BlogModal from '../../components/author/BlogModal';
 import AlertModal from '../../components/AlertModal';
+import { ClipLoader } from 'react-spinners';
 
 const ListBlog = () => {
     const [blogs, setBlogs] = useState<Blogs[]>([]);
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [selectedBlog, setSelectedBlog] = useState<Blogs | null>(null);
+    const [loading, setLoading] = useState(false);
     const [alertConfig, setAlertConfig] = useState<{
         message: string;
         onConfirm: () => void;
@@ -19,6 +21,7 @@ const ListBlog = () => {
 
     const fetchBlogs = async () => {
         try {
+            setLoading(true);
             const data = await getAllBlogs(page, 5);
             if (data) {
                 setBlogs(data.blogs);
@@ -26,6 +29,8 @@ const ListBlog = () => {
             }
         } catch (error) {
             toast.error((error as Error).message);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -40,12 +45,18 @@ const ListBlog = () => {
     };
 
     return (
-        <div className="flex-1 p-4 sm:p-6 md:p-10 bg-blue-50/50 min-h-screen">
-            <h1 className="text-lg sm:text-xl md:text-2xl font-semibold text-gray-700 mb-6">
-                All Blogs
-            </h1>
+        <main className="flex-1 p-4 sm:p-6 md:p-10 bg-blue-50/50 min-h-screen">
+            <header>
+                <h1 className="text-lg sm:text-xl md:text-2xl font-semibold text-gray-700 mb-6">
+                    All Blogs
+                </h1>
+            </header>
 
-            <div className="relative overflow-x-auto shadow-md rounded-xl bg-white">
+            <section aria-labelledby="blogs-list-heading" className="relative overflow-x-auto shadow-md rounded-xl bg-white">
+                <h2 id="blogs-list-heading" className="sr-only">
+                    Blog list
+                </h2>
+
                 <table className="w-full text-sm sm:text-base text-left text-gray-500">
                     <thead className="bg-gray-100 text-gray-600 uppercase text-xs sm:text-sm tracking-wider">
                         <tr>
@@ -61,7 +72,15 @@ const ListBlog = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {blogs.length > 0 ? (
+
+                        {loading ? (
+                            <tr>
+                                <td colSpan={5} className="text-center py-6 text-gray-500" aria-live="polite">
+                                    {/* Loading blogs... */}
+                                    <ClipLoader color="#00C2CB" size={35} />
+                                </td>
+                            </tr>
+                        ) : blogs.length > 0 ? (
                             blogs.map((blog, index) => (
                                 <BlogTableItem
                                     key={blog._id}
@@ -76,7 +95,7 @@ const ListBlog = () => {
                             <tr>
                                 <td
                                     colSpan={5}
-                                    className="text-center py-6 text-gray-500"
+                                    className="text-center py-6 text-gray-500" aria-live="polite"
                                 >
                                     No blogs found.
                                 </td>
@@ -84,9 +103,11 @@ const ListBlog = () => {
                         )}
                     </tbody>
                 </table>
-            </div>
+            </section>
             {alertConfig && (
-                <div className="fixed inset-0 flex items-center justify-center z-50">
+                <div className="fixed inset-0 flex items-center justify-center z-50" role="dialog"
+                    aria-modal="true"
+                    aria-label="Alert">
                     <AlertModal
                         message={alertConfig.message}
                         onConfirm={() => {
@@ -101,14 +122,14 @@ const ListBlog = () => {
                 <BlogModal blog={selectedBlog} onViewClose={() => setSelectedBlog(null)} />
             )}
 
-            <div className="my-15">
+            <nav className="my-15" aria-label="Blog list pagination">
                 <Pagination
                     page={page}
                     totalPages={totalPages}
                     onPageChange={handlePageChange}
                 />
-            </div>
-        </div>
+            </nav>
+        </main>
     );
 };
 
