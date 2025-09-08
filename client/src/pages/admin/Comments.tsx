@@ -5,6 +5,7 @@ import { useAppSelector } from '../../redux/store/hooks';
 import type { Comment } from '../../utils/interface';
 import CommentTableItem from '../../components/admin/CommentTableItem';
 import Pagination from '../../components/Pagination';
+import { analytics, logEvent } from "../../config/firebase";
 
 const Comments = () => {
     const [allComments, setAllComments] = useState<Comment[]>([]);
@@ -14,22 +15,86 @@ const Comments = () => {
     const [totalPages, setTotalPages] = useState(1);
 
     const userToken = useAppSelector((state) => state.login.token);
+    const userId = useAppSelector((state) => state.login.userId);
+    const userRole = useAppSelector((state) => state.login.role);
+
+    const trackCommentsPageView = (userId: string | null, userRole: string | null) => {
+        if (analytics) {
+            logEvent(analytics, "comments_page_view", {
+                user_id: userId,
+                user_role: userRole,
+            });
+        }
+    };
+
+    const trackCommentsFilterChange = (
+        filter: "Approved" | "Not Approved",
+        userId: string | null,
+        userRole: string | null
+    ) => {
+        if (analytics) {
+            logEvent(analytics, "comments_filter_changed", {
+                filter,
+                user_id: userId,
+                user_role: userRole,
+            });
+        }
+    };
+
+    const trackCommentsPageChange = (
+        page: number,
+        userId: string | null,
+        userRole: string | null
+    ) => {
+        if (analytics) {
+            logEvent(analytics, "comments_page_changed", {
+                page,
+                user_id: userId,
+                user_role: userRole,
+            });
+        }
+    };
+
+    const trackCommentsFetchSuccess = (count: number, userId: string | null, userRole: string | null) => {
+        if (analytics) {
+            logEvent(analytics, "comments_fetch_success", {
+                count,
+                user_id: userId,
+                user_role: userRole,
+            });
+        }
+    };
+
+    const trackCommentsFetchError = (errorMessage: string, userId: string | null, userRole: string | null) => {
+        if (analytics) {
+            logEvent(analytics, "comments_fetch_error", {
+                error_message: errorMessage,
+                user_id: userId,
+                user_role: userRole,
+            });
+        }
+    };
 
     const fetchComments = async () => {
         try {
             const data = await getAllComments(userToken, 1, 1000);
             if (data) {
                 setAllComments(data.data.comments);
+                trackCommentsFetchSuccess(data.data.comments.length, userId || null, userRole || null);
             } else {
                 toast.error(data.message);
+                trackCommentsFetchError(data.message, userId || null, userRole || null);
             }
         } catch (error) {
-            toast.error((error as Error).message);
+            const msg = (error as Error).message;
+            toast.error(msg);
+            trackCommentsFetchError(msg, userId || null, userRole || null);
         }
     };
 
     useEffect(() => {
         fetchComments();
+        trackCommentsPageView(userId || null, userRole || null);
     }, []);
 
     useEffect(() => {
@@ -47,6 +112,7 @@ const Comments = () => {
     const handlePageChange = (newPage: number) => {
         if (newPage >= 1 && newPage <= totalPages) {
             setPage(newPage);
+            trackCommentsPageChange(newPage, userId || null, userRole || null);
         }
     };
 
@@ -62,6 +128,7 @@ const Comments = () => {
                         onClick={() => {
                             setFilter('Approved');
                             setPage(1);
+                            trackCommentsFilterChange("Approved", userId || null, userRole || null);
                         }}
                         className={`px-3 sm:px-4 py-2 text-sm font-medium rounded-lg shadow-md transition-all cursor-pointer ${filter === 'Approved'
                             ? 'bg-blue-300 text-white'
@@ -74,6 +141,7 @@ const Comments = () => {
                         onClick={() => {
                             setFilter('Not Approved');
                             setPage(1);
+                            trackCommentsFilterChange("Not Approved", userId || null, userRole || null);
                         }}
                         className={`px-3 sm:px-4 py-2 text-sm font-medium rounded-lg shadow-md transition-all cursor-pointer ${filter === 'Not Approved'
                             ? 'bg-blue-300 text-white'

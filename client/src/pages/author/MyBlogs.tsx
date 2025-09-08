@@ -9,6 +9,7 @@ import type { Blogs } from '../../utils/interface';
 import EditBlogModal from '../../components/author/EditBlogModal';
 import Pagination from '../../components/Pagination';
 import { ClipLoader } from 'react-spinners';
+import { analytics, logEvent } from "../../config/firebase";
 
 const MyBlogs = () => {
     const [blogs, setBlogs] = useState<Blogs[]>([]);
@@ -47,9 +48,25 @@ const MyBlogs = () => {
         fetchBlogByAuthor();
     }, [page]);
 
+    useEffect(() => {
+        if (analytics) {
+            logEvent(analytics, "blogs_screen_view", {
+                screen_name: "MyBlogs",
+                user_id: userId || null,
+            });
+        }
+    }, [userId]);
+
     const handleModal = (blog: Blogs) => {
         setSelectedBlog(blog);
         setModalOpen(true);
+        if (analytics) {
+            logEvent(analytics, "blog_preview", {
+                blog_id: blog._id,
+                blog_title: blog.title,
+                user_id: userId,
+            });
+        }
     };
 
     const closeModal = () => {
@@ -60,6 +77,13 @@ const MyBlogs = () => {
     const handleEditBlogModal = (blog: Blogs) => {
         setEditSelectedBlog(blog)
         setIsEditBlogModalOpen(true);
+        if (analytics) {
+            logEvent(analytics, "blog_edit", {
+                blog_id: blog._id,
+                blog_title: blog.title,
+                user_id: userId,
+            });
+        }
     }
 
     const closeEditBlogModal = () => {
@@ -70,8 +94,15 @@ const MyBlogs = () => {
     const handlePageChange = (newPage: number) => {
         if (newPage >= 1 && newPage <= totalPages) {
             setPage(newPage);
+            if (analytics) {
+                logEvent(analytics, "blog_pagination", {
+                    page_number: newPage,
+                    user_id: userId,
+                });
+            }
         }
     };
+
 
     return (
         <main className="w-full min-h-screen bg-blue-50/50 py-12 px-6 sm:px-16" aria-labelledby="my-blogs-heading">

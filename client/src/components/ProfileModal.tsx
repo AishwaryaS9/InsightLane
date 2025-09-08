@@ -2,21 +2,67 @@ import { IoCloseOutline } from 'react-icons/io5'
 import { assets } from '../assets/assets'
 import EditProfileModal from './EditProfileModal'
 import ChangePasswordModal from './ChangePasswordModal'
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import type { User } from '../utils/interface'
+import { analytics, logEvent } from "../config/firebase"
+import { useAppSelector } from '../redux/store/hooks'
 
 const ProfileModal: React.FC<{
     userData: User;
-    isProfileOpen: () => void;
+    isProfileOpen: boolean;
     onProfileClose: () => void;
 }> = ({ userData, isProfileOpen, onProfileClose }) => {
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
 
     const modalRef = useRef<HTMLDivElement>(null);
+    const userId = useAppSelector((state) => state.login.userId);
+
+    const trackProfileOpened = (userId: string | null) => {
+        if (analytics) {
+            logEvent(analytics, "profile_opened", { user_id: userId });
+        }
+    };
+
+    const trackProfileClosed = (userId: string | null) => {
+        if (analytics) {
+            logEvent(analytics, "profile_closed", { user_id: userId });
+        }
+    };
+
+    const trackEditProfileClick = (userId: string | null) => {
+        if (analytics) {
+            logEvent(analytics, "edit_profile_clicked", { user_id: userId });
+        }
+    };
+
+    const trackChangePasswordClick = (userId: string | null) => {
+        if (analytics) {
+            logEvent(analytics, "change_password_clicked", { user_id: userId });
+        }
+    };
+
+    const trackSocialLinkClick = (platform: string, userId: string | null) => {
+        if (analytics) {
+            logEvent(analytics, "social_link_clicked", {
+                platform,
+                user_id: userId,
+            });
+        }
+    };
+
+    useEffect(() => {
+        if (isProfileOpen) {
+            trackProfileOpened(userId || null);
+        }
+        return () => {
+            trackProfileClosed(userId || null);
+        };
+    }, [isProfileOpen, userId]);
 
     const handleEditProfile = () => {
         setIsEditModalOpen(true);
+        trackEditProfileClick(userId || null);
     };
 
     const closeModal = () => {
@@ -25,6 +71,7 @@ const ProfileModal: React.FC<{
 
     const handleChangePassword = () => {
         setIsPasswordModalOpen(true);
+        trackChangePasswordClick(userId || null);
     };
 
     const closePasswordModal = () => {
@@ -86,6 +133,7 @@ const ProfileModal: React.FC<{
                                 rel="noopener noreferrer"
                                 className="hover:-translate-y-0.5 transition"
                                 aria-label="Facebook profile"
+                                onClick={() => trackSocialLinkClick("facebook", userId || null)}
                             >
                                 <img src={assets.facebook} className="w-6 h-6" alt="Facebook icon" />
                             </a>
@@ -95,6 +143,7 @@ const ProfileModal: React.FC<{
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="hover:-translate-y-0.5 transition"
+                                onClick={() => trackSocialLinkClick("twitter", userId || null)}
                             >
                                 <img src={assets.twitter} className="w-6 h-6" alt="Twitter icon" />
                             </a>
@@ -103,6 +152,7 @@ const ProfileModal: React.FC<{
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="hover:-translate-y-0.5 transition"
+                                onClick={() => trackSocialLinkClick("linkedin", userId || null)}
                             >
                                 <img src={assets.linkedin} className="w-6 h-6" alt="LinkedIn icon" />
                             </a>

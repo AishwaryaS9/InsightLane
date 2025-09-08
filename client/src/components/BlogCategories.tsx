@@ -7,6 +7,7 @@ import toast from 'react-hot-toast';
 import type { Blogs } from '../utils/interface';
 import Pagination from './Pagination';
 import { ClipLoader } from 'react-spinners';
+import { analytics, logEvent } from '../config/firebase';
 
 const BlogCategories = () => {
     const [menu, setMenu] = useState('All');
@@ -24,6 +25,14 @@ const BlogCategories = () => {
             if (data) {
                 setBlogs(data.blogs);
                 setTotalPages(data.totalPages || 1);
+                if (analytics) {
+                    logEvent(analytics, 'blog_category_view', {
+                        category: menu,
+                        page: page,
+                        search: search || null,
+                        number_of_blogs: data.blogs.length,
+                    });
+                }
             }
         } catch (error) {
             toast.error((error as Error).message);
@@ -39,8 +48,36 @@ const BlogCategories = () => {
     const handlePageChange = (newPage: number) => {
         if (newPage >= 1 && newPage <= totalPages) {
             setPage(newPage);
+            if (analytics) {
+                logEvent(analytics, 'blog_pagination', {
+                    category: menu,
+                    new_page: newPage,
+                });
+            }
         }
     };
+
+    const handleCategoryClick = (category: string) => {
+        setMenu(category);
+        setPage(1);
+
+        if (analytics) {
+            logEvent(analytics, 'blog_category_click', {
+                category,
+            });
+        }
+    };
+
+    const handleSearch = () => {
+        setPage(1);
+
+        if (analytics) {
+            logEvent(analytics, 'blog_search', {
+                query: search,
+            });
+        }
+    };
+
 
     return (
         <main>
@@ -48,7 +85,7 @@ const BlogCategories = () => {
                 {blogCategories.map((item) => (
                     <div key={item} className='relative'>
                         <button aria-pressed={menu === item}
-                            onClick={() => { setMenu(item); setPage(1); }}
+                            onClick={() => handleCategoryClick(item)}
                             className={`cursor-pointer text-gray-500 ${menu === item && 'text-white px-4 pt-0.5'}`}
                         >
                             {item}
@@ -81,6 +118,7 @@ const BlogCategories = () => {
                     />
                     <button
                         type='submit'
+                        onClick={handleSearch}
                         className='bg-primary text-white px-8 py-2 m-1.5 rounded hover:scale-105 transition-all cursor-pointer'
                     >
                         Search

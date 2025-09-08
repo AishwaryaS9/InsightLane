@@ -21,9 +21,13 @@ import About from './pages/About'
 import Contact from './pages/Contact'
 import ForgotPassword from './pages/ForgotPassword'
 import ResetPassword from './pages/ResetPassword'
+import { useEffect } from 'react'
+import { analytics, logEvent } from './config/firebase'
+
 
 const App = () => {
   const location = useLocation();
+
   const hideNavbarRoutes = ['/login', '/register', '/forgot-password', '/resetPassword', '/admin', '/author'];
   const shouldHideNavbar = hideNavbarRoutes.some((route) =>
     location.pathname.startsWith(route)
@@ -32,8 +36,19 @@ const App = () => {
   const shouldHideFooter = hideFooterRoutes.some((route) =>
     location.pathname.startsWith(route)
   );
-  const userToken = useAppSelector((state) => state.login.token);
-  const userRole = useAppSelector((state) => state.login.role);
+  const userToken = useAppSelector((state) => state?.login.token);
+  const userRole = useAppSelector((state) => state?.login.role);
+
+  useEffect(() => {
+    if (analytics) {
+      logEvent(analytics, "page_view", {
+        page_path: location.pathname + location.search,
+        page_title: document.title,
+      });
+    }
+  }, [location]);
+
+
 
   return (
     <>

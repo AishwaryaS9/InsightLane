@@ -7,9 +7,11 @@ import type { UserData, User } from '../../utils/interface';
 import Pagination from '../../components/Pagination';
 import toast from 'react-hot-toast';
 import { ClipLoader } from 'react-spinners';
+import { analytics, logEvent } from "../../config/firebase";
 
 const Users = () => {
     const userToken = useAppSelector((state) => state.login.token);
+    const userId = useAppSelector((state) => state.login.userId);
 
     const [userData, setUserData] = useState<UserData | null>(null);
     const [userInfo, setUserInfo] = useState<User[]>([]);
@@ -27,12 +29,36 @@ const Users = () => {
                 setUserInfo(data.users);
                 setTotalPages(data.totalPages || 1)
                 setSearch(search);
+                if (analytics) {
+                    logEvent(analytics, "users_fetch_success", {
+                        page,
+                        search: search || "none",
+                        total_users: data.totalUsers,
+                        user_id: userId || null,
+                    });
+                }
             } else {
-                toast.error(data.message)
+                toast.error(data.message);
+                if (analytics) {
+                    logEvent(analytics, "users_fetch_failed", {
+                        reason: data.message,
+                        page,
+                        search: search || "none",
+                        user_id: userId || null,
+                    });
+                }
             }
         } catch (error) {
             console.error("Failed to fetch user data:", error);
             toast.error((error as Error).message);
+            if (analytics) {
+                logEvent(analytics, "users_fetch_error", {
+                    message: (error as Error).message,
+                    page,
+                    search: search || "none",
+                    user_id: userId || null,
+                });
+            }
         } finally {
             setLoading(false);
         }
@@ -42,14 +68,37 @@ const Users = () => {
         getUserData();
     }, [page]);
 
+    useEffect(() => {
+        if (analytics) {
+            logEvent(analytics, "page_view_users", {
+                page_path: "/admin/users",
+                page_title: "Users",
+                user_id: userId || null,
+            });
+        }
+    }, [userId]);
+
     const handlePageChange = (newPage: number) => {
         if (newPage >= 1 && newPage <= totalPages) {
             setPage(newPage);
+            if (analytics) {
+                logEvent(analytics, "users_pagination", {
+                    from_page: page,
+                    to_page: newPage,
+                    user_id: userId || null,
+                });
+            }
         }
     };
 
     const handleUserDeleted = (deletedUserId: string) => {
         setUserInfo((prevUsers) => prevUsers.filter((user) => user._id !== deletedUserId));
+        if (analytics) {
+            logEvent(analytics, "user_deleted", {
+                deleted_user_id: deletedUserId,
+                by_user_id: userId || null,
+            });
+        }
     };
 
 

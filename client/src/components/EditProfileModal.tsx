@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { IoCloseOutline } from 'react-icons/io5';
 import ProfilePhotoSelector from './ProfilePhotoSelector';
 import { updateUserProfile } from '../api/userApi';
@@ -6,6 +6,8 @@ import { useAppDispatch, useAppSelector } from '../redux/store/hooks';
 import toast from 'react-hot-toast';
 import { userProfileDetails } from '../redux/store/slice/userProfileSlice';
 import type { User } from '../utils/interface';
+import { analytics, logEvent } from "../config/firebase";
+
 
 const EditProfileModal: React.FC<{ data: User; isOpen: boolean; onViewClose: () => void; }> = ({ data, isOpen, onViewClose }) => {
     const [profilePicture, setProfilePicture] = useState<File | null>(null);
@@ -20,7 +22,31 @@ const EditProfileModal: React.FC<{ data: User; isOpen: boolean; onViewClose: () 
     });
 
     const userToken = useAppSelector((state) => state.login.token);
+    const userId = useAppSelector((state) => state.login.userId);
+    const userRole = useAppSelector((state) => state.login.role);
     const dispatch = useAppDispatch();
+
+    const trackProfileEditEvent = (action: string, extra?: Record<string, unknown>) => {
+        if (analytics) {
+            logEvent(analytics, "profile_edit", {
+                action,
+                user_id: userId,
+                user_role: userRole,
+                ...extra,
+            });
+        }
+    };
+
+    useEffect(() => {
+        if (isOpen) {
+            trackProfileEditEvent("opened");
+        }
+        return () => {
+            if (isOpen) {
+                trackProfileEditEvent("closed");
+            }
+        };
+    }, [isOpen]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -44,11 +70,13 @@ const EditProfileModal: React.FC<{ data: User; isOpen: boolean; onViewClose: () 
                     data: response
                 }))
                 toast.success("User details updated successfully");
+                trackProfileEditEvent("saved", { updated_fields: ["name", "bio", "socialLinks", profilePicture ? "profilePicture" : null].filter(Boolean) });
                 onViewClose();
             }
         } catch (error) {
             setError('Failed to update profile. Please try again.');
             toast.error((error as Error).message);
+            trackProfileEditEvent("error", { message: (error as Error).message });
         } finally {
             setLoading(false);
         }
@@ -155,7 +183,10 @@ const EditProfileModal: React.FC<{ data: User; isOpen: boolean; onViewClose: () 
                         <button
                             type="button"
                             className="cancel-btn"
-                            onClick={onViewClose}
+                            onClick={() => {
+                                trackProfileEditEvent("cancelled");
+                                onViewClose();
+                            }}
                             disabled={loading}
                         >
                             Cancel

@@ -2,10 +2,41 @@ import React, { useRef, useState, useEffect } from 'react';
 import { LuUser, LuUpload, LuTrash } from 'react-icons/lu';
 import { assets } from '../assets/assets';
 import type { ProfilePhotoSelectorProps } from '../utils/interface';
+import { analytics, logEvent } from "../config/firebase";
+import { useAppSelector } from '../redux/store/hooks';
+
 
 const ProfilePhotoSelector: React.FC<ProfilePhotoSelectorProps> = ({ image, setImage }) => {
     const inputRef = useRef<HTMLInputElement | null>(null);
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+
+    const userId = useAppSelector((state) => state.login.userId);
+
+    const trackProfilePhotoUploaded = (fileName: string, userId: string | null) => {
+        if (analytics) {
+            logEvent(analytics, "profile_photo_uploaded", {
+                file_name: fileName,
+                user_id: userId,
+            });
+        }
+    };
+
+    const trackProfilePhotoRemoved = (userId: string | null) => {
+        if (analytics) {
+            logEvent(analytics, "profile_photo_removed", {
+                user_id: userId,
+            });
+        }
+    };
+
+    const trackProfilePhotoError = (errorMessage: string, userId: string | null) => {
+        if (analytics) {
+            logEvent(analytics, "profile_photo_error", {
+                error_message: errorMessage,
+                user_id: userId,
+            });
+        }
+    };
 
     useEffect(() => {
         if (image) {
@@ -27,16 +58,19 @@ const ProfilePhotoSelector: React.FC<ProfilePhotoSelectorProps> = ({ image, setI
             setImage(file);
             const preview = URL.createObjectURL(file);
             setPreviewUrl(preview);
+            trackProfilePhotoUploaded(file.name, userId || null);
         }
     };
 
     const handleImageError = () => {
         setPreviewUrl(assets.defaultAvatar);
+        trackProfilePhotoError("Image load failed - fallback to default avatar", userId || null);
     };
 
     const handleRemoveImage = () => {
         setImage(null);
         setPreviewUrl(null);
+        trackProfilePhotoRemoved(userId || null);
     };
 
     const onChooseFile = () => {

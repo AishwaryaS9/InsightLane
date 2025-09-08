@@ -7,6 +7,7 @@ import { authTokenDetails, userLogin } from '../redux/store/slice/loginSlice';
 import { useAppDispatch } from '../redux/store/hooks';
 import { validateEmail } from '../utils/regex';
 import { PiEyeLight, PiEyeSlashLight } from "react-icons/pi";
+import { analytics, logEvent } from "../config/firebase";
 
 const Login = () => {
     const navigate = useNavigate();
@@ -26,6 +27,15 @@ const Login = () => {
         }
     }, []);
 
+    useEffect(() => {
+        if (analytics) {
+            logEvent(analytics, "page_view_login", {
+                page_path: "/login",
+                page_title: "Login",
+            });
+        }
+    }, []);
+
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         if (!validateEmail(email)) {
@@ -37,6 +47,12 @@ const Login = () => {
             const data = await loginUser(email, password);
             if (!data || !data.token) {
                 toast.error(data?.message || "Login failed. Please try again.");
+                if (analytics) {
+                    logEvent(analytics, "login_failed", {
+                        method: "email",
+                        reason: data?.message || "unknown_error",
+                    });
+                }
                 return;
             }
             if (data) {
@@ -49,12 +65,24 @@ const Login = () => {
                     localStorage.removeItem('rememberedEmail');
                 }
                 toast.success('Logged in successfully!');
+                if (analytics) {
+                    logEvent(analytics, "login", {
+                        method: "email",
+                        user_role: data.role,
+                    });
+                }
                 navigate('/');
             } else {
                 toast.error(data.message);
             }
         } catch (error) {
             toast.error((error as Error).message);
+            if (analytics) {
+                logEvent(analytics, "login_error", {
+                    method: "email",
+                    message: (error as Error).message,
+                });
+            }
         }
     };
 
@@ -152,7 +180,7 @@ const Login = () => {
                             </div>
                             <a className="text-sm underline" href="/forgot-password" aria-label="Forgot Password">Forgot password?</a>
                         </div>
-                        <button
+                        <button 
                             type="submit" aria-label="Login"
                             className="mt-8 w-full h-11 rounded-full text-white bg-primary hover:opacity-90 transition-opacity cursor-pointer"
                         >
@@ -160,7 +188,7 @@ const Login = () => {
                         </button>
                         <p className="text-gray-500/90 text-sm mt-4 text-center">
                             Don't have an account?{' '}
-                            <button
+                            <button type='button'
                                 className="text-primary hover:underline"
                                 onClick={() => navigate('/register')}
                                 aria-label="Navigate to Sign Up"

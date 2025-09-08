@@ -1,5 +1,33 @@
+import { useEffect } from "react";
+import { useAnalytics } from "../hooks/useAnalytics";
 
 const Contact = () => {
+    const { trackPageView, sendEvent } = useAnalytics();
+
+    useEffect(() => {
+        trackPageView("/contact");
+    }, [trackPageView]);
+
+    const handleEmailClick = () => {
+        sendEvent("contact_email_click", {
+            method: "email",
+            value: "support@example.com",
+        });
+    };
+    const handleOfficeVisitClick = () => {
+        sendEvent("contact_office_visit", {
+            method: "office",
+            value: "221b Elementary Avenue, NY",
+        });
+    };
+
+    const handlePhoneClick = () => {
+        sendEvent("contact_phone_click", {
+            method: "phone",
+            value: "+1-212-456-7890",
+        });
+    };
+
     return (
         <main className="max-w-5xl w-full mx-auto p-10 text-gray-800 mt-20"
             id="main-content" role="main" aria-label="Contact Page">
@@ -11,8 +39,9 @@ const Contact = () => {
                 </h1>
                 <p className="text-left mt-4 text-secondary">
                     Or just reach out manually at{" "}
-                    <a href="mailto:contact@example.com" className="text-teal"
-                        aria-label="Send an email to contact@example.com">contact@example.com</a>
+                    <a href="mailto:insightlane@example.com" className="text-teal"
+                        onClick={handleEmailClick}
+                        aria-label="Send an email to insightlane@example.com">insightlane@example.com</a>
                 </p>
             </header>
 
@@ -23,7 +52,8 @@ const Contact = () => {
                     </svg>
                     <p className="text-lg font-semibold mt-2 text-tertiary">Email Support</p>
                     <p className="text-gray-500 mt-1 mb-4">Our team can respond in real time.</p>
-                    <a href="mailto:support@example.com" className="text-teal font-medium" aria-label="Email insightlane@example.com">
+                    <a href="mailto:support@example.com" className="text-teal font-medium" aria-label="Email insightlane@example.com"
+                        onClick={handleEmailClick}>
                         insightlane@example.com
                     </a>
                 </div>
@@ -34,7 +64,7 @@ const Contact = () => {
                     </svg>
                     <p className="text-lg font-semibold mt-2 text-tertiary">Visit Our Office</p>
                     <p className="text-gray-500 mt-1 mb-4">Come see us in person.</p>
-                    <address className="text-teal font-medium not-italic" aria-label="Office address">
+                    <address className="text-teal font-medium not-italic" aria-label="Office address" onClick={handleOfficeVisitClick}>
                         221b Elementary Avenue, NY
                     </address>
                 </div>
@@ -45,7 +75,7 @@ const Contact = () => {
                     </svg>
                     <p className="text-lg font-semibold mt-2 text-tertiary">Call Us Directly</p>
                     <p className="text-gray-500 mt-1 mb-4">Available during working hours.</p>
-                    <span className="text-teal font-medium" aria-label="Call us at +1-212-456-7890">
+                    <span className="text-teal font-medium" aria-label="Call us at +1-212-456-7890" onClick={handlePhoneClick}>
                         +1-212-456-7890
                     </span>
                 </div>

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useLocation, useParams } from 'react-router-dom'
 import { assets } from '../assets/assets';
 import Navbar from '../components/Navbar';
 import Moment from 'moment';
@@ -10,9 +10,12 @@ import { LiaComments } from 'react-icons/lia';
 import { useAppSelector } from '../redux/store/hooks';
 import { getUserProfileById } from '../api/userApi';
 import { ClipLoader } from 'react-spinners';
+import { useAnalytics } from "../hooks/useAnalytics";
 
 const Blog = () => {
     const { id } = useParams();
+    const location = useLocation();
+    const { sendEvent, trackPageView } = useAnalytics();
 
     const [data, setData] = useState<Blogs | null>(null);
     const [comments, setComments] = useState<Comment[]>([]);
@@ -28,6 +31,22 @@ const Blog = () => {
             behavior: 'smooth',
         });
     };
+
+    useEffect(() => {
+        trackPageView(location.pathname);
+    }, [location.pathname]);
+
+
+    useEffect(() => {
+        if (data) {
+            sendEvent("blog_view", {
+                blog_id: data._id,
+                blog_title: data.title,
+                author: data.author.name,
+            });
+        }
+    }, [data]);
+
 
     const fetchBlogData = async () => {
         if (!id) return;
@@ -60,8 +79,11 @@ const Blog = () => {
         }
     }
 
-
     const handleRelatedBlog = async (blogId: string) => {
+        sendEvent("related_blog_click", {
+            clicked_blog_id: blogId,
+            current_blog_id: data?._id,
+        });
         try {
             const blogData = await getBlogById(blogId);
             if (blogData) {
@@ -114,6 +136,10 @@ const Blog = () => {
         try {
             const data = await addBlogComment(userToken, id, content)
             if (data) {
+                sendEvent("comment_added", {
+                    blog_id: id,
+                    user_id: userToken ? "logged_in_user" : "guest",
+                });
                 toast.success(data.message)
                 setContent('')
                 fetchComments()

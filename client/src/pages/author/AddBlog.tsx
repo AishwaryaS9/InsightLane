@@ -5,6 +5,8 @@ import { parse } from 'marked';
 import { addBlog, generateAIContent } from '../../api/blogApi';
 import { useAppSelector } from '../../redux/store/hooks';
 import toast from 'react-hot-toast';
+import { analytics, logEvent } from "../../config/firebase";
+
 
 const AddBlog = () => {
     const editorRef = useRef<HTMLDivElement | null>(null);
@@ -19,6 +21,17 @@ const AddBlog = () => {
     const [error, setError] = useState<{ field: string; message: string }[]>([]);
 
     const userToken = useAppSelector((state) => state.login.token);
+    const userId = useAppSelector((state) => state.login.userId);
+
+    useEffect(() => {
+        if (analytics) {
+            logEvent(analytics, "page_view_add_blog", {
+                page_path: "/add-blog",
+                page_title: "Add Blog",
+                user_id: userId || null,
+            });
+        }
+    }, [userId]);
 
     const validateFields = () => {
         const errors = [];
@@ -39,6 +52,11 @@ const AddBlog = () => {
         }
 
         if (errors.length > 0) {
+            if (analytics) {
+                logEvent(analytics, "add_blog_validation_failed", {
+                    error_fields: errors.map(e => e.field).join(", "),
+                });
+            }
             setError(errors);
             return false;
         }
@@ -76,13 +94,32 @@ const AddBlog = () => {
                 }
                 setCategory('Startup');
                 toast.success(data.message);
+                if (analytics) {
+                    logEvent(analytics, "blog_added", {
+                        user_id: userId || null,
+                        category,
+                        title_length: title.length,
+                    });
+                }
             } else {
                 setError([{ field: 'general', message: data.message }]);
-                toast.error(data.message)
+                toast.error(data.message);
+                if (analytics) {
+                    logEvent(analytics, "blog_add_failed", {
+                        reason: data.message,
+                        user_id: userId || null,
+                    });
+                }
             }
         } catch (error) {
             setError([{ field: 'general', message: (error as Error).message }]);
             toast.error((error as Error).message);
+            if (analytics) {
+                logEvent(analytics, "blog_add_error", {
+                    message: (error as Error).message,
+                    user_id: userId || null,
+                });
+            }
         } finally {
             setIsAdding(false);
         }
@@ -91,6 +128,11 @@ const AddBlog = () => {
     const generateContent = async () => {
         if (!title) {
             setError([{ field: 'title', message: 'Please enter a title' }]);
+            if (analytics) {
+                logEvent(analytics, "ai_generate_failed", {
+                    reason: "missing_title",
+                });
+            }
             return;
         }
         try {
@@ -100,12 +142,28 @@ const AddBlog = () => {
                 if (quillRef.current) {
                     const content = await parse(data.content);
                     quillRef.current.root.innerHTML = content;
+                    if (analytics) {
+                        logEvent(analytics, "ai_generate_success", {
+                            user_id: userId || null,
+                            title_length: title.length,
+                        });
+                    }
                 }
             } else {
                 setError([{ field: 'general', message: data.message }]);
+                if (analytics) {
+                    logEvent(analytics, "ai_generate_failed", {
+                        reason: data.message,
+                    });
+                }
             }
         } catch (error) {
             setError([{ field: 'general', message: (error as Error).message }]);
+            if (analytics) {
+                logEvent(analytics, "ai_generate_error", {
+                    message: (error as Error).message,
+                });
+            }
         } finally {
             setLoading(false);
         }

@@ -3,12 +3,25 @@ import type { BlogTableItemProps } from '../../utils/interface';
 import { RxCross2 } from "react-icons/rx";
 import { deleteBlogApi, publishBlog } from '../../api/blogApi';
 import { useAppSelector } from '../../redux/store/hooks';
+import { analytics, logEvent } from "../../config/firebase";
+
 
 const BlogTableItem: React.FC<BlogTableItemProps> = ({ blog, fetchBlogs, index, setAlert, onSelectBlog }) => {
     const { title, createdAt } = blog;
     const BlogDate = new Date(createdAt);
 
     const userToken = useAppSelector((state) => state.login.token);
+
+    const trackBlogAction = (action: string, extra: Record<string, any> = {}) => {
+        if (analytics) {
+            logEvent(analytics, "blog_table_item", {
+                action,
+                blogId: blog._id,
+                blogTitle: blog.title,
+                ...extra,
+            });
+        }
+    };
 
     const deleteBlog = () => {
         if (setAlert) {
@@ -19,6 +32,7 @@ const BlogTableItem: React.FC<BlogTableItemProps> = ({ blog, fetchBlogs, index, 
                         const data = await deleteBlogApi(userToken, blog._id);
                         if (data) {
                             toast.success(data.message);
+                            trackBlogAction("delete_blog");
                             await fetchBlogs();
                         } else {
                             toast.error(data.message);
@@ -36,6 +50,7 @@ const BlogTableItem: React.FC<BlogTableItemProps> = ({ blog, fetchBlogs, index, 
             const data = await publishBlog(userToken, blog._id);
             if (data) {
                 toast.success(data.message);
+                trackBlogAction(blog.isPublished ? "unpublish_blog" : "publish_blog");
                 await fetchBlogs();
             } else {
                 toast.error(data.message);
@@ -50,7 +65,10 @@ const BlogTableItem: React.FC<BlogTableItemProps> = ({ blog, fetchBlogs, index, 
             <th className="px-4 py-4 text-sm" scope="row" >{index}</th>
             <td className="px-4 py-4 text-sm cursor-pointer"
                 aria-label={`View details for blog titled ${title}`}
-                onClick={() => onSelectBlog(blog)}>{title}</td>
+                onClick={() => {
+                    trackBlogAction("view_blog");
+                    onSelectBlog(blog);
+                }}>{title}</td>
             <td className="px-4 py-4 hidden sm:table-cell text-gray-500 text-sm">{BlogDate.toDateString()}</td>
             <td className="px-4 py-4 hidden sm:table-cell">
                 <span role="status"

@@ -118,13 +118,16 @@ To login as a Reader, use these credentials:
 InsightLane/
 ├── .gitignore
 ├── client/
+│   ├── .env
 │   ├── .gitignore
+│   ├── dist/
 │   ├── eslint.config.js
 │   ├── index.html
 │   ├── package-lock.json
 │   ├── package.json
 │   ├── public/
 │   │   ├── favicon.svg
+│   │   ├── preview-image.jpg
 │   │   ├── vite.svg
 │   ├── README.md
 │   ├── src/
@@ -159,6 +162,10 @@ InsightLane/
 │   │   │   ├── Pagination.tsx
 │   │   │   ├── ProfileModal.tsx
 │   │   │   ├── ProfilePhotoSelector.tsx
+│   │   ├── config/
+│   │   │   ├── firebase.ts
+│   │   ├── hooks/
+│   │   │   ├── useAnalytics.ts
 │   │   ├── index.css
 │   │   ├── main.tsx
 │   │   ├── pages/
@@ -187,7 +194,10 @@ InsightLane/
 │   │   │   │   ├── index.ts
 │   │   │   │   ├── slice/
 │   │   │   │   │   ├── loginSlice.ts
+│   │   │   │   │   ├── registerSlice.ts
 │   │   │   │   │   ├── userProfileSlice.ts
+│   │   ├── types/
+│   │   │   ├── global.d.ts
 │   │   ├── utils/
 │   │   │   ├── interface.ts
 │   │   │   ├── regex.ts
@@ -234,7 +244,6 @@ InsightLane/
 │   ├── utils/
 │   │   ├── emailUtil.js
 │   ├── vercel.json
-
 ```
 
 ## 🚀 Getting Started

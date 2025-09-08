@@ -6,6 +6,7 @@ import { deleteUserApi } from '../../api/userApi';
 import { useAppSelector } from '../../redux/store/hooks';
 import toast from 'react-hot-toast';
 import type { User } from '../../utils/interface';
+import { analytics, logEvent } from "../../config/firebase";
 
 const roleColors: Record<string, string> = {
     admin: 'bg-purple-500',
@@ -26,30 +27,46 @@ const UserCard: React.FC<{ userInfo: User, onUserDeleted: (userId: string) => vo
         day: 'numeric',
     });
 
+    const trackUserAction = (action: string) => {
+        if (analytics) {
+            logEvent(analytics, "user_action", {
+                action,
+                userId: userInfo._id,
+                userRole: userInfo.role,
+            });
+        }
+    };
+
     const handleDeleteClick = () => {
         setShowModal(true);
+        trackUserAction("delete_click");
     };
 
     const handleConfirmDelete = () => {
         setShowModal(false);
+        trackUserAction("delete_confirmed");
         deleteUser();
     };
 
     const handleCancelDelete = () => {
         setShowModal(false);
+        trackUserAction("delete_canceled");
     };
 
     const deleteUser = async () => {
         try {
             const data = await deleteUserApi(userToken, userInfo._id)
             if (data) {
-                toast.success(data.message)
+                toast.success(data.message);
                 onUserDeleted(userInfo._id);
+                trackUserAction("delete_success");
             } else {
-                toast.error(data.message)
+                toast.error(data.message);
+                trackUserAction("delete_failed");
             }
         } catch (error) {
-            toast.error((error as Error).message)
+            toast.error((error as Error).message);
+            trackUserAction("delete_error");
         }
     }
 

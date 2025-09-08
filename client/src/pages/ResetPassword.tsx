@@ -1,14 +1,24 @@
 import { useNavigate, useParams } from 'react-router-dom';
 import { assets } from '../assets/assets';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { resetPassword } from '../api/userApi';
 import toast from 'react-hot-toast';
+import { analytics, logEvent } from "../config/firebase";
 
 const ResetPassword = () => {
   const navigate = useNavigate();
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const { resetToken } = useParams();
+
+  useEffect(() => {
+    if (analytics) {
+      logEvent(analytics, "page_view_reset_password", {
+        page_path: "/resetPassword",
+        page_title: "Reset Password",
+      });
+    }
+  }, []);
 
   const handleResetPassword = async () => {
     if (!resetToken) {
@@ -18,6 +28,11 @@ const ResetPassword = () => {
 
     if (newPassword !== confirmPassword) {
       toast.error('New password and confirm password do not match.');
+      if (analytics) {
+        logEvent(analytics, "reset_password_mismatch", {
+          reason: "Password confirmation failed",
+        });
+      }
       return;
     }
 
@@ -25,12 +40,27 @@ const ResetPassword = () => {
       const data = await resetPassword(resetToken, newPassword);
       if (data) {
         toast.success(data.message);
+        if (analytics) {
+          logEvent(analytics, "reset_password_success", {
+            resetTokenProvided: true,
+          });
+        }
         navigate('/login');
       } else {
         toast.error('Failed to reset password. Please try again.');
+        if (analytics) {
+          logEvent(analytics, "reset_password_failed", {
+            resetTokenProvided: true,
+          });
+        }
       }
     } catch (error) {
       toast.error((error as Error).message);
+      if (analytics) {
+        logEvent(analytics, "reset_password_error", {
+          message: (error as Error).message,
+        });
+      }
     }
   };
 

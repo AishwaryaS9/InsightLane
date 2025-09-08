@@ -1,12 +1,22 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { forgotPassword } from '../api/userApi';
 import { assets } from '../assets/assets';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
+import { analytics, logEvent } from "../config/firebase";
 
 const ForgotPassword = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
+
+  useEffect(() => {
+    if (analytics) {
+      logEvent(analytics, "page_view_forgot_password", {
+        page_path: "/forgot-password",
+        page_title: "Forgot Password",
+      });
+    }
+  }, []);
 
   const handleForgotPassword = async () => {
     if (!email.trim()) {
@@ -18,12 +28,27 @@ const ForgotPassword = () => {
       const data = await forgotPassword(email);
       if (data) {
         toast.success(data.message);
+        if (analytics) {
+          logEvent(analytics, "forgot_password_request_success", {
+            email_entered: true,
+          });
+        }
         setEmail('');
       } else {
         toast.error('Failed to send reset email.');
+        if (analytics) {
+          logEvent(analytics, "forgot_password_request_failed", {
+            reason: "No response or invalid response",
+          });
+        }
       }
     } catch (error) {
       toast.error((error as Error).message);
+      if (analytics) {
+        logEvent(analytics, "forgot_password_request_error", {
+          message: (error as Error).message,
+        });
+      }
     }
   };
 
