@@ -256,21 +256,42 @@ const Blog = () => {
 
             {/* Related Blogs */}
             {relatedBlogs.length > 0 && (
-                <aside className="mx-5 max-w-5xl md:mx-auto my-10 " aria-labelledby="related-blogs">
+                <aside
+                    className="mx-5 max-w-5xl md:mx-auto my-10"
+                    aria-labelledby="related-blogs"
+                >
                     <h2 className="font-semibold mb-4 text-xl">Related Blogs</h2>
-                    <div className={`grid gap-4 ${relatedBlogs.length === 1 ? 'grid-cols-1' : relatedBlogs.length === 2 ? 'grid-cols-2' : 'grid-cols-3'}`}>
+
+                    <div
+                        className={`grid gap-4 ${relatedBlogs.length === 1
+                            ? 'grid-cols-1'
+                            : relatedBlogs.length === 2
+                                ? 'grid-cols-1 sm:grid-cols-2'
+                                : 'grid-cols-1 sm:grid-cols-2 md:grid-cols-3'
+                            }`}
+                    >
                         {relatedBlogs.map((blog, index) => (
-                            <article onClick={() => handleRelatedBlog(blog._id)} role="link"
-                                tabIndex={0} aria-label={`Read related blog: ${blog.title}`}
-                                key={index} className="rounded-lg shadow-md overflow-hidden border border-gray-200  hover:scale-102 duration-300 cursor-pointer">
-                                <img src={blog.image} alt={blog.title || "Related blog image"} className="h-40 w-full object-cover" />
+                            <article
+                                onClick={() => handleRelatedBlog(blog._id)}
+                                role="link"
+                                tabIndex={0}
+                                aria-label={`Read related blog: ${blog.title}`}
+                                key={index}
+                                className="rounded-lg shadow-md overflow-hidden border border-gray-200 hover:scale-102 duration-300 cursor-pointer"
+                            >
+                                <img
+                                    src={blog.image}
+                                    alt={blog.title || 'Related blog image'}
+                                    className="h-40 w-full object-cover"
+                                />
                                 <div className="p-4">
                                     <h3 className="text-lg font-medium text-gray-800">{blog.title}</h3>
                                     <p className="text-sm text-gray-600 mt-2">{blog.subTitle}</p>
                                     <time
                                         className="text-xs text-gray-400 mt-4 block"
-                                        dateTime={blog.createdAt}>
-                                        Published on {Moment(blog.createdAt).format("MMMM Do YYYY")}
+                                        dateTime={blog.createdAt}
+                                    >
+                                        Published on {Moment(blog.createdAt).format('MMMM Do YYYY')}
                                     </time>
                                 </div>
                             </article>
@@ -278,6 +299,7 @@ const Blog = () => {
                     </div>
                 </aside>
             )}
+
         </main >
 
     ) : (
