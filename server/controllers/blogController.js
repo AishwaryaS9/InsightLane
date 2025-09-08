@@ -130,6 +130,7 @@ export const getAllBlogs = async (req, res) => {
 
         const blogs = await Blog.find(filter)
             .populate('author', 'name email role')
+            .sort({ createdAt: -1 })
             .skip((pageInt - 1) * limitInt)
             .limit(limitInt)
             .lean();
@@ -291,39 +292,6 @@ export const getRelatedBlogs = async (req, res) => {
         res.status(500).json({ success: false, message: error.message });
     }
 };
-
-// export const getBlogsByAuthor = async (req, res) => {
-//     try {
-//         const { authorId } = req.params;
-//         const { page = 1, limit = 10 } = req.query;
-
-//         const pageInt = parseInt(page, 10);
-//         const limitInt = parseInt(limit, 10);
-
-//         const filter = { author: authorId };
-
-//         const totalBlogs = await Blog.countDocuments(filter);
-
-//         const blogs = await Blog.find(filter)
-//             .sort({ createdAt: -1 })
-//             .skip((pageInt - 1) * limitInt)
-//             .limit(limitInt);
-
-//         if (!blogs.length) {
-//             return res.status(404).json({ success: false, message: "No blogs found" });
-//         }
-
-//         res.json({
-//             success: true,
-//             totalBlogs,
-//             currentPage: pageInt,
-//             totalPages: Math.ceil(totalBlogs / limitInt),
-//             blogs,
-//         });
-//     } catch (error) {
-//         res.status(500).json({ success: false, message: error.message });
-//     }
-// };
 
 export const getBlogsByAuthor = async (req, res) => {
     try {
