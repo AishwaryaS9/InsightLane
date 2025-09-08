@@ -81,13 +81,17 @@ const BlogCategories = () => {
 
     return (
         <main>
-            <nav aria-label="Blog categories" className='flex justify-center gap-4 sm:gap-8 my-10 relative'>
+            <nav
+                aria-label="Blog categories"
+                className="flex flex-wrap justify-center gap-2 sm:gap-4 md:gap-6 my-10 px-4"
+            >
                 {blogCategories.map((item) => (
-                    <div key={item} className='relative'>
-                        <button aria-pressed={menu === item}
+                    <div key={item} className="relative">
+                        <button
+                            aria-pressed={menu === item}
                             onClick={() => handleCategoryClick(item)}
-                            className={`cursor-pointer text-gray-500 ${menu === item && 'text-white px-4 pt-0.5'}`}
-                        >
+                            className={`cursor-pointer text-gray-500 px-4 pt-0.5 rounded-full text-[clamp(0.85rem, 2vw, 1rem)] ${menu === item && "text-white bg-primary"
+                                }`}>
                             {item}
                             {menu === item && (
                                 <motion.div
@@ -101,8 +105,34 @@ const BlogCategories = () => {
                 ))}
             </nav>
 
-            <section className='flex justify-center mb-16'>
-                <div className='flex justify-between max-w-lg mx-auto w-full sm:w-3/4 md:w-2/3 border border-gray-300 bg-white rounded overflow-hidden'>
+            <section className='flex justify-center mb-12 sm:mb-16 px-4 sm:px-0'>
+
+                <div className='flex flex-col gap-3 w-full sm:hidden'>
+                    <label htmlFor="search" className="sr-only">
+                        Search blogs
+                    </label>
+                    <input
+                        role="search"
+                        aria-label="Search blogs"
+                        onChange={(e) => {
+                            setSearch(e.target.value);
+                            setPage(1);
+                        }}
+                        type="text"
+                        placeholder='Search for blogs'
+                        required
+                        className='w-full px-4 py-3 border border-gray-300 rounded outline-none placeholder:text-gray-400 text-base'
+                    />
+                    <button
+                        type='submit'
+                        onClick={handleSearch}
+                        className='bg-primary text-white w-full px-6 py-3 rounded  cursor-pointer'
+                    >
+                        Search
+                    </button>
+                </div>
+
+                <div className='hidden sm:flex justify-between max-w-lg mx-auto w-full sm:w-3/4 md:w-2/3 border border-gray-300 bg-white rounded overflow-hidden'>
                     <label htmlFor="search" className="sr-only">
                         Search blogs
                     </label>
@@ -119,12 +149,13 @@ const BlogCategories = () => {
                     <button
                         type='submit'
                         onClick={handleSearch}
-                        className='bg-primary text-white px-8 py-2 m-1.5 rounded hover:scale-105 transition-all cursor-pointer'
+                        className='bg-primary text-white px-8 py-2 m-1.5 rounded  cursor-pointer'
                     >
                         Search
                     </button>
                 </div>
             </section>
+
 
             <section aria-label="Blog posts"
                 aria-live="polite"
