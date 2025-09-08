@@ -8,6 +8,7 @@ import toast from 'react-hot-toast';
 import type { Blogs } from '../../utils/interface';
 import BlogAuthorTableItem from '../../components/author/BlogAuthorTableItem';
 import { ClipLoader } from 'react-spinners';
+import { analytics, logEvent } from '../../config/firebase';
 
 const AuthorDashboard = () => {
   const [authorDashboardData, setAuthorDashboardData] = useState({
@@ -20,6 +21,7 @@ const AuthorDashboard = () => {
   const [loading, setLoading] = useState(false);
 
   const userToken = useAppSelector((state) => state.login.token);
+  const userId = useAppSelector((state) => state.login.userId);
 
   const fetchAuthorDashboardData = async () => {
     try {
@@ -27,6 +29,15 @@ const AuthorDashboard = () => {
       const data = await getAuthorDashboardData(userToken);
       if (data) {
         setAuthorDashboardData(data.dashboardData);
+        if (analytics) {
+          logEvent(analytics, "author_dashboard_data_loaded" as any, {
+            user_id: userId || null,
+            total_blogs: data.dashboardData.totalBlogs,
+            drafts: data.dashboardData.drafts,
+            total_comments: data.dashboardData.totalComments,
+            approved_comments: data.dashboardData.approvedComments,
+          });
+        }
       } else {
         toast.error(data.message);
       }
@@ -37,9 +48,20 @@ const AuthorDashboard = () => {
     }
   };
 
+
   useEffect(() => {
     fetchAuthorDashboardData();
   }, []);
+
+  useEffect(() => {
+    if (analytics) {
+      logEvent(analytics, "author_dashboard_view", {
+        firebase_screen: "AuthorDashboard",
+        firebase_screen_class: "AuthorDashboard",
+        user_id: userId || null,
+      });
+    }
+  }, [userId]);
 
   return (
     <main className="flex-1 p-6 md:p-10 bg-blue-50/50 min-h-screen" aria-labelledby="author-dashboard-heading">

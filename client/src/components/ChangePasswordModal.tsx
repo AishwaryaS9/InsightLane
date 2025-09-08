@@ -5,12 +5,16 @@ import { changePassword } from '../api/userApi';
 import { useAppSelector } from '../redux/store/hooks';
 import { validatePassword } from '../utils/regex';
 import { PiEyeLight, PiEyeSlashLight } from 'react-icons/pi';
+import { analytics, logEvent } from "../config/firebase";
+
 
 const ChangePasswordModal: React.FC<{
     isOpen: boolean;
     onViewClose: () => void;
 }> = ({ isOpen, onViewClose }) => {
     const userToken = useAppSelector((state) => state.login.token);
+    const userId = useAppSelector((state) => state.login.userId);
+    const userRole = useAppSelector((state) => state.login.role);
 
     const [oldPassword, setOldPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
@@ -19,6 +23,47 @@ const ChangePasswordModal: React.FC<{
     const [showOldPassword, setShowOldPassword] = useState(false);
     const [showNewPassword, setShowNewPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+    const trackChangePasswordModalOpen = (userId: string | null, userRole: string | null) => {
+        if (analytics) {
+            logEvent(analytics, "change_password_modal_opened", {
+                user_id: userId,
+                user_role: userRole,
+            });
+        }
+    };
+
+    const trackChangePasswordModalClose = (userId: string | null, userRole: string | null) => {
+        if (analytics) {
+            logEvent(analytics, "change_password_modal_closed", {
+                user_id: userId,
+                user_role: userRole,
+            });
+        }
+    };
+
+    const trackChangePasswordSuccess = (userId: string | null, userRole: string | null) => {
+        if (analytics) {
+            logEvent(analytics, "change_password_success", {
+                user_id: userId,
+                user_role: userRole,
+            });
+        }
+    };
+
+    const trackChangePasswordError = (
+        errorMessage: string,
+        userId: string | null,
+        userRole: string | null
+    ) => {
+        if (analytics) {
+            logEvent(analytics, "change_password_error", {
+                error_message: errorMessage,
+                user_id: userId,
+                user_role: userRole,
+            });
+        }
+    };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -39,18 +84,28 @@ const ChangePasswordModal: React.FC<{
             const response = await changePassword(oldPassword, newPassword, userToken);
             if (response) {
                 toast.success(response.message);
+                trackChangePasswordSuccess(userId || null, userRole || null);
                 onViewClose();
             } else {
                 toast.error(response.message);
+                trackChangePasswordError(response.message, userId || null, userRole || null);
             }
         } catch (error) {
-            toast.error((error as Error).message);
+            const msg = (error as Error).message;
+            toast.error(msg);
+            trackChangePasswordError(msg, userId || null, userRole || null);
         } finally {
             setLoading(false);
         }
     };
 
     if (!isOpen) return null;
+
+    React.useEffect(() => {
+        if (isOpen) {
+            trackChangePasswordModalOpen(userId || null, userRole || null);
+        }
+    }, [isOpen]);
 
     return (
         <div
@@ -68,7 +123,10 @@ const ChangePasswordModal: React.FC<{
                     <h3 className="text-lg font-medium text-gray-900" id="change-password-title">Change Password</h3>
                     <button
                         type="button"
-                        onClick={onViewClose}
+                        onClick={() => {
+                            onViewClose();
+                            trackChangePasswordModalClose(userId || null, userRole || null);
+                        }}
                         className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 inline-flex justify-center items-center"
                         aria-label="Close change password modal"
                     >

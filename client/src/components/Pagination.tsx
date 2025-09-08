@@ -1,4 +1,5 @@
 import { MdKeyboardArrowLeft, MdKeyboardArrowRight } from "react-icons/md";
+import { analytics, logEvent } from "../config/firebase";
 
 interface PaginationProps {
     page: number;
@@ -7,12 +8,29 @@ interface PaginationProps {
 }
 
 const Pagination: React.FC<PaginationProps> = ({ page, totalPages, onPageChange }) => {
+
+    const trackPaginationClick = (action: "previous" | "next" | "page_select", pageNumber?: number) => {
+        if (analytics) {
+            logEvent(analytics, "pagination_click", {
+                action,
+                page: pageNumber || page,
+                total_pages: totalPages,
+            });
+        }
+    };
+
     const handlePrevious = () => {
-        if (page > 1) onPageChange(page - 1);
+        if (page > 1) {
+            trackPaginationClick("previous", page - 1);
+            onPageChange(page - 1);
+        }
     };
 
     const handleNext = () => {
-        if (page < totalPages) onPageChange(page + 1);
+        if (page < totalPages) {
+            trackPaginationClick("next", page + 1);
+            onPageChange(page + 1);
+        }
     };
 
     return (
@@ -31,7 +49,10 @@ const Pagination: React.FC<PaginationProps> = ({ page, totalPages, onPageChange 
                     <button
                         key={pageNumber}
                         type="button"
-                        onClick={() => onPageChange(pageNumber)}
+                        onClick={() => {
+                            trackPaginationClick("page_select", pageNumber);
+                            onPageChange(pageNumber);
+                        }}
                         className={`flex items-center justify-center w-7 h-7 aspect-square rounded-sm 
                             ${page === pageNumber ? 'bg-primary text-white' : 'hover:bg-gray-300/10'}
                             transition-all text-xs`}

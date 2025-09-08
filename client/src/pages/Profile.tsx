@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAppSelector } from "../redux/store/hooks";
 import { assets } from "../assets/assets";
 import EditProfileModal from "../components/EditProfileModal";
 import ChangePasswordModal from "../components/ChangePasswordModal";
+import { analytics, logEvent } from "../config/firebase";
 
 const Profile = () => {
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -10,20 +11,59 @@ const Profile = () => {
 
     const userProfileData = useAppSelector((state) => state.userProfile.data) || {};
 
+    useEffect(() => {
+        if (analytics) {
+            logEvent(analytics, "page_view_profile", {
+                page_path: "/profile",
+                page_title: "User Profile",
+                userId: userProfileData?._id || "guest",
+            });
+        }
+    }, [userProfileData?._id]);
+
     const handleEditProfile = () => {
         setIsEditModalOpen(true);
+        if (analytics) {
+            logEvent(analytics, "profile_edit_opened", {
+                userId: userProfileData?._id || "guest",
+            });
+        }
     };
 
     const closeModal = () => {
         setIsEditModalOpen(false);
+        if (analytics) {
+            logEvent(analytics, "profile_edit_closed", {
+                userId: userProfileData?._id || "guest",
+            });
+        }
     };
 
     const handleChangePassword = () => {
         setIsPasswordModalOpen(true);
+        if (analytics) {
+            logEvent(analytics, "profile_change_password_opened", {
+                userId: userProfileData?._id || "guest",
+            });
+        }
     };
 
     const closePasswordModal = () => {
         setIsPasswordModalOpen(false);
+        if (analytics) {
+            logEvent(analytics, "profile_change_password_closed", {
+                userId: userProfileData?._id || "guest",
+            });
+        }
+    };
+
+    const handleSocialClick = (platform: string) => {
+        if (analytics) {
+            logEvent(analytics, "profile_social_click", {
+                userId: userProfileData?._id || "guest",
+                platform,
+            });
+        }
     };
 
     return (
@@ -56,6 +96,7 @@ const Profile = () => {
                             rel="noopener noreferrer"
                             className="hover:-translate-y-0.5 transition"
                             aria-label="Facebook Profile"
+                            onClick={() => handleSocialClick("facebook")}
                         >
                             <img src={assets.facebook} className="w-6 h-6" alt="Facebook" />
                         </a>
@@ -65,6 +106,7 @@ const Profile = () => {
                             rel="noopener noreferrer"
                             className="hover:-translate-y-0.5 transition"
                             aria-label="Twitter Profile"
+                            onClick={() => handleSocialClick("twitter")}
                         >
                             <img src={assets.twitter} className="w-6 h-6" alt="Twitter" />
                         </a>
@@ -74,6 +116,7 @@ const Profile = () => {
                             rel="noopener noreferrer"
                             className="hover:-translate-y-0.5 transition"
                             aria-label="LinkedIn Profile"
+                            onClick={() => handleSocialClick("linkedin")}
                         >
                             <img src={assets.linkedin} className="w-6 h-6" alt="LinkedIn" />
                         </a>

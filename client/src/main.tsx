@@ -5,6 +5,7 @@ import App from './App.tsx'
 import { BrowserRouter } from 'react-router-dom'
 import { store } from './redux/store/index.ts'
 import { Provider } from 'react-redux';
+import "./config/firebase.ts";
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

@@ -1,14 +1,23 @@
 import { motion } from "framer-motion";
 import { assets } from "../assets/assets";
+import { useAnalytics } from "../hooks/useAnalytics";
+import { useEffect } from "react";
 
 const Hero = () => {
+    const { trackPageView, sendEvent } = useAnalytics();
+
+    useEffect(() => {
+        trackPageView(window.location.pathname);
+    }, []);
+
     return (
         <section className="flex flex-col justify-center px-6 md:px-16 
         lg:px-24 xl:px-32 text-white mt-20">
             <div className="text-center mt-20 mb-8">
                 <div
                     className="inline-flex items-center justify-center gap-4 px-6 py-1.5
-                    mb-4 border border-primary/40 bg-primary/10 rounded-full text-sm">
+                    mb-4 border border-primary/40 bg-primary/10 rounded-full text-sm"
+                    onClick={() => sendEvent("hero_badge_click", { badge: "AI-enabled features" })}>
                     <p className="text-secondary">New: AI-enabled features</p>
                     <motion.img
                         src={assets.star_icon}

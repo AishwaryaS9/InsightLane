@@ -7,6 +7,7 @@ import { generateAIContent, updateBlog } from '../../api/blogApi';
 import toast from 'react-hot-toast';
 import { parse } from 'marked';
 import type { Blogs } from '../../utils/interface';
+import { analytics, logEvent } from "../../config/firebase";
 
 const EditBlogModal: React.FC<{
     data: Blogs;
@@ -28,6 +29,28 @@ const EditBlogModal: React.FC<{
 
     const editorRef = useRef<HTMLDivElement | null>(null);
     const quillRef = useRef<Quill | null>(null);
+
+    const trackEditBlogEvent = (action: string, extra: Record<string, any> = {}) => {
+        if (analytics) {
+            logEvent(analytics, "edit_blog_modal", {
+                action,
+                blog_id: data._id,
+                blog_title: title || data.title,
+                ...extra,
+            });
+        }
+    };
+
+    useEffect(() => {
+        if (isOpen) {
+            trackEditBlogEvent("opened");
+        }
+        return () => {
+            if (isOpen) {
+                trackEditBlogEvent("closed");
+            }
+        };
+    }, [isOpen]);
 
     useEffect(() => {
         if (!quillRef.current && editorRef.current) {
@@ -87,11 +110,13 @@ const EditBlogModal: React.FC<{
         setLoading(true);
         setError([]);
         if (!validateFields()) {
+            trackEditBlogEvent("update_failed", { reason: "validation_error" });
             setLoading(false);
             return;
         }
         try {
             setIsEditing(true);
+            trackEditBlogEvent("update_attempt");
             const formData = new FormData();
             formData.append('title', title);
             formData.append('subTitle', subTitle);
@@ -104,12 +129,15 @@ const EditBlogModal: React.FC<{
 
             if (response) {
                 toast.success(response.message);
+                trackEditBlogEvent("update_success");
                 onRefresh();
                 onViewClose();
             } else {
+                trackEditBlogEvent("update_failed", { reason: "server_error" });
                 setError([{ field: 'general', message: data.message }]);
             }
         } catch (error) {
+            trackEditBlogEvent("update_failed", { reason: (error as Error).message });
             toast.error((error as Error).message);
             setError([{ field: 'general', message: (error as Error).message }]);
         } finally {
@@ -120,21 +148,26 @@ const EditBlogModal: React.FC<{
     const generateContent = async () => {
         if (!title && !subTitle) {
             setError([{ field: 'title', message: 'Please enter a title' }]);
+            trackEditBlogEvent("ai_generate_failed", { reason: "missing_title" });
             setLoading(false);
             return;
         }
         try {
             setLoading(true);
+            trackEditBlogEvent("ai_generate_attempt");
             const data = await generateAIContent(userToken, title);
             if (data) {
                 if (quillRef.current) {
                     const content = await parse(data.content);
                     quillRef.current.root.innerHTML = content;
+                    trackEditBlogEvent("ai_generate_success");
                 }
             } else {
+                trackEditBlogEvent("ai_generate_failed", { reason: "no_content" });
                 setError([{ field: 'general', message: data.message }]);
             }
         } catch (error) {
+            trackEditBlogEvent("ai_generate_failed", { reason: (error as Error).message });
             setError([{ field: 'general', message: (error as Error).message }]);
         } finally {
             setLoading(false);

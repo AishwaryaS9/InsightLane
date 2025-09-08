@@ -1,13 +1,15 @@
 
 import { useNavigate } from 'react-router-dom'
 import { assets } from '../assets/assets'
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { registerUser } from '../api/userApi';
 import toast from 'react-hot-toast';
 import { validateEmail, validatePassword } from '../utils/regex';
 import { PiEyeLight, PiEyeSlashLight } from 'react-icons/pi';
 import { useAppDispatch } from '../redux/store/hooks';
 import { clearRegisterUser, userRegistration } from '../redux/store/slice/registerSlice';
+import { analytics, logEvent } from "../config/firebase";
+
 
 const Register = () => {
     const navigate = useNavigate();
@@ -19,6 +21,15 @@ const Register = () => {
     const [showPassword, setShowPassword] = useState(false);
 
     const dispatch = useAppDispatch();
+
+    useEffect(() => {
+        if (analytics) {
+            logEvent(analytics, "page_view_register", {
+                page_path: "/register",
+                page_title: "Register",
+            });
+        }
+    }, []);
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -36,14 +47,32 @@ const Register = () => {
                 setToken(data.token)
                 dispatch(userRegistration({ token: token }))
                 toast.success("Registered successfully!")
+                if (analytics) {
+                    logEvent(analytics, "register_success", {
+                        method: "email",
+                        user_role: role,
+                    });
+                }
                 navigate('/login')
                 dispatch(clearRegisterUser())
             }
             else {
-                toast.error(data.message)
+                toast.error(data.message);
+                if (analytics) {
+                    logEvent(analytics, "register_failed", {
+                        method: "email",
+                        reason: data?.message || "unknown_error",
+                    });
+                }
             }
         } catch (error) {
             toast.error((error as Error).message);
+            if (analytics) {
+                logEvent(analytics, "register_error", {
+                    method: "email",
+                    message: (error as Error).message,
+                });
+            }
         }
     }
 

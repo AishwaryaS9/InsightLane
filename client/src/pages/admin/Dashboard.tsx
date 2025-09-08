@@ -9,6 +9,7 @@ import type { Blogs } from '../../utils/interface';
 import AlertModal from '../../components/AlertModal';
 import BlogModal from '../../components/author/BlogModal';
 import { ClipLoader } from 'react-spinners';
+import { analytics, logEvent } from "../../config/firebase";
 
 const Dashboard = () => {
     const [dashboardData, setDashboardData] = useState({
@@ -26,6 +27,40 @@ const Dashboard = () => {
     const [loading, setLoading] = useState(false);
 
     const userToken = useAppSelector((state) => state.login.token);
+    const userId = useAppSelector((state) => state.login.userId);
+    const userRole = useAppSelector((state) => state.login.role);
+
+
+    const trackDashboardBlogViewOpened = (blog: Blogs, userId: string | null, userRole: string | null) => {
+        if (analytics) {
+            logEvent(analytics, "dashboard_blog_view_opened", {
+                blog_id: blog._id,
+                blog_title: blog.title,
+                user_id: userId,
+                user_role: userRole,
+            });
+        }
+    };
+
+    const trackDashboardBlogViewClosed = (userId: string | null, userRole: string | null) => {
+        if (analytics) {
+            logEvent(analytics, "dashboard_blog_view_closed", {
+                user_id: userId,
+                user_role: userRole,
+            });
+        }
+    };
+
+    const trackDashboardBlogDeleted = (blogId: string, userId: string | null, userRole: string | null) => {
+        if (analytics) {
+            logEvent(analytics, "dashboard_blog_deleted", {
+                blog_id: blogId,
+                user_id: userId,
+                user_role: userRole,
+            });
+        }
+    };
+
 
     const fetchDashboardData = async () => {
         try {
@@ -113,8 +148,20 @@ const Dashboard = () => {
                                         blog={blog}
                                         fetchBlogs={fetchDashboardData}
                                         index={index + 1}
-                                        setAlert={setAlertConfig}
-                                        onSelectBlog={setSelectedBlog}
+                                        setAlert={(config) => {
+                                            setAlertConfig({
+                                                ...config,
+                                                onConfirm: () => {
+                                                    config.onConfirm();
+                                                    trackDashboardBlogDeleted(blog._id, userId || null, userRole || null);
+                                                    setAlertConfig(null);
+                                                },
+                                            });
+                                        }}
+                                        onSelectBlog={(b) => {
+                                            setSelectedBlog(b);
+                                            trackDashboardBlogViewOpened(b, userId || null, userRole || null);
+                                        }}
                                     />
                                 ))
                             ) : (
@@ -148,7 +195,10 @@ const Dashboard = () => {
                 </div>
             )}
             {selectedBlog && (
-                <BlogModal blog={selectedBlog} onViewClose={() => setSelectedBlog(null)} />
+                <BlogModal blog={selectedBlog} onViewClose={() => {
+                    setSelectedBlog(null);
+                    trackDashboardBlogViewClosed(userId || null, userRole || null);
+                }} />
             )}
         </main>
     );

@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { analytics, logEvent } from "../config/firebase";
 
 const AlertModal: React.FC<{
     message: string;
@@ -6,6 +7,23 @@ const AlertModal: React.FC<{
     onCancel: () => void;
 
 }> = ({ message, onConfirm, onCancel }) => {
+
+    const trackAlertEvent = (action: string) => {
+        if (analytics) {
+            logEvent(analytics, "alert_modal", {
+                action,
+                message,
+            });
+        }
+    };
+
+    useEffect(() => {
+        trackAlertEvent("opened");
+        return () => {
+            trackAlertEvent("closed");
+        };
+    }, []);
+
     return (
         <div
             className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-md p-4"
@@ -40,14 +58,20 @@ const AlertModal: React.FC<{
                     <button aria-label="Confirm delete"
                         type="button"
                         className="flex-1 bg-red-500 text-white py-2 px-4 rounded-lg hover:bg-red-700 transition-colors focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 cursor-pointer"
-                        onClick={onConfirm}
+                        onClick={() => {
+                            trackAlertEvent("confirmed");
+                            onConfirm();
+                        }}
                     >
                         Delete
                     </button>
                     <button aria-label="Cancel deletion"
                         type="button"
                         className="flex-1 bg-gray-100 text-gray-800 py-2 px-4 rounded-lg hover:bg-gray-200 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-offset-2 cursor-pointer"
-                        onClick={onCancel}
+                        onClick={() => {
+                            trackAlertEvent("cancelled");
+                            onCancel();
+                        }}
                     >
                         Cancel
                     </button>

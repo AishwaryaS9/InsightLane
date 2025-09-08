@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import toast from 'react-hot-toast';
 import type { CommentTableItemProps } from '../../utils/interface';
 import { SiTicktick } from "react-icons/si";
@@ -6,7 +7,8 @@ import { FaTimesCircle } from "react-icons/fa";
 import { approveComment, deleteComment, disApproveComment } from '../../api/blogApi';
 import { useAppSelector } from '../../redux/store/hooks';
 import AlertModal from '../AlertModal';
-import { useState } from 'react';
+import { analytics, logEvent } from "../../config/firebase";
+
 
 const CommentTableItem: React.FC<CommentTableItemProps> = ({ comment, fetchComments }) => {
     const { blog, createdAt, _id } = comment;
@@ -15,11 +17,24 @@ const CommentTableItem: React.FC<CommentTableItemProps> = ({ comment, fetchComme
 
     const [showModal, setShowModal] = useState(false);
 
+    const trackCommentAction = (action: string) => {
+        if (analytics) {
+            logEvent(analytics, "comment_table_action", {
+                action,
+                commentId: comment._id,
+                blogId: blog._id,
+                blogTitle: blog.title,
+                userName: comment.user.name,
+            });
+        }
+    };
+
     const acceptComment = async () => {
         try {
             const data = await approveComment(userToken, _id);
             if (data.success) {
                 toast.success(data.message);
+                trackCommentAction("approve_comment");
                 fetchComments();
             } else {
                 toast.error(data.message);
@@ -34,6 +49,7 @@ const CommentTableItem: React.FC<CommentTableItemProps> = ({ comment, fetchComme
             const data = await disApproveComment(userToken, _id);
             if (data.success) {
                 toast.success(data.message);
+                trackCommentAction("disapprove_comment");
                 fetchComments();
             } else {
                 toast.error(data.message);
@@ -48,21 +64,26 @@ const CommentTableItem: React.FC<CommentTableItemProps> = ({ comment, fetchComme
             const data = await deleteComment(userToken, _id);
             if (data) {
                 toast.success(data.message);
+                trackCommentAction("delete_success");
                 fetchComments();
             } else {
                 toast.error(data.message);
+                trackCommentAction("delete_failed");
             }
         } catch (error) {
             toast.error((error as Error).message);
+            trackCommentAction("delete_error");
         }
     };
 
     const handleDeleteClick = () => {
+        trackCommentAction("delete_click");
         setShowModal(true);
     };
 
     const handleConfirmDelete = () => {
         setShowModal(false);
+        trackCommentAction("delete_confirmed");
         deleteBlogComment();
     };
 

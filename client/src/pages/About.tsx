@@ -1,12 +1,19 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { subscribeToNewsLetter } from '../api/newsLetterApi';
 import { assets } from '../assets/assets';
 import { motion } from "framer-motion";
 import toast from 'react-hot-toast';
 import { validateEmail } from '../utils/regex';
+import { useAnalytics } from '../hooks/useAnalytics';
 
 const About = () => {
     const [email, setEmail] = useState('');
+
+    const { sendEvent, trackPageView } = useAnalytics();
+
+    useEffect(() => {
+        trackPageView(window.location.pathname);
+    }, []);
 
     const handleSubscription = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -18,6 +25,7 @@ const About = () => {
             const data = await subscribeToNewsLetter(email);
             if (data.success) {
                 toast.success(data.message);
+                sendEvent("newsletter_subscription", { email });
                 setEmail('');
             } else {
                 toast.error(data.message);
@@ -67,6 +75,7 @@ const About = () => {
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
                         aria-label="Step 1: Share Your Voice"
+                        onClick={() => sendEvent("team_step_1_click", { step: 1, name: "Share Your Voice" })}
                     >
                         <h3 className="text-5xl font-bold text-teal mb-2">01</h3>
                         <h4 className="font-semibold text-primary mb-4">Share Your Voice</h4>
@@ -80,6 +89,7 @@ const About = () => {
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
                         aria-label="Step 2: Join the Conversation"
+                        onClick={() => sendEvent("team_step_2_click", { step: 2, name: "Join the Conversation" })}
                     >
                         <h3 className="text-5xl font-bold text-teal mb-2">02</h3>
                         <h4 className="font-semibold text-primary mb-4">Join the Conversation</h4>
@@ -92,6 +102,7 @@ const About = () => {
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
                         aria-label="Step 3: Build Connections"
+                        onClick={() => sendEvent("team_step_3_click", { step: 3, name: "Build Connections" })}
                     >
                         <h3 className="text-5xl font-bold text-teal mb-2">03</h3>
                         <h4 className="font-semibold text-primary mb-4">Build Connections</h4>

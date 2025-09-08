@@ -5,6 +5,7 @@ import Hero from "../components/Hero"
 import { useAppDispatch, useAppSelector } from "../redux/store/hooks"
 import { getUserProfileById } from "../api/userApi"
 import { userProfileDetails } from "../redux/store/slice/userProfileSlice"
+import { analytics, logEvent } from "../config/firebase";
 
 const Home = () => {
     const dispatch = useAppDispatch();
@@ -31,6 +32,19 @@ const Home = () => {
             fetchUserProfile(userId)
         }
     }, [userId, userToken])
+
+    useEffect(() => {
+        if (analytics) {
+            logEvent(analytics, "home_page_view", {
+                page_path: "/",
+                page_title: "Home",
+            });
+
+            logEvent(analytics, "home_visited", {
+                user_logged_in: Boolean(userToken),
+            });
+        }
+    }, [userToken]);
 
     return (
         <main>

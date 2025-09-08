@@ -1,11 +1,20 @@
 import type React from 'react';
 import { useNavigate } from 'react-router-dom';
 import type { Blogs } from '../utils/interface';
+import { analytics, logEvent } from '../config/firebase';
 
 const BlogCard: React.FC<{ blog: Blogs }> = ({ blog }) => {
     const { title, subTitle, category, image, _id, author, createdAt } = blog;
 
     const handleClick = () => {
+        if (analytics) {
+            logEvent(analytics, 'blog_description_click', {
+                blog_id: _id,
+                title,
+                category,
+                author: author.name,
+            });
+        }
         navigate(`/blog/${_id}`);
     };
 

@@ -7,6 +7,8 @@ import Pagination from '../../components/Pagination';
 import BlogModal from '../../components/author/BlogModal';
 import AlertModal from '../../components/AlertModal';
 import { ClipLoader } from 'react-spinners';
+import { analytics, logEvent } from "../../config/firebase";
+import { useAppSelector } from '../../redux/store/hooks';
 
 const ListBlog = () => {
     const [blogs, setBlogs] = useState<Blogs[]>([]);
@@ -19,6 +21,8 @@ const ListBlog = () => {
         onConfirm: () => void;
     } | null>(null);
 
+    const userId = useAppSelector((state) => state.login.userId);
+
     const fetchBlogs = async () => {
         try {
             setLoading(true);
@@ -26,9 +30,12 @@ const ListBlog = () => {
             if (data) {
                 setBlogs(data.blogs);
                 setTotalPages(data.totalPages || 1);
+            } else {
+                toast.error("Failed to fetch blogs");
             }
         } catch (error) {
             toast.error((error as Error).message);
+
         } finally {
             setLoading(false);
         }
@@ -41,6 +48,44 @@ const ListBlog = () => {
     const handlePageChange = (newPage: number) => {
         if (newPage >= 1 && newPage <= totalPages) {
             setPage(newPage);
+            trackBlogPagination(page, newPage, userId || null);
+        }
+    };
+
+    const trackBlogViewOpened = (blog: Blogs, userId: string | null) => {
+        if (analytics) {
+            logEvent(analytics, "blog_view_opened", {
+                blog_id: blog._id,
+                blog_title: blog.title,
+                user_id: userId,
+            });
+        }
+    };
+
+    const trackBlogViewClosed = (userId: string | null) => {
+        if (analytics) {
+            logEvent(analytics, "blog_view_closed", {
+                user_id: userId,
+            });
+        }
+    };
+
+    const trackBlogDeleted = (blogId: string, userId: string | null) => {
+        if (analytics) {
+            logEvent(analytics, "blog_deleted", {
+                blog_id: blogId,
+                user_id: userId,
+            });
+        }
+    };
+
+    const trackBlogPagination = (fromPage: number, toPage: number, userId: string | null) => {
+        if (analytics) {
+            logEvent(analytics, "blogs_pagination", {
+                from_page: fromPage,
+                to_page: toPage,
+                user_id: userId,
+            });
         }
     };
 
@@ -87,8 +132,20 @@ const ListBlog = () => {
                                     blog={blog}
                                     fetchBlogs={fetchBlogs}
                                     index={(page - 1) * 5 + index + 1}
-                                    onSelectBlog={setSelectedBlog}
-                                    setAlert={setAlertConfig}
+                                    onSelectBlog={(b) => {
+                                        setSelectedBlog(b);
+                                        trackBlogViewOpened(b, userId || null);
+                                    }}
+                                    setAlert={(config) => {
+                                        setAlertConfig({
+                                            ...config,
+                                            onConfirm: () => {
+                                                config.onConfirm();
+                                                trackBlogDeleted(selectedBlog?._id || "unknown", userId || null);
+                                                setAlertConfig(null);
+                                            },
+                                        });
+                                    }}
                                 />
                             ))
                         ) : (
@@ -119,7 +176,10 @@ const ListBlog = () => {
                 </div>
             )}
             {selectedBlog && (
-                <BlogModal blog={selectedBlog} onViewClose={() => setSelectedBlog(null)} />
+                <BlogModal blog={selectedBlog} onViewClose={() => {
+                    setSelectedBlog(null);
+                    trackBlogViewClosed(userId || null);
+                }} />
             )}
 
             <nav className="my-15" aria-label="Blog list pagination">
